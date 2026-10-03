@@ -33,6 +33,21 @@ def _norm(header: str) -> str:
     return h.strip()
 
 
+_YEAR = re.compile(r"^\s*((?:19|20)\d{2})\s*$")
+
+
+def _date(raw: str | None, year: str | None) -> str | None:
+    """The page has typos ("08/31//2022") and dates without a year ("01/15"); each
+    year's table sits under a year heading, which fills the gap. A date that still
+    can't be read gets January 1 of its table's year, so it counts as old, not new."""
+    raw = re.sub(r"/+", "/", (raw or "").strip())
+    if d := iso(raw):
+        return d
+    if year and re.fullmatch(r"\d{1,2}/\d{1,2}", raw) and (d := iso(f"{raw}/{year}")):
+        return d
+    return f"{year}-01-01" if year else None
+
+
 def parse(html: str) -> list[dict]:
     soup = BeautifulSoup(html, "lxml")
     rows: list[dict] = []
@@ -43,13 +58,18 @@ def parse(html: str) -> list[dict]:
         headers = [_norm(c.get_text(" ", strip=True)) for c in trs[0].find_all(["th", "td"])]
         if "company" not in headers:
             continue
+        heading = table.find_previous(string=_YEAR)
+        year = heading.strip() if heading else None
         for tr in trs[1:]:
             cells = [c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])]
             if len(cells) < 2:
                 continue
-            rows.append(dict(zip(headers, cells)))
+            row = dict(zip(headers, cells))
+            row["_year"] = year
+            rows.append(row)
     items = []
     for row in rows:
+        year = row.pop("_year")
         company = row.get("company", "").strip()
         if not company:
             continue
@@ -59,7 +79,7 @@ def parse(html: str) -> list[dict]:
         items.append({
             "id": stable_id(row.get("date"), company, location),
             "title": f"{company}: WARN notice" + (f", {workers} workers" if workers else ""),
-            "date": iso(row.get("date")),
+            "date": _date(row.get("date"), year),
             "url": URL,
             "org": company,
             "place": location,

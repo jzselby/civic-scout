@@ -45,7 +45,8 @@ def test_pmn_skips_a_body_whose_page_is_not_the_expected_body(monkeypatch):
 
 def test_warn_table_parses_rows_and_skips_blank_ones():
     items = warn.parse(read("warn.html"))
-    assert len(items) == 2
+    assert len(items) == 5
+    assert [i["date"] for i in items[2:]] == ["2022-08-31", "2022-01-15", "2022-01-01"]
     tyson = items[0]
     assert tyson["org"] == "Tyson Fresh Meats" and tyson["workers"] == 723
     assert tyson["date"] == "2026-08-13" and tyson["place"] == "Eagle Mountain"
