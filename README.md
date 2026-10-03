@@ -14,9 +14,9 @@ source's `guidance` (see `civic_scout/sources/`).
 
 | Source | Key | What it is | Status |
 |---|---|---|---|
-| Utah Public Notice Website | `pmn` | Agendas and notices from public bodies: SLC Council, SLC Planning Commission, SLC Board of Education, Inland Port Authority, the state liquor commission (DABS), Salt Lake County Council. Claude reads the attached agenda PDFs. | Built; some body ids still to verify |
-| WARN layoff notices | `warn` | Employers' advance notice of mass layoffs and closures (Dept. of Workforce Services) | Built; check against live page |
-| SLC new business licenses | `slc_licenses` | The city's monthly list of businesses that applied for a license | Built; file format to confirm |
+| Utah Public Notice Website | `pmn` | Agendas and notices from public bodies: SLC Council, SLC Planning Commission, SLC Historic Landmark Commission, SLC Board of Education, Inland Port Authority, the state liquor commission (DABS), Salt Lake County Council. Claude reads the attached agenda PDFs. | Working |
+| WARN layoff notices | `warn` | Employers' advance notice of mass layoffs and closures (Dept. of Workforce Services) | Working |
+| SLC new business licenses | `slc_licenses` | The city's monthly list of businesses that applied for a license (PDF only; Claude picks out notable names) | Working |
 | SLC permits & planning | `slc_permits` | Commercial building permits and Planning applications, imported **read-only** from the [slcbuilding](https://github.com/jzselby/slcbuilding) project's data, already rated there | Working |
 
 `python -m civic_scout sources` lists them. Ideas for next sources: campaign finance

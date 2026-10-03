@@ -39,7 +39,12 @@ DEFAULT_BODIES: list[tuple[str, str, str, str]] = [
     ("1067", "SLC Board of Education", "Board of Education", "Salt Lake City School District"),
     ("6413", "Utah Inland Port Authority Board", "UIPA Board", "Inland Port"),
     ("709", "Salt Lake County Council", "Council", "Salt Lake County"),
+    ("1266", "SLC Historic Landmark Commission", "Historic Landmark Commission", "Salt Lake City"),
+    ("13", "Alcoholic Beverage Services Commission", "Alcoholic Beverage Services Commission",
+     "Alcoholic Beverage Services"),
 ]
+# Not yet found: the current UTA Board of Trustees (940 is the deactivated old board)
+# and the SLC Community Reinvestment Agency board (2017 is the County's RDA).
 
 # Body pages list only upcoming notices, so this cap is rarely reached.
 MAX_PER_BODY = 30
