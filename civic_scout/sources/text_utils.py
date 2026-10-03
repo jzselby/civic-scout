@@ -16,7 +16,13 @@ MONTHS = ("january|february|march|april|may|june|july|august|september|october|n
           "jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec")
 _LONG = re.compile(rf"\b({MONTHS})\.?\s+(\d{{1,2}}),?\s+(\d{{4}})\b", re.I)
 _NUMERIC = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{2,4})\b")
-_ISO = re.compile(r"\b(\d{4})-(\d{2})-(\d{2})\b")
+_ISO = re.compile(r"\b(\d{4})[-/](\d{1,2})[-/](\d{1,2})\b")
+# "August 2026" (no day): the first of the month.
+_MONTH_YEAR = re.compile(rf"\b({MONTHS})\.?\s+(\d{{4}})\b", re.I)
+
+
+def _month(name: str) -> int:
+    return ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"].index(name[:3].lower()) + 1
 
 
 def parse_date(value) -> date | None:
@@ -41,12 +47,12 @@ def parse_date(value) -> date | None:
         except ValueError:
             pass
     for m in _LONG.finditer(s):
-        name = m[1][:3].lower()
-        month = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"].index(name) + 1
         try:
-            found.append((m.start(), date(int(m[3]), month, int(m[2]))))
+            found.append((m.start(), date(int(m[3]), _month(m[1]), int(m[2]))))
         except ValueError:
             pass
+    for m in _MONTH_YEAR.finditer(s):
+        found.append((m.start(), date(int(m[2]), _month(m[1]), 1)))
     return min(found)[1] if found else None
 
 
@@ -63,6 +69,15 @@ def page_text(html: str) -> str:
     root = soup.find("main") or soup.find(id=re.compile("content|main", re.I)) or soup.body or soup
     lines = (line.strip() for line in root.get_text("\n").splitlines())
     return "\n".join(line for line in lines if line)
+
+
+def field(text: str, label: str) -> str | None:
+    """Value of a labeled field in page text: the line after the line equal to `label`."""
+    lines = text.splitlines()
+    for i, line in enumerate(lines[:-1]):
+        if line.strip().lower() == label.lower():
+            return lines[i + 1].strip() or None
+    return None
 
 
 def pdf_text(data: bytes, max_pages: int = 40) -> str:

@@ -22,7 +22,7 @@ from bs4 import BeautifulSoup
 
 from ..config import Config
 from ..http import Http
-from .text_utils import clip, iso, page_text, pdf_text
+from .text_utils import clip, field, iso, page_text, pdf_text
 
 log = logging.getLogger(__name__)
 
@@ -30,61 +30,66 @@ BASE = "https://www.utah.gov/pmn/"
 BODY_URL = BASE + "sitemap/publicbody/{}.html"
 NOTICE_URL = BASE + "sitemap/notice/{}.html"
 
-# (body id, name, words its page must contain). The check guards against a wrong
-# id silently reporting another body's meetings. Ids marked "verify" haven't been
-# checked against the live site yet; the probe workflow reports whether they match.
-DEFAULT_BODIES: list[tuple[str, str, str]] = [
-    ("1360", "Salt Lake City Council", "Salt Lake City Council"),
-    ("1274", "Salt Lake City Planning Commission", "Planning Commission"),
-    ("1067", "Salt Lake City Board of Education", "Board of Education"),
-    ("6413", "Utah Inland Port Authority Board", "Inland Port"),                 # verify
-    ("731", "Alcoholic Beverage Services Commission", "Alcoholic Beverage"),     # verify
-    ("709", "Salt Lake County Council", "Salt Lake County"),                     # verify
+# (body id, display name, text the page's "Public Body Name" must contain, text its
+# "Entity Name" must contain). The check guards against a wrong id silently
+# reporting another body's meetings. Checked against the live site 2026-10-03.
+DEFAULT_BODIES: list[tuple[str, str, str, str]] = [
+    ("1360", "Salt Lake City Council", "Salt Lake City Council", "Salt Lake City"),
+    ("1274", "SLC Planning Commission", "Planning Commission", "Salt Lake City"),
+    ("1067", "SLC Board of Education", "Board of Education", "Salt Lake City School District"),
+    ("6413", "Utah Inland Port Authority Board", "UIPA Board", "Inland Port"),
+    ("709", "Salt Lake County Council", "Council", "Salt Lake County"),
 ]
 
-# Newest notices looked at per body per run. Notice ids increase over time.
-MAX_PER_BODY = 8
+# Body pages list only upcoming notices, so this cap is rarely reached.
+MAX_PER_BODY = 30
 # Characters of notice text plus attachment text passed to Claude per notice.
 MAX_TEXT = 60_000
 MAX_FILES = 3
 
 _NOTICE_LINK = re.compile(r"/pmn/sitemap/notice/(\d+)\.html")
 _FILE_LINK = re.compile(r"/pmn/files/\d+[^\"'#?]*", re.I)
-_DATE_LABEL = re.compile(r"(event date|meeting date|start date|date\s*(?:&|and)\s*time)[^\n]*\n?([^\n]*)", re.I)
+# Page chrome after the notice itself.
+_FOOTER = re.compile(r"\n(Subscribe by Email|Subscribe\nSubscribe by Email|Public Notice Website\nHome\nSearch)\n")
 
 
-def body_list(cfg: Config) -> list[tuple[str, str, str]]:
+def body_list(cfg: Config) -> list[tuple[str, str, str, str]]:
     if not cfg.pmn_bodies:
         return DEFAULT_BODIES
     out = []
     for spec in cfg.pmn_bodies:
         body_id, _, name = spec.partition("=")
-        out.append((body_id.strip(), name.strip() or f"Public body {body_id.strip()}", ""))
+        out.append((body_id.strip(), name.strip() or f"Public body {body_id.strip()}", "", ""))
     return out
 
 
-def parse_body_page(html: str) -> tuple[str, list[tuple[str, str]]]:
-    """(page title, [(notice id, link text)]) newest first."""
+def parse_body_page(html: str) -> tuple[str, str, list[tuple[str, str]]]:
+    """(public body name, entity name, [(notice id, link text)] newest first)."""
     soup = BeautifulSoup(html, "lxml")
-    title = (soup.find("h1") or soup.find("title") or soup).get_text(" ", strip=True)
+    text = page_text(html)
     notices: dict[str, str] = {}
     for a in soup.find_all("a", href=True):
         m = _NOTICE_LINK.search(a["href"])
         if m and m[1] not in notices:
             notices[m[1]] = a.get_text(" ", strip=True)
     ordered = sorted(notices.items(), key=lambda kv: int(kv[0]), reverse=True)
-    return title, ordered
+    return field(text, "Public Body Name") or "", field(text, "Entity Name") or "", ordered
 
 
 def parse_notice_page(html: str, url: str) -> dict:
     soup = BeautifulSoup(html, "lxml")
-    heading = soup.find("h1") or soup.find("h2") or soup.find("title")
-    title = heading.get_text(" ", strip=True) if heading else ""
     text = page_text(html)
-    when = None
-    m = _DATE_LABEL.search(text)
+    start = text.find("Notice Information")
+    if start > 0:
+        text = text[start:]
+    m = _FOOTER.search(text)
     if m:
-        when = iso(m[0])
+        text = text[:m.start()]
+    title = field(text, "Notice Title")
+    if not title:
+        heading = soup.find("h1") or soup.find("title")
+        title = heading.get_text(" ", strip=True) if heading else ""
+    when = iso(field(text, "Event Start Date & Time") or field(text, "Event Date & Time") or "")
     files = []
     for a in soup.find_all("a", href=True):
         if _FILE_LINK.search(a["href"]):
@@ -118,15 +123,15 @@ address on the agenda and in `names` every business, developer or applicant name
 
     def fetch(self, cfg: Config, http: Http, seen: set[str]) -> list[dict]:
         items = []
-        for body_id, body_name, expect in body_list(cfg):
+        for body_id, body_name, want_body, want_entity in body_list(cfg):
             try:
-                title, notices = parse_body_page(http.text(BODY_URL.format(body_id)))
+                found_body, found_entity, notices = parse_body_page(http.text(BODY_URL.format(body_id)))
             except Exception as exc:
                 log.error("PMN body %s (%s): could not load its page (%s)", body_id, body_name, exc)
                 continue
-            if expect and expect.lower() not in title.lower():
-                log.error("PMN body %s page is titled %r, expected %r; skipping it. Fix its id in pmn.py.",
-                          body_id, title, expect)
+            if (want_body.lower() not in found_body.lower()) or (want_entity.lower() not in found_entity.lower()):
+                log.error("PMN body %s is %r (%r), expected %r (%r); skipping it. Fix its id in pmn.py.",
+                          body_id, found_body, found_entity, want_body, want_entity)
                 continue
             log.info("PMN %s (%s): %d notices listed", body_name, body_id, len(notices))
             for notice_id, link_text in notices[:MAX_PER_BODY]:
@@ -164,14 +169,15 @@ address on the agenda and in `names` every business, developer or applicant name
 
     def probe(self, cfg: Config, http: Http) -> dict[str, bytes]:
         out = {}
-        for body_id, _, _ in body_list(cfg):
+        for body_id, *_ in body_list(cfg):
             try:
                 html = http.text(BODY_URL.format(body_id))
             except Exception as exc:
                 out[f"body-{body_id}.error.txt"] = str(exc).encode()
                 continue
             out[f"body-{body_id}.html"] = html.encode()
-            _, notices = parse_body_page(html)
+            body, entity, notices = parse_body_page(html)
+            print(f"PMN body {body_id}: {body!r} of {entity!r}, {len(notices)} upcoming notices")
             if notices and not any(k.startswith("notice-") for k in out):
                 nid = notices[0][0]
                 notice_html = http.text(NOTICE_URL.format(nid))

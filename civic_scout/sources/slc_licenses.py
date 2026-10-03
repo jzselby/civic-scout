@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 import re
+from datetime import date
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
@@ -21,8 +22,8 @@ from .text_utils import clip, iso, pdf_text, sheet_rows, stable_id
 log = logging.getLogger(__name__)
 
 LIST_PAGE = "https://www.slc.gov/Finance/business-licensing/license-data/"
-# How many of the newest monthly files to read per run.
-MAX_FILES = 2
+# Only the newest monthly list: older ones were reported in earlier months.
+MAX_FILES = 1
 _FILE = re.compile(r"\.(xlsx|csv|pdf)(\?|$)", re.I)
 
 
@@ -90,7 +91,9 @@ addresses; put every notable address in `places` and name in `names`."""
             log.error("No license list files found on %s; the page layout may have changed", LIST_PAGE)
         items: list[dict] = []
         for url, text in files[:MAX_FILES]:
-            month = iso(text) or iso(url)
+            # Dated the day it was found: the list covers the previous month, which
+            # would otherwise fall outside the look-back window.
+            month = date.today().isoformat()
             file_id = stable_id(url)
             if file_id in seen:
                 continue
@@ -103,7 +106,7 @@ addresses; put every notable address in `places` and name in `names`."""
                 items.append({"id": file_id, "title": f"Business license list: {text}", "date": month,
                               "url": url, "details": f"{len(rows)} businesses", "hidden": True})
             elif url.lower().split("?")[0].endswith(".pdf"):
-                items.append({"id": file_id, "title": f"New business licenses: {text}", "date": month,
+                items.append({"id": file_id, "title": text if "licen" in text.lower() else f"New business licenses: {text}", "date": month,
                               "url": url, "org": "Salt Lake City Business Licensing",
                               "text": clip(pdf_text(data, max_pages=80), 150_000)})
             else:

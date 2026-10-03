@@ -10,20 +10,37 @@ def read(name):
     return (FIX / name).read_text()
 
 
-def test_pmn_body_page_lists_notices_newest_first_without_duplicates():
-    title, notices = pmn.parse_body_page(read("pmn_body.html"))
-    assert "Salt Lake City Council" in title
-    assert [n for n, _ in notices] == ["1077049", "1075705", "1064119"]
+def test_pmn_body_page_gives_body_entity_and_notices_newest_first():
+    body, entity, notices = pmn.parse_body_page(read("pmn_body.html"))
+    assert (body, entity) == ("Salt Lake City Council", "Salt Lake City")
+    assert [n for n, _ in notices] == ["1112241", "1112213", "1110609"]
 
 
-def test_pmn_notice_page_extracts_event_date_text_and_files():
-    url = "https://www.utah.gov/pmn/sitemap/notice/1077049.html"
+def test_pmn_notice_page_extracts_title_event_date_agenda_and_files():
+    url = "https://www.utah.gov/pmn/sitemap/notice/1112241.html"
     notice = pmn.parse_notice_page(read("pmn_notice.html"), url)
-    assert notice["title"] == "REVISED Salt Lake City Formal Meeting Agenda"
-    assert notice["date"] == "2026-10-07"
-    assert "730 W 900 S" in notice["text"]
-    assert "var x" not in notice["text"] and "Home | Search" not in notice["text"]
-    assert notice["files"] == ["https://www.utah.gov/pmn/files/1453567.pdf"]
+    assert notice["title"] == "Salt Lake City Council Work Session Agenda"
+    assert notice["date"] == "2026-10-06"
+    assert "237 & 239 S 1000 East" in notice["text"]
+    assert "var x" not in notice["text"] and "Definitions" not in notice["text"]
+    assert notice["files"] == ["https://www.utah.gov/pmn/files/1495669.pdf"]
+
+
+def test_pmn_skips_a_body_whose_page_is_not_the_expected_body(monkeypatch):
+    class FakeHttp:
+        def text(self, url):
+            return read("pmn_body.html") if "publicbody" in url else read("pmn_notice.html")
+
+        def content(self, url):
+            return b""
+
+    from civic_scout.config import Config
+    monkeypatch.setattr(pmn, "DEFAULT_BODIES", [("1360", "Council", "Salt Lake City Council", "Salt Lake City"),
+                                                 ("731", "DABS", "Alcoholic Beverage Services Commission", "")])
+    monkeypatch.setattr(pmn, "pdf_text", lambda data: "AGENDA PDF TEXT")
+    items = pmn.PublicNotices().fetch(Config(), FakeHttp(), seen={"1110609"})
+    assert [i["id"] for i in items] == ["1112241", "1112213"]  # seen notice skipped; DABS body rejected
+    assert items[0]["org"] == "Council" and "AGENDA PDF TEXT" in items[0]["text"]
 
 
 def test_warn_table_parses_rows_and_skips_blank_ones():
@@ -40,7 +57,7 @@ def test_license_page_finds_only_license_lists():
     files = slc_licenses.list_files(read("licenses.html"))
     assert [u.rsplit("/", 1)[1] for u, _ in files] == [
         "september-2026-new-business-licenses.xlsx", "august-2026-new-business-licenses.pdf"]
-    assert iso(files[0][1]) is None  # month names alone aren't dates; month comes from the file
+    assert iso(files[0][1]) == "2026-09-01"
 
 
 def test_license_rows_become_items():
@@ -66,4 +83,6 @@ def test_dates():
     assert iso("Event Date & Time\nOctober 7, 2026 7:00 PM") == "2026-10-07"
     assert iso("Sept. 3, 2026") == "2026-09-03"
     assert iso("10/2/26") == "2026-10-02"
+    assert iso("2026/10/06 07:00 PM") == "2026-10-06"
+    assert iso("August 2026 New Business Licenses") == "2026-08-01"
     assert iso("nothing here") is None
