@@ -1,0 +1,84 @@
+name: Civic Scout daily briefing
+
+on:
+  schedule:
+    # GitHub's scheduler is best-effort, so there are backup attempts; each skips
+    # itself once the day's report exists. Runs after slcbuilding's morning update.
+    # UTC = 8:13, 8:47, 9:31am MDT (summer); 7:13, 7:47, 8:31am MST (winter).
+    - cron: "13 14 * * *"
+    - cron: "47 14 * * *"
+    - cron: "31 15 * * *"
+  workflow_dispatch:
+    inputs:
+      sources:
+        description: "Sources to run, comma-separated (blank = all). See: python -m civic_scout sources"
+        default: ""
+      days_back:
+        description: "Report records dated within the last N days"
+        default: "14"
+      dry_run:
+        description: "Dry run: print the report only; write nothing and mark nothing seen"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: civic-scout
+  cancel-in-progress: false
+
+jobs:
+  briefing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Skip if today's briefing already ran
+        id: guard
+        if: github.event_name == 'schedule'
+        run: |
+          today=$(TZ=America/Denver date +%F)
+          if [ -f "reports/$today.md" ]; then
+            echo "reports/$today.md exists; skipping this backup attempt."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        if: steps.guard.outputs.skip != 'true'
+        run: pip install -r requirements.txt
+
+      - name: Fetch, rate and brief
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          PMN_BODIES: ${{ vars.PMN_BODIES }}
+          SOURCES: ${{ inputs.sources }}
+          DAYS_BACK: ${{ inputs.days_back || '14' }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          args=(run)
+          if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+          python -m civic_scout "${args[@]}"
+
+      - name: Commit report and seen-record lists
+        if: ${{ !inputs.dry_run && steps.guard.outputs.skip != 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ reports/
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "Civic Scout briefing $(TZ=America/Denver date +%F)"
+            git push
+          fi

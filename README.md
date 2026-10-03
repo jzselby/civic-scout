@@ -1,0 +1,109 @@
+# Civic Scout
+
+A daily watcher for public records from Salt Lake City, Salt Lake County and the state
+of Utah. Each morning it checks a set of public sources for new records, has Claude
+rate each one for news value, links records from different sources that share an
+address or a name, and writes a short cross-source briefing for the newsroom. The
+results go to a Google Sheet and a Markdown report in `reports/`.
+
+It's meant for every beat. Nothing is tuned to one reporter; what counts as "high
+importance" is written down per source, in plain editor's language, in each
+source's `guidance` (see `civic_scout/sources/`).
+
+## Sources
+
+| Source | Key | What it is | Status |
+|---|---|---|---|
+| Utah Public Notice Website | `pmn` | Agendas and notices from public bodies: SLC Council, SLC Planning Commission, SLC Board of Education, Inland Port Authority, the state liquor commission (DABS), Salt Lake County Council. Claude reads the attached agenda PDFs. | Built; some body ids still to verify |
+| WARN layoff notices | `warn` | Employers' advance notice of mass layoffs and closures (Dept. of Workforce Services) | Built; check against live page |
+| SLC new business licenses | `slc_licenses` | The city's monthly list of businesses that applied for a license | Built; file format to confirm |
+| SLC permits & planning | `slc_permits` | Commercial building permits and Planning applications, imported **read-only** from the [slcbuilding](https://github.com/jzselby/slcbuilding) project's data, already rated there | Working |
+
+`python -m civic_scout sources` lists them. Ideas for next sources: campaign finance
+(disclosures.utah.gov), the Legislature's API (bill filings), Salt Lake County
+recorder/assessor sales, water-rights applications, DEQ permits, SLCPD open data,
+restaurant inspections.
+
+## How a run works
+
+```
+for each source:      fetch the current list → drop records already seen
+                      → records dated before the look-back window (default 14 days)
+                        are remembered but not reported, so a first run isn't a flood
+rate (Claude)         headline, importance (high/medium/low), category, why it
+                      matters, plus the names and addresses each record mentions
+connect               normalize addresses ("1124 East 100 South, Unit 3" → "1124 E 100 S")
+                      and names ("Postino, LLC" → "POSTINO"); match records across
+                      sources, over the past year
+brief (Claude)        Top stories · Connections · Coming up · Also notable
+publish               Google Sheet + reports/YYYY-MM-DD.md + data/<source>.jsonl
+```
+
+A source that fails (site down, layout changed) is marked FAILED in the report's
+source table; the others still run. If the sheet write fails, nothing is marked as
+seen, so the next run retries.
+
+```
+civic_scout/
+  sources/      one module per source (+ text_utils for dates, PDFs, spreadsheets)
+  pipeline.py   collect → rate → connect → brief
+  analyze.py    the two Claude calls and their prompts
+  link.py       address/name normalization and cross-source matching
+  report.py     the Markdown report
+  sheets.py     the Google Sheet
+  store.py      data/<source>.jsonl: every record already seen
+```
+
+## The sheet
+
+- **Briefings**: one row per day, newest first, with the cross-source briefing.
+- **Top stories**: high-importance records from the last 30 days, newest first.
+  Rebuilt every run, so don't type notes here.
+- **All records**: every new record, newest first. Add your own columns (Notes,
+  Assigned to); runs write by column heading and leave other columns alone. Don't
+  rename the built-in headings.
+
+## Setup
+
+1. **Google Sheet.** Create a blank sheet and share it (Editor) with the Google Cloud
+   service account's email. The slcbuilding service account works fine. The sheet id
+   is the long string in its URL.
+2. **Secrets** (Settings → Secrets and variables → Actions):
+
+   | Secret | Value |
+   |---|---|
+   | `ANTHROPIC_API_KEY` | for ratings and the briefing (without it, records are still collected) |
+   | `GOOGLE_SHEET_ID` | the new sheet's id |
+   | `GOOGLE_SERVICE_ACCOUNT_JSON` | the service account key file's contents |
+
+   Optional **variable** `PMN_BODIES` replaces the default list of public bodies:
+   comma-separated ids from utah.gov/pmn body pages, e.g. `1360,1274=SLC Planning Commission`.
+3. **Probe first.** Actions → *Probe sources* → Run workflow. It saves raw pages from
+   every source and logs what each parser makes of them.
+4. **Test run.** Actions → *Civic Scout daily briefing* → Run workflow with *dry run*
+   ticked, then once for real. After that it runs every morning around 8am Mountain,
+   after slcbuilding's update.
+
+## Run it locally
+
+```bash
+pip install -r requirements.txt
+python -m civic_scout run --dry-run --no-summary        # no Claude, no writes
+python -m civic_scout run --sources pmn,warn --dry-run  # just some sources
+python -m civic_scout probe --out probe                 # save raw pages
+python -m pytest
+```
+
+Settings (environment variables): `SOURCES`, `DAYS_BACK`, `SUMMARY_MODEL` (default
+`claude-opus-5-5`), `PMN_BODIES`, `SLCBUILDING_URL`, `HTTP_TIMEOUT`.
+
+## Adding a source
+
+Write a class in `civic_scout/sources/` with `name`, `label`, `guidance`,
+`default_enabled`, `fetch()` and `probe()` (see `sources/base.py` for the item
+fields), add it to `sources/__init__.py`, and add a parser test with a saved page in
+`tests/fixtures/`. Use `org`, `place`, `names` and `places` wherever the record has
+them; that's what cross-source connections match on.
+
+Be a polite scraper: the shared HTTP client identifies itself, retries gently and
+waits a second between requests to the same site.
