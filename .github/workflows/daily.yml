@@ -67,7 +67,7 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
           args=(run)
-          if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+          if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); else args+=(--require-claude); fi
           python -m civic_scout "${args[@]}"
 
       - name: Commit report and seen-record lists

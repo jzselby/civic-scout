@@ -41,6 +41,32 @@ def test_claude_notes_merge_into_items_and_feed_the_briefing(tmp_path, monkeypat
     assert "Council weighs West End rezone" in result.report
 
 
+def test_records_claude_failed_to_rate_are_held_for_the_next_run(tmp_path, monkeypatch):
+    src = FakeSource([{"id": "1", "title": "Rated", "date": "2026-10-02"},
+                      {"id": "2", "title": "Dropped by the API", "date": "2026-10-02"}])
+    monkeypatch.setattr(pipeline, "selected", lambda names: [src])
+    monkeypatch.setattr(analyze, "available", lambda: True)
+    monkeypatch.setattr(analyze, "rate", lambda items, guidance, model: {"fake:1": analyze.ItemNotes(
+        key="fake:1", headline="h", importance="low", category="Other", why_it_matters="w")})
+    monkeypatch.setattr(analyze, "brief", lambda *a: None)
+    cfg = Config(data_dir=tmp_path / "data")
+    store = Store(cfg.data_dir)
+    result = pipeline.collect(cfg, store, None, date(2026, 10, 3))
+    pipeline.enrich(cfg, store, result)
+    assert [i["id"] for i in result.items] == ["1"]
+    assert [i["id"] for i in result.held] == ["2"]
+    assert "Dropped by the API" not in result.report
+
+
+def test_run_refuses_to_record_anything_without_a_claude_key(tmp_path, monkeypatch):
+    from civic_scout.__main__ import main
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("ANTHROPIC_AUTH_TOKEN", raising=False)
+    monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+    assert main(["run", "--require-claude"]) == 1
+    assert not (tmp_path / "data").exists()
+
+
 class FakeWorksheet:
     def __init__(self, title, rows=1000, cols=10):
         self.title, self.row_count, self.col_count = title, rows, cols

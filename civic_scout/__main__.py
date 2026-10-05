@@ -13,7 +13,7 @@ import os
 import sys
 from pathlib import Path
 
-from . import pipeline, sheets
+from . import analyze, pipeline, sheets
 from .config import Config
 from .http import Http
 from .sources import ALL, selected
@@ -23,6 +23,10 @@ log = logging.getLogger("civic_scout")
 
 
 def cmd_run(cfg: Config, args) -> int:
+    if args.require_claude and not args.no_summary and not analyze.available():
+        # Otherwise every record would be marked seen without a rating, and never rated.
+        log.error("ANTHROPIC_API_KEY is not set; stopping before anything is recorded")
+        return 1
     store = Store(cfg.data_dir)
     http = Http(cfg.http_timeout)
     day = pipeline.today()
@@ -95,6 +99,8 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("--dry-run", action="store_true", help="print the report; write nothing, mark nothing seen")
     run.add_argument("--no-sheet", action="store_true", help="skip the Google Sheet")
     run.add_argument("--no-summary", action="store_true", help="skip Claude (no ratings or briefing)")
+    run.add_argument("--require-claude", action="store_true",
+                     help="fail, recording nothing, if no Anthropic API key is set")
     probe = sub.add_parser("probe", help="save raw pages from each source")
     probe.add_argument("--sources", help="comma-separated source names (default: all)")
     probe.add_argument("--out", default="probe")

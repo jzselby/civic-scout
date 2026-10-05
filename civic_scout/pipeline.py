@@ -34,6 +34,9 @@ class RunResult:
     day: date
     items: list[dict] = field(default_factory=list)
     old: list[dict] = field(default_factory=list)
+    # New records Claude should have rated but didn't (an API error): not reported and
+    # not marked seen, so the next run retries them.
+    held: list[dict] = field(default_factory=list)
     health: dict[str, str] = field(default_factory=dict)
     labels: dict[str, str] = field(default_factory=dict)
     connections: dict[str, list[dict]] = field(default_factory=dict)
@@ -73,7 +76,14 @@ def enrich(cfg: Config, store: Store, result: RunResult, use_claude: bool = True
     sources = selected(cfg.sources)
     guidance = "\n\n".join(s.guidance for s in sources)
     to_rate = [i for i in result.items if not i.get("prerated") and not i.get("hidden")]
-    notes = analyze.rate(to_rate, guidance, cfg.model) if use_claude else {}
+    attempted = use_claude and analyze.available()
+    notes = analyze.rate(to_rate, guidance, cfg.model) if attempted else {}
+    if attempted:
+        result.held = [i for i in to_rate if link.item_key(i) not in notes]
+        if result.held:
+            log.warning("%d record(s) weren't rated; holding them for the next run", len(result.held))
+            held = {link.item_key(i) for i in result.held}
+            result.items = [i for i in result.items if link.item_key(i) not in held]
     for item in result.items:
         note = notes.get(link.item_key(item))
         if note:
