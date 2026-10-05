@@ -110,6 +110,22 @@ def _rows(headers: list[str], values: list[dict[str, Any]]) -> list[list[Any]]:
     return [[v.get(h, "") for h in headers] for v in values]
 
 
+def _latest_run_date(ws: gspread.Worksheet, headers: list[str]) -> date | None:
+    """Run date on the newest Briefings row (row 2), read unformatted."""
+    if "Run date" not in headers:
+        return None
+    cells = ws.col_values(headers.index("Run date") + 1, value_render_option=ValueRenderOption.unformatted)
+    if len(cells) < 2:
+        return None
+    value = cells[1]
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return date(1899, 12, 30) + timedelta(days=int(value))
+    try:
+        return date.fromisoformat(str(value)[:10])
+    except ValueError:
+        return None
+
+
 def _insert_top(ws: gspread.Worksheet, headers: list[str], values: list[dict[str, Any]]) -> None:
     """Insert rows under the header, so the newest are always at the top."""
     if values:
@@ -468,23 +484,35 @@ def publish(sheet_id: str, service_account_json: str, today: date, items: list[d
     items = [i for i in items if not i.get("hidden")]
     high = [i for i in items if i.get("importance") == "high"]
 
+    # Idempotent: records already on All records (by Key) aren't added again, so a
+    # re-run after a failure doesn't duplicate rows.
+    all_ws, all_headers = _worksheet(sh, ALL, RECORD_HEADERS)
+    existing = set(all_ws.col_values(all_headers.index("Key") + 1)[1:]) if "Key" in all_headers else set()
+    fresh = [i for i in items if item_key(i) not in existing]
+    if len(fresh) < len(items):
+        log.info("%d record(s) already on the sheet; not added again", len(items) - len(fresh))
+
     briefings, b_headers = _worksheet(sh, BRIEFINGS, BRIEFING_HEADERS)
     plain, runs = md_to_rich(briefing or "")
-    _insert_top(briefings, b_headers, [{"Run date": today.isoformat(), "New records": len(items),
-                                        "High importance": len(high), "Briefing": text(plain)}])
+    values = {"Run date": today.isoformat(), "New records": len(items), "High importance": len(high),
+              "Briefing": text(plain)}
+    if items and not fresh and _latest_run_date(briefings, b_headers) == today:
+        # A repeat of a run already published today: refresh its briefing row.
+        briefings.update([[values.get(h, "") for h in b_headers]], "A2", value_input_option="USER_ENTERED")
+    else:
+        _insert_top(briefings, b_headers, [values])
     if runs and "Briefing" in b_headers:
         try:
             sh.batch_update({"requests": [rich_cell(briefings.id, 1, b_headers.index("Briefing"), plain, runs)]})
         except Exception:
             log.exception("Couldn't add links to the briefing cell; it stays as plain text")
 
-    all_ws, all_headers = ws, headers = _worksheet(sh, ALL, RECORD_HEADERS)
     # Appended, then sorted newest first below: inserting at row 2 would shift the
     # filter and color rules (which start at row 2) down past the new rows.
-    if items:
-        ws.append_rows(_rows(headers, [record_values(i, labels.get(i["source"], i["source"]),
-                                                     connections.get(item_key(i)), labels) for i in items]),
-                       value_input_option="USER_ENTERED", table_range="A1")
+    if fresh:
+        all_ws.append_rows(_rows(all_headers, [record_values(i, labels.get(i["source"], i["source"]),
+                                                             connections.get(item_key(i)), labels) for i in fresh]),
+                           value_input_option="USER_ENTERED", table_range="A1")
 
     top_ws, top_headers = write_top(sh, today, all_stored + items, connections, labels)
     # Presentation only: a failure here must not lose the data written above.

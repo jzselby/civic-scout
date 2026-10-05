@@ -127,7 +127,7 @@ class FakeWorksheet:
     def get_all_values(self, value_render_option=None):
         return self.grid
 
-    def col_values(self, n):
+    def col_values(self, n, value_render_option=None):
         return [r[n - 1] if len(r) >= n else "" for r in self.grid]
 
 
@@ -269,3 +269,14 @@ def test_update_ratings_rewrites_changed_rows_and_top_stories(monkeypatch):
     assert ws.grid[2][h.index("Importance")] == "High"
     top = sh.tabs[sheets.TOP].grid
     assert [r[h.index("Key")] for r in top[1:]] == ["pmn:2"]
+
+
+def test_republishing_the_same_records_adds_no_rows_and_refreshes_the_briefing(monkeypatch):
+    sh = FakeSpreadsheet()
+    monkeypatch.setattr(gspread, "service_account_from_dict", lambda info: SimpleNamespace(open_by_key=lambda k: sh))
+    items = [{"source": "pmn", "id": "1", "title": "Agenda", "importance": "high", "date": "2026-10-07"}]
+    sheets.publish("id", "{}", date(2026, 10, 5), items, {}, "first", {}, [])
+    sheets.publish("id", "{}", date(2026, 10, 5), [dict(i) for i in items], {}, "second", {}, [])
+    assert len(sh.tabs[sheets.ALL].grid) == 2
+    briefs = sh.tabs[sheets.BRIEFINGS].grid
+    assert len(briefs) == 2 and briefs[1][-1] == "second"

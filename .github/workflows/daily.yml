@@ -46,6 +46,10 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The branch as it is when the job starts, not when it was queued: an earlier
+          # run in the queue may have committed data since.
+          ref: ${{ github.ref_name }}
 
       - name: Skip if today's briefing already ran
         id: guard
@@ -101,5 +105,6 @@ jobs:
             echo "Nothing to commit"
           else
             git commit -m "Civic Scout briefing $(TZ=America/Denver date +%F)"
+            git pull --rebase origin "${{ github.ref_name }}"
             git push
           fi
