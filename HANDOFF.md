@@ -60,7 +60,11 @@ Public Notice body ids: SLC Council 1360, SLC Planning Commission 1274, SLC Boar
 Education 1067, Inland Port board 6413, SL County Council 709, SLC Historic Landmark
 Commission 1266, liquor commission (DABS) 13, Granite 767, Jordan 738, Canyons 1281,
 Murray 1094, State Board of Education 1499, Board of Higher Education 83, U of U
-trustees 1376, SLCC trustees 1383.
+trustees 1376, SLCC trustees 1383, State Charter School Board 1495, SLC CRA 9033,
+Fairpark district 8711, Point of the Mountain authority 6439, SL County Mountainous
+Planning District 5341, Housing Connect 6223, Air Quality Board 38, Water Quality Board
+40, Waste Management and Radiation Control Board 5281, Great Salt Lake Advisory Council
+7937, Metropolitan Water District of SL & Sandy 885, SL County Board of Health 1498.
 
 ## Workflows
 
@@ -83,13 +87,11 @@ civic_scout run --dry-run --no-summary`, `python -m civic_scout sources`.
 1. **UTA board not watched.** Body 940 is UTA's deactivated board; its current notices
    don't show under a new body yet. Find a recent UTA notice id and run the probe with
    `pmn_notices`.
-2. **SLC Community Reinvestment Agency board not watched.** 2017 is the County's RDA, not
-   SLC's CRA. Find a recent CRA notice id (agendas are on utah.gov/pmn) and probe it.
-3. **Editor calibration.** It now errs toward visibility (the owner's priority). Ratings
+2. **Editor calibration.** It now errs toward visibility (the owner's priority). Ratings
    vary a bit between runs (LLM nondeterminism). If Top stories grows too long on normal
    days, tune `REVIEW_PROMPT` rather than loosening `HIDE_REASONS`. Watch a week of
    normal (non-backlog) runs before changing anything.
-4. **Business license list** is one item per month (PDF). Per-business items would
+3. **Business license list** is one item per month (PDF). Per-business items would
    improve address matching; the PDF's layout hasn't been inspected yet (probe it).
 
 ## Next sources the owner approved in principle
