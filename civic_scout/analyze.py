@@ -106,6 +106,8 @@ Be skeptical of:
   outcome reported (a past date alone is not a reason to lower a record that reveals
   something new);
 - placeholder, test, withdrawn or incomplete records: low.
+Move a rating one step at a time (high to medium, medium to low). Use low only for
+routine paperwork; a record with a real news angle that just isn't urgent is medium.
 Raise a rating when a record is clearly underrated (e.g. a closure, layoff or
 lawsuit marked low or medium). A day with no high records is fine.
 

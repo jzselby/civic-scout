@@ -62,10 +62,14 @@ def parse_closures(html: str) -> list[dict]:
     soup = BeautifulSoup(html, "lxml")
     rows = []
     for tr in soup.find_all("tr"):
-        if tr.find("tr"):  # skip layout rows that wrap the whole table
+        # A closure row has five cells of its own, the first holding the Inspections
+        # button (itself a small nested table). Layout rows wrapping the whole table
+        # and the button's own rows don't fit that shape.
+        tds = tr.find_all("td", recursive=False)
+        if len(tds) != 5 or not tds[0].find("a", href=_INSP_BUTTON):
             continue
-        cells = [td.get_text(" ", strip=True) for td in tr.find_all("td")]
-        cells = [c for c in cells if c and c.lower() != "inspections"]
+        cells = [td.get_text(" ", strip=True) for td in tds[1:]]
+        cells = [c for c in cells if c]
         dates = [c for c in cells if _DATE.match(c)]
         words = [c for c in cells if not _DATE.match(c)]
         if not dates or len(words) < 2:
