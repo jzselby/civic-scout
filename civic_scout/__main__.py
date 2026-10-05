@@ -74,6 +74,14 @@ def cmd_refresh_connections(cfg: Config, args) -> int:
     return 0
 
 
+def cmd_format_sheet(cfg: Config, args) -> int:
+    if not (cfg.google_sheet_id and cfg.google_service_account_json):
+        log.error("GOOGLE_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_JSON not set")
+        return 1
+    sheets.format_existing(cfg.google_sheet_id, cfg.google_service_account_json)
+    return 0
+
+
 def cmd_probe(cfg: Config, args) -> int:
     http = Http(cfg.http_timeout)
     out_dir = Path(args.out)
@@ -116,6 +124,7 @@ def main(argv: list[str] | None = None) -> int:
     probe.add_argument("--sources", help="comma-separated source names (default: all)")
     probe.add_argument("--out", default="probe")
     sub.add_parser("sources", help="list sources")
+    sub.add_parser("format-sheet", help="apply the sheet's formatting now (no fetching, no Claude)")
     sub.add_parser("refresh-connections", help="recompute the sheet's Connections column from stored records")
     args = parser.parse_args(argv)
 
@@ -133,6 +142,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "probe":
         return cmd_probe(cfg, args)
+    if args.command == "format-sheet":
+        return cmd_format_sheet(cfg, args)
     if args.command == "refresh-connections":
         return cmd_refresh_connections(cfg, args)
     return cmd_run(cfg, args)

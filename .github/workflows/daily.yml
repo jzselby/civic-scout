@@ -24,6 +24,10 @@ on:
         description: "Only recompute the sheet's Connections column (no fetching, no Claude)"
         type: boolean
         default: false
+      format_sheet:
+        description: "Only apply the sheet's formatting (no fetching, no Claude)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -70,7 +74,9 @@ jobs:
           DAYS_BACK: ${{ inputs.days_back || '14' }}
           DRY_RUN: ${{ inputs.dry_run }}
           REFRESH: ${{ inputs.refresh_connections }}
+          FORMAT: ${{ inputs.format_sheet }}
         run: |
+          if [ "$FORMAT" = "true" ]; then python -m civic_scout format-sheet; exit; fi
           if [ "$REFRESH" = "true" ]; then python -m civic_scout refresh-connections; exit; fi
           args=(run)
           if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); else args+=(--require-claude); fi

@@ -68,8 +68,11 @@ def test_run_refuses_to_record_anything_without_a_claude_key(tmp_path, monkeypat
 
 
 class FakeWorksheet:
+    _ids = iter(range(100, 10_000))
+
     def __init__(self, title, rows=1000, cols=10):
         self.title, self.row_count, self.col_count = title, rows, cols
+        self.id = next(self._ids)
         self.grid: list[list] = []
 
     def update(self, values, range_name, value_input_option=None):
@@ -84,6 +87,9 @@ class FakeWorksheet:
 
     def row_values(self, n):
         return self.grid[n - 1] if len(self.grid) >= n else []
+
+    def append_rows(self, rows, value_input_option=None, table_range=None):
+        self.grid += [list(r) for r in rows]
 
     def insert_rows(self, rows, row, value_input_option=None):
         self.grid[row - 1:row - 1] = [list(r) for r in rows]
@@ -103,13 +109,32 @@ class FakeWorksheet:
     def add_rows(self, n):
         self.row_count += n
 
-    def get_all_values(self):
+    def get_all_values(self, value_render_option=None):
         return self.grid
+
+    def col_values(self, n):
+        return [r[n - 1] if len(r) >= n else "" for r in self.grid]
 
 
 class FakeSpreadsheet:
     def __init__(self):
         self.tabs = {}
+        self.requests = []
+        self.versions = {}
+
+    def batch_update(self, body):
+        self.requests += body["requests"]
+        for r in body["requests"]:
+            if "createDeveloperMetadata" in r:
+                dm = r["createDeveloperMetadata"]["developerMetadata"]
+                self.versions[dm["location"]["sheetId"]] = dm["metadataValue"]
+
+    def fetch_sheet_metadata(self, params=None):
+        return {"sheets": [{"properties": {"sheetId": ws.id},
+                            "developerMetadata": ([{"metadataKey": sheets.FORMAT_KEY,
+                                                    "metadataValue": self.versions[ws.id]}]
+                                                  if ws.id in self.versions else []),
+                            "conditionalFormats": []} for ws in self.tabs.values()]}
 
     def worksheet(self, title):
         if title not in self.tabs:
@@ -146,13 +171,20 @@ def test_sheet_tabs_are_created_and_filled(monkeypatch):
     assert sh.tabs[sheets.BRIEFINGS].grid[1][:3] == ["2026-10-03", 2, 1]
     all_rows = sh.tabs[sheets.ALL].grid
     assert all_rows[0][:3] == ["Notes", "Key", "Headline"]
-    assert all_rows[1][:3] == ["", "pmn:1", "Rezone vote"]
-    assert all_rows[2][2] == "'=cmd()"  # scraped text never runs as a formula
-    assert len(all_rows) == 3  # the hidden file marker isn't shown
+    assert sorted(r[1] for r in all_rows[1:]) == ["pmn:1", "warn:2"]  # the hidden file marker isn't shown
+    row = {r[1]: r for r in all_rows[1:]}
+    assert row["pmn:1"][2] == '=HYPERLINK("https://u/1", "Rezone vote")'
+    assert row["warn:2"][2] == "'=cmd()"  # scraped text never runs as a formula
+    assert any("sortRange" in r for r in sh.requests)
     top = sh.tabs[sheets.TOP].grid
     keys = [r[top[0].index("Key")] for r in top[1:]]
     assert keys == ["pmn:1", "pmn:0"]
     assert "Sheet1" not in sh.tabs
+    # Each tab is formatted once, then left alone on later runs.
+    formatted = [r for r in sh.requests if "createDeveloperMetadata" in r]
+    assert len(formatted) == 3
+    sheets.publish("id", "{}", date(2026, 10, 4), [], {}, None, {}, stored)
+    assert len([r for r in sh.requests if "createDeveloperMetadata" in r]) == 3
 
 
 def test_refresh_rewrites_connections_by_key(monkeypatch):
@@ -165,3 +197,32 @@ def test_refresh_rewrites_connections_by_key(monkeypatch):
     assert changed == 2
     assert ws.grid[1] == ["pmn:1", "", "keep me"]
     assert ws.grid[2][:2] == ["warn:2", "Permit (SLC permits, 2026-10-01)"]
+
+
+def test_briefing_markdown_becomes_rich_text_with_links():
+    md = ("## Top stories\n\n- **Domo lays off 175.** Filed Sept. 23 "
+          "([WARN](https://jobs.utah.gov/w)).\n  - nested café note")
+    plain, runs = sheets.md_to_rich(md)
+    assert plain == "TOP STORIES\n\n• Domo lays off 175. Filed Sept. 23 (WARN).\n    • nested café note"
+    link = plain.index("WARN")
+    assert {"startIndex": link, "format": {"link": {"uri": "https://jobs.utah.gov/w"}}} in runs
+    assert {"startIndex": link + 4, "format": {}} in runs
+    assert runs[0] == {"startIndex": 0, "format": {"bold": True}}
+    assert sheets.md_to_rich("plain text only") == ("plain text only", [])
+
+
+def test_format_existing_upgrades_old_rows_and_briefings(monkeypatch):
+    sh = FakeSpreadsheet()
+    monkeypatch.setattr(gspread, "service_account_from_dict", lambda info: SimpleNamespace(open_by_key=lambda k: sh))
+    rec = sh.add_worksheet(sheets.ALL, 10, 13)
+    rec.update([["Importance", "Headline", "Link"],
+                ["high", "Domo lays off 175", '=HYPERLINK("https://j/w", "Open")'],
+                ["low", "No link", ""]], "A1")
+    brief = sh.add_worksheet(sheets.BRIEFINGS, 10, 4)
+    brief.update([["Run date", "Briefing"], ["2026-10-05", "## Top\n- **A** ([x](https://x))"]], "A1")
+    sheets.format_existing("id", "{}")
+    assert rec.grid[1][:2] == ["High", '=HYPERLINK("https://j/w", "Domo lays off 175")']
+    assert rec.grid[2][:2] == ["Low", "No link"]
+    rich = [r["updateCells"] for r in sh.requests if "updateCells" in r]
+    assert rich and rich[0]["rows"][0]["values"][0]["userEnteredValue"]["stringValue"] == "TOP\n• A (x)"
+    assert len([r for r in sh.requests if "createDeveloperMetadata" in r]) == 2

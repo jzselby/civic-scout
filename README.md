@@ -56,12 +56,27 @@ civic_scout/
 
 ## The sheet
 
-- **Briefings**: one row per day, newest first, with the cross-source briefing.
+- **Briefings**: one row per day, newest first, with the cross-source briefing. Headings
+  are bold and every source in it is a clickable link.
 - **Top stories**: high-importance records from the last 30 days, newest first.
   Rebuilt every run, so don't type notes here.
-- **All records**: every new record, newest first. Add your own columns (Notes,
+- **All records**: every new record, sorted newest first. Add your own columns (Notes,
   Assigned to); runs write by column heading and leave other columns alone. Don't
   rename the built-in headings.
+
+How it's styled, for scanning:
+
+- Rows from the **latest run** are shaded light blue.
+- **High** importance is marked in red on the Importance cell, **Medium** in amber;
+  **Low** (routine) rows are gray.
+- Each **headline links** to the original record. The Link and Key columns are hidden
+  (Data > unhide to see them).
+- Every column has a filter, and the header row stays in view. For a personal view
+  that doesn't change anyone else's, use **Data > Filter views**.
+
+The formatting is applied once per version (`FORMAT_VERSION` in `sheets.py`), so
+formatting your team adds by hand afterwards stays. To apply it immediately, run the
+daily workflow with **format_sheet** ticked.
 
 ## Setup
 
