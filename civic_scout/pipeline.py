@@ -11,7 +11,7 @@ from . import analyze, link, report
 from .config import Config
 from .http import Http
 from .sources import selected
-from .store import Store
+from .store import Store, was_reported
 
 log = logging.getLogger(__name__)
 
@@ -41,7 +41,34 @@ class RunResult:
     labels: dict[str, str] = field(default_factory=dict)
     connections: dict[str, list[dict]] = field(default_factory=dict)
     briefing: str | None = None
+    # Everything reported today, this run's records included: the briefing covers the
+    # whole day, so several runs in one day still make one briefing.
+    today_items: list[dict] = field(default_factory=list)
     report: str = ""
+
+
+def local_date(stamp: str | None) -> date | None:
+    """A first_seen timestamp (UTC ISO) as a Mountain-time date."""
+    if not stamp:
+        return None
+    try:
+        dt = datetime.fromisoformat(stamp)
+    except ValueError:
+        return None
+    return (dt.astimezone(TZ) if dt.tzinfo else dt).date()
+
+
+def reported_on(store: Store, day: date, new_items: list[dict] = ()) -> list[dict]:
+    """Every record reported on this day (by first_seen, Mountain time), plus new ones."""
+    out = {link.item_key(i): i for i in store.everything()
+           if local_date(i.get("first_seen")) == day and was_reported(i) and not i.get("hidden")}
+    out.update({link.item_key(i): i for i in new_items if not i.get("hidden")})
+    return list(out.values())
+
+
+def day_briefing(cfg: Config, store: Store, day: date, items: list[dict], labels: dict[str, str]) -> str | None:
+    conns = link.connections(items, store.everything() + items, day)
+    return analyze.brief(items, conns, labels, day, cfg.model)
 
 
 def collect(cfg: Config, store: Store, http: Http, day: date) -> RunResult:
@@ -95,7 +122,8 @@ def enrich(cfg: Config, store: Store, result: RunResult, use_claude: bool = True
         if changed:
             log.info("Editor review changed %d rating(s)", changed)
     result.connections = link.connections(result.items, store.everything(), result.day)
+    result.today_items = reported_on(store, result.day, result.items)
     if use_claude:
-        result.briefing = analyze.brief(result.items, result.connections, result.labels, result.day, cfg.model)
+        result.briefing = day_briefing(cfg, store, result.day, result.today_items, result.labels)
     result.report = report.build(result.day, result.items, result.labels, result.health, result.briefing,
                                  result.connections)

@@ -113,16 +113,34 @@ lawsuit marked low or medium). A day with no high records is fine.
 
 Each input record has `key`, `source`, `importance` (the current rating), `headline`,
 `why_it_matters`, and may have `category`, `date`, `org`, `place`, `details`.
-Return only the records whose rating you change, each with the new `importance` and a
-`note` of at most 20 words for the reporter: why it moved (e.g. "Routine trade
-permit for the already-reported Hive on 11th."). Return an empty list if every rating
-holds.
+Reporters see every high and medium record; low records are hidden in an archive. So
+lowering to medium is cheap, but lowering to low means a reporter will never see it.
+Only lower a record to low when it is plainly one of these, and say which as `reason`:
+- "routine_permit": a trade or minor permit for a project that is already public;
+- "duplicate": another record in this list covers the same thing better;
+- "placeholder": a test, placeholder, withdrawn or empty record;
+- "procedural": routine paperwork (minutes approval, a cancelled meeting, a
+  ceremonial item, a schedule notice).
+For any other change, use reason "other" (lowering to medium, or raising). When in
+doubt, keep a record visible at medium.
+
+Return only the records whose rating you change, each with the new `importance`, the
+`reason`, and a `note` of at most 20 words for the reporter: why it moved (e.g.
+"Routine trade permit for the already-reported Hive on 11th."). Return an empty list
+if every rating holds.
 """
+
+
+Reason = Literal["routine_permit", "duplicate", "placeholder", "procedural", "other"]
+# The only reasons the editor may hide a record (lower it to low) for.
+HIDE_REASONS = {"routine_permit", "duplicate", "placeholder", "procedural"}
+LEVEL = {"low": 0, "medium": 1, "high": 2}
 
 
 class Change(BaseModel):
     key: str
     importance: Importance
+    reason: Reason = "other"
     note: str
 
 
@@ -270,13 +288,24 @@ def review(items: list[dict], labels: dict[str, str], model: str) -> dict[str, C
 
 
 def apply_review(items: list[dict], changes: dict[str, Change]) -> int:
-    """Apply the editor's changes; the screener's rating is kept as `first_importance`."""
+    """Apply the editor's changes; the screener's rating is kept as `first_importance`.
+
+    Guard against burying news: the editor may hide a record the screener rated medium
+    or high (lower it to low) only for a routine reason (HIDE_REASONS); otherwise the
+    record stays visible at medium.
+    """
     n = 0
     for item in items:
         c = changes.get(f"{item['source']}:{item['id']}")
-        if c and c.importance != item.get("importance"):
+        if not c:
+            continue
+        screener = item.get("first_importance") or item.get("importance") or "low"
+        new = c.importance
+        if new == "low" and LEVEL[screener] > 0 and c.reason not in HIDE_REASONS:
+            new = "medium"
+        if new != item.get("importance"):
             item.setdefault("first_importance", item.get("importance"))
-            item["importance"] = c.importance
+            item["importance"] = new
             item["editor_note"] = c.note
             n += 1
     return n

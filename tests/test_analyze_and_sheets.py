@@ -140,6 +140,10 @@ class FakeSpreadsheet:
     def batch_update(self, body):
         self.requests += body["requests"]
         for r in body["requests"]:
+            if "deleteDimension" in r:
+                rng = r["deleteDimension"]["range"]
+                ws = next(w for w in self.tabs.values() if w.id == rng["sheetId"])
+                del ws.grid[rng["startIndex"]:rng["endIndex"]]
             if "createDeveloperMetadata" in r:
                 dm = r["createDeveloperMetadata"]["developerMetadata"]
                 self.versions[dm["location"]["sheetId"]] = dm["metadataValue"]
@@ -261,11 +265,11 @@ def test_update_ratings_rewrites_changed_rows_and_top_stories(monkeypatch):
     h = sheets.RECORD_HEADERS
     row = lambda key, imp: [imp if c == "Importance" else key if c == "Key" else "" for c in h]
     ws.update([h, row("pmn:1", "High"), row("pmn:2", "High")], "A1")
-    lowered = {"source": "pmn", "id": "1", "title": "t1", "importance": "medium", "editor_note": "Routine.",
+    lowered = {"source": "pmn", "id": "1", "title": "t1", "importance": "low", "editor_note": "Routine.",
                "first_seen": "2026-10-05"}
     kept = {"source": "pmn", "id": "2", "title": "t2", "importance": "high", "first_seen": "2026-10-05"}
     sheets.update_ratings("id", "{}", [lowered], [lowered, kept], {}, date(2026, 10, 5))
-    assert ws.grid[1][h.index("Importance")] == "Medium" and ws.grid[1][h.index("Editor's note")] == "Routine."
+    assert ws.grid[1][h.index("Importance")] == "Low" and ws.grid[1][h.index("Editor's note")] == "Routine."
     assert ws.grid[2][h.index("Importance")] == "High"
     top = sh.tabs[sheets.TOP].grid
     assert [r[h.index("Key")] for r in top[1:]] == ["pmn:2"]
@@ -280,3 +284,44 @@ def test_republishing_the_same_records_adds_no_rows_and_refreshes_the_briefing(m
     assert len(sh.tabs[sheets.ALL].grid) == 2
     briefs = sh.tabs[sheets.BRIEFINGS].grid
     assert len(briefs) == 2 and briefs[1][-1] == "second"
+
+
+def test_editor_can_hide_a_record_only_for_a_routine_reason():
+    items = [{"source": "s", "id": str(n), "importance": imp} for n, imp in
+             enumerate(["high", "high", "medium", "low", "medium"])]
+    changes = {
+        "s:0": analyze.Change(key="s:0", importance="low", reason="other", note="Not urgent."),
+        "s:1": analyze.Change(key="s:1", importance="low", reason="routine_permit", note="Trade permit."),
+        "s:2": analyze.Change(key="s:2", importance="low", reason="duplicate", note="Covered by s:4."),
+        "s:3": analyze.Change(key="s:3", importance="high", reason="other", note="Underrated closure."),
+    }
+    assert analyze.apply_review(items, changes) == 4
+    assert [i["importance"] for i in items] == ["medium", "low", "low", "high", "medium"]
+    assert items[0]["first_importance"] == "high"
+
+
+def test_top_stories_holds_high_for_30_days_and_medium_for_7(monkeypatch):
+    sh = FakeSpreadsheet()
+    pool = [
+        {"source": "s", "id": "h-old", "title": "a", "importance": "high", "first_seen": "2026-09-10"},
+        {"source": "s", "id": "m-old", "title": "b", "importance": "medium", "first_seen": "2026-09-25"},
+        {"source": "s", "id": "m-new", "title": "c", "importance": "medium", "first_seen": "2026-10-05"},
+        {"source": "s", "id": "h-new", "title": "d", "importance": "high", "first_seen": "2026-10-05"},
+        {"source": "s", "id": "l-new", "title": "e", "importance": "low", "first_seen": "2026-10-05"},
+    ]
+    ws, headers = sheets.write_top(sh, date(2026, 10, 5), pool, {}, {})
+    keys = [r[headers.index("Key")] for r in ws.grid[1:]]
+    assert keys == ["s:h-new", "s:m-new", "s:h-old"]
+
+
+def test_several_runs_in_one_day_leave_one_briefing_row(monkeypatch):
+    sh = FakeSpreadsheet()
+    monkeypatch.setattr(gspread, "service_account_from_dict", lambda info: SimpleNamespace(open_by_key=lambda k: sh))
+    a = {"source": "pmn", "id": "1", "title": "A", "importance": "high"}
+    b = {"source": "warn", "id": "2", "title": "B", "importance": "medium"}
+    sheets.publish("id", "{}", date(2026, 10, 4), [a], {}, "yesterday", {}, [], today_items=[a])
+    sheets.publish("id", "{}", date(2026, 10, 5), [a | {"id": "3"}], {}, "morning", {}, [])
+    sheets.publish("id", "{}", date(2026, 10, 5), [b], {}, "afternoon", {}, [], today_items=[a | {"id": "3"}, b])
+    briefs = sh.tabs[sheets.BRIEFINGS].grid
+    assert [r[0] for r in briefs[1:]] == ["2026-10-05", "2026-10-04"]
+    assert briefs[1][1:] == [2, 1, "afternoon"]

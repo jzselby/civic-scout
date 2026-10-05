@@ -42,7 +42,8 @@ def cmd_run(cfg: Config, args) -> int:
     if cfg.google_sheet_id and cfg.google_service_account_json and not args.no_sheet:
         # If the sheet write fails, nothing is recorded as seen, so the next run retries.
         sheets.publish(cfg.google_sheet_id, cfg.google_service_account_json, day, result.items,
-                       result.labels, result.briefing, result.connections, store.everything())
+                       result.labels, result.briefing, result.connections, store.everything(),
+                       today_items=result.today_items)
     elif not args.no_sheet:
         log.info("GOOGLE_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_JSON not set; skipping the sheet")
 
@@ -100,10 +101,21 @@ def cmd_review_existing(cfg: Config, args) -> int:
     recent = [i for i in items if (i.get("first_seen") or "")[:10] >= cutoff and i.get("importance")
               and was_reported(i, cfg.days_back) and not i.get("hidden")]
     labels = {s.name: s.label for s in ALL}
+    # Start over from the screener's ratings, so this redoes the editor's pass rather
+    # than stacking a second one on top of it.
+    before = {link.item_key(i): (i.get("importance"), i.get("editor_note")) for i in recent}
+    for i in recent:
+        if i.get("first_importance"):
+            i["importance"] = i.pop("first_importance")
+        i.pop("editor_note", None)
     changes = analyze.review(recent, labels, cfg.review_model)
     changed_n = analyze.apply_review(recent, changes)
-    changed = [i for i in recent if link.item_key(i) in changes and i.get("editor_note")]
-    log.info("Editor review: %d of %d rating(s) changed", changed_n, len(recent))
+    for i in recent:
+        i.setdefault("first_importance", None)
+        i.setdefault("editor_note", None)
+    changed = [i for i in recent if before[link.item_key(i)] != (i.get("importance"), i.get("editor_note"))]
+    log.info("Editor review: %d of %d rating(s) differ from the screener's; %d row(s) change on the sheet",
+             changed_n, len(recent), len(changed))
     for c in changed:
         log.info("  %s: %s -> %s (%s)", link.item_key(c), c.get("first_importance"), c["importance"], c["editor_note"])
     if args.dry_run:
@@ -116,6 +128,12 @@ def cmd_review_existing(cfg: Config, args) -> int:
         merged.update({link.item_key(i): i for i in changed})
         sheets.update_ratings(cfg.google_sheet_id, cfg.google_service_account_json, changed,
                               list(merged.values()), labels, pipeline.today())
+        # Ratings changed, so today's briefing is rewritten to match.
+        day = pipeline.today()
+        today_items = pipeline.reported_on(Store(cfg.data_dir), day)
+        if today_items:
+            sheets.replace_briefing(cfg.google_sheet_id, cfg.google_service_account_json, day, today_items,
+                                    pipeline.day_briefing(cfg, Store(cfg.data_dir), day, today_items, labels))
     return 0
 
 

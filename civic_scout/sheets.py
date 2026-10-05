@@ -4,7 +4,8 @@ Authenticates as a Google Cloud service account; share the sheet with the servic
 account's email (Editor). Three tabs:
 
   Briefings      one row per run, newest first: the cross-source briefing
-  Top stories    rebuilt every run: high-importance items from the last TOP_DAYS days
+  Top stories    rebuilt every run: high records (last TOP_DAYS days) and medium
+                 ones (last MEDIUM_DAYS days): the tab reporters work from
   All records    every new record, sorted newest first; add your own columns freely
 
 Values are written under their column headings, so people can reorder columns or
@@ -34,7 +35,9 @@ ALL = "All records"
 BRIEFING_HEADERS = ["Run date", "New records", "High importance", "Briefing"]
 RECORD_HEADERS = ["First seen", "Date", "Source", "Importance", "Category", "Headline", "Why it matters",
                   "Editor's note", "Who", "Where", "Details", "Connections", "Link", "Key"]
+# Top stories keeps high records this many days, medium ones MEDIUM_DAYS.
 TOP_DAYS = 30
+MEDIUM_DAYS = 7
 MAX_CELL = 50_000
 
 
@@ -110,14 +113,8 @@ def _rows(headers: list[str], values: list[dict[str, Any]]) -> list[list[Any]]:
     return [[v.get(h, "") for h in headers] for v in values]
 
 
-def _latest_run_date(ws: gspread.Worksheet, headers: list[str]) -> date | None:
-    """Run date on the newest Briefings row (row 2), read unformatted."""
-    if "Run date" not in headers:
-        return None
-    cells = ws.col_values(headers.index("Run date") + 1, value_render_option=ValueRenderOption.unformatted)
-    if len(cells) < 2:
-        return None
-    value = cells[1]
+def _as_date(value) -> date | None:
+    """A date cell read unformatted: a serial number, or ISO text."""
     if isinstance(value, (int, float)) and not isinstance(value, bool):
         return date(1899, 12, 30) + timedelta(days=int(value))
     try:
@@ -424,13 +421,19 @@ def format_existing(sheet_id: str, service_account_json: str) -> None:
 
 def write_top(sh: gspread.Spreadsheet, today: date, pool_items: list[dict], connections: dict[str, list[dict]],
               labels: dict[str, str]) -> tuple[gspread.Worksheet, list[str]]:
-    """Regenerate Top stories: high-importance records first seen in the last TOP_DAYS
-    days, newest first."""
-    cutoff = (today - timedelta(days=TOP_DAYS)).isoformat()
+    """Regenerate Top stories, the tab reporters work from: high records first seen in
+    the last TOP_DAYS days and medium ones from the last MEDIUM_DAYS, newest run first
+    and high before medium within a run."""
+    keep = {"high": (today - timedelta(days=TOP_DAYS)).isoformat(),
+            "medium": (today - timedelta(days=MEDIUM_DAYS)).isoformat()}
     pool = {item_key(i): i for i in pool_items}
-    top = [i for i in pool.values() if i.get("importance") == "high" and not i.get("hidden")
-           and was_reported(i) and (i.get("first_seen") or today.isoformat())[:10] >= cutoff]
-    top.sort(key=lambda i: ((i.get("first_seen") or today.isoformat())[:10], i.get("date") or ""), reverse=True)
+
+    def seen(i: dict) -> str:
+        return (i.get("first_seen") or today.isoformat())[:10]
+
+    top = [i for i in pool.values() if i.get("importance") in keep and not i.get("hidden")
+           and was_reported(i) and seen(i) >= keep[i["importance"]]]
+    top.sort(key=lambda i: (seen(i), i["importance"] == "high", i.get("date") or ""), reverse=True)
     # Connections for every row, not just this run's: older top stories gain links too.
     top_connections = {**link.connections(top, list(pool.values()), today), **connections}
     ws, headers = _worksheet(sh, TOP, RECORD_HEADERS)
@@ -477,8 +480,39 @@ def update_ratings(sheet_id: str, service_account_json: str, changed: list[dict]
             _apply_format(sh, tab, state, reqs(tab.id, tab.row_values(1)))
 
 
+def write_briefing(sh: gspread.Spreadsheet, today: date, day_items: list[dict],
+                   briefing: str | None) -> tuple[gspread.Worksheet, list[str]]:
+    """One Briefings row per day: replace any rows already there for today with one
+    covering all of today's records."""
+    ws, headers = _worksheet(sh, BRIEFINGS, BRIEFING_HEADERS)
+    if "Run date" in headers:
+        cells = ws.col_values(headers.index("Run date") + 1, value_render_option=ValueRenderOption.unformatted)
+        same_day = [n for n, v in enumerate(cells) if n > 0 and _as_date(v) == today]
+        if same_day:
+            sh.batch_update({"requests": [{"deleteDimension": {"range": {
+                "sheetId": ws.id, "dimension": "ROWS", "startIndex": n, "endIndex": n + 1}}}
+                for n in sorted(same_day, reverse=True)]})
+    plain, runs = md_to_rich(briefing or "")
+    values = {"Run date": today.isoformat(), "New records": len(day_items),
+              "High importance": sum(1 for i in day_items if i.get("importance") == "high"), "Briefing": text(plain)}
+    _insert_top(ws, headers, [values])
+    if runs and "Briefing" in headers:
+        try:
+            sh.batch_update({"requests": [rich_cell(ws.id, 1, headers.index("Briefing"), plain, runs)]})
+        except Exception:
+            log.exception("Couldn't add links to the briefing cell; it stays as plain text")
+    return ws, headers
+
+
+def replace_briefing(sheet_id: str, service_account_json: str, today: date, day_items: list[dict],
+                     briefing: str | None) -> None:
+    gc = gspread.service_account_from_dict(json.loads(service_account_json))
+    write_briefing(gc.open_by_key(sheet_id), today, day_items, briefing)
+
+
 def publish(sheet_id: str, service_account_json: str, today: date, items: list[dict], labels: dict[str, str],
-            briefing: str | None, connections: dict[str, list[dict]], all_stored: list[dict]) -> None:
+            briefing: str | None, connections: dict[str, list[dict]], all_stored: list[dict],
+            today_items: list[dict] | None = None) -> None:
     gc = gspread.service_account_from_dict(json.loads(service_account_json))
     sh = gc.open_by_key(sheet_id)
     items = [i for i in items if not i.get("hidden")]
@@ -492,20 +526,8 @@ def publish(sheet_id: str, service_account_json: str, today: date, items: list[d
     if len(fresh) < len(items):
         log.info("%d record(s) already on the sheet; not added again", len(items) - len(fresh))
 
-    briefings, b_headers = _worksheet(sh, BRIEFINGS, BRIEFING_HEADERS)
-    plain, runs = md_to_rich(briefing or "")
-    values = {"Run date": today.isoformat(), "New records": len(items), "High importance": len(high),
-              "Briefing": text(plain)}
-    if items and not fresh and _latest_run_date(briefings, b_headers) == today:
-        # A repeat of a run already published today: refresh its briefing row.
-        briefings.update([[values.get(h, "") for h in b_headers]], "A2", value_input_option="USER_ENTERED")
-    else:
-        _insert_top(briefings, b_headers, [values])
-    if runs and "Briefing" in b_headers:
-        try:
-            sh.batch_update({"requests": [rich_cell(briefings.id, 1, b_headers.index("Briefing"), plain, runs)]})
-        except Exception:
-            log.exception("Couldn't add links to the briefing cell; it stays as plain text")
+    day = [i for i in (today_items if today_items is not None else items) if not i.get("hidden")]
+    briefings, b_headers = write_briefing(sh, today, day, briefing)
 
     # Appended, then sorted newest first below: inserting at row 2 would shift the
     # filter and color rules (which start at row 2) down past the new rows.

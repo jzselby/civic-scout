@@ -36,7 +36,11 @@ rate (Claude Opus)    headline, importance (high/medium/low), category, why it
 editor (Claude Sonnet) a skeptical second pass over every rating, as an assignment
                       editor: "high" means a reporter should start calls today, so
                       routine trade permits, repeat items about one project and past
-                      meetings get lowered; each change carries an Editor's note
+                      meetings get lowered; each change carries an Editor's note.
+                      It can only hide a record (lower it to Low, off Top stories)
+                      for a routine reason: a trade permit for a known project, a
+                      duplicate, a placeholder, or procedural paperwork. Otherwise
+                      the code keeps the record at Medium, where reporters see it.
 connect               normalize addresses ("1124 East 100 South, Unit 3" → "1124 E 100 S")
                       and names ("Postino, LLC" → "POSTINO"); match records across
                       sources, over the past year
@@ -61,10 +65,12 @@ civic_scout/
 
 ## The sheet
 
-- **Briefings**: one row per day, newest first, with the cross-source briefing. Headings
+- **Briefings**: one row per day, newest first, with the cross-source briefing. If more
+  than one run happens in a day, the day's row is rewritten to cover all of them. Headings
   are bold and every source in it is a clickable link.
-- **Top stories**: high-importance records from the last 30 days, newest first.
-  Rebuilt every run, so don't type notes here.
+- **Top stories**: the tab reporters work from: High records from the last 30 days and
+  Medium ones from the last 7, newest first and High before Medium. Rebuilt every run,
+  so don't type notes here.
 - **All records**: every new record, sorted newest first. When the editor pass changed
   a rating, the **Editor's note** column says why. Add your own columns (Notes,
   Assigned to); runs write by column heading and leave other columns alone. Don't
