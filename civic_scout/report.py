@@ -38,6 +38,8 @@ def build(today: date, items: list[dict], labels: dict[str, str], health: dict[s
     parts.append("| Source | New | Status |\n|---|---|---|")
     for name, status in health.items():
         parts.append(f"| {cell(labels.get(name, name))} | {len(by_source.get(name, []))} | {cell(status)} |")
+    for name in [n for n in labels if n in by_source and n not in health]:
+        parts.append(f"| {cell(labels.get(name, name))} | {len(by_source[name])} | earlier run today |")
     parts.append("")
 
     if briefing:

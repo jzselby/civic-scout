@@ -33,7 +33,8 @@ editor      Claude Sonnet 5.5: skeptical second pass; changes carry an Editor's 
 connect     normalized address/name matching across sources (link.py); a public body's
             meeting place (an address on 3+ of its notices) is ignored
 brief       Claude Opus: one briefing per day covering all of the day's records
-publish     sheet (idempotent by Key) + report file + data/ committed by the workflow
+publish     sheet (idempotent by Key) + the day's one report file (rewritten by later
+            runs that day) + data/ committed by the workflow
 ```
 
 ## The sheet

@@ -48,6 +48,9 @@ brief (Claude)        Top stories · Connections · Coming up · Also notable
 publish               Google Sheet + reports/YYYY-MM-DD.md + data/<source>.jsonl
 ```
 
+There's one report per day: a second run (or an editor re-review) the same day rewrites
+`reports/YYYY-MM-DD.md` to cover all of the day's records, like the sheet's Briefings row.
+
 A source that fails (site down, layout changed) is marked FAILED in the report's
 source table; the others still run. If the sheet write fails, nothing is marked as
 seen, so the next run retries.

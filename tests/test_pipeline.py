@@ -74,3 +74,33 @@ def test_was_reported_flags_old_backlog_items():
     assert was_reported({"first_seen": "2026-10-05T15:00:00+00:00", "date": "2026-09-30"})
     assert not was_reported({"first_seen": "2026-10-05T15:00:00+00:00", "date": "2026-08-01"})
     assert was_reported({"first_seen": "2026-10-05T15:00:00+00:00"})
+
+
+def test_a_second_run_the_same_day_rewrites_one_report_covering_both(tmp_path, monkeypatch):
+    from civic_scout.__main__ import write_report
+    first = FakeSource([{"id": "a", "title": "Morning record", "date": "2026-10-02"}])
+    cfg, store, result = run(tmp_path, monkeypatch, [first])
+    for i in result.items:
+        i["first_seen"] = "2026-10-03T15:00:00+00:00"
+    store.source("fake").add(result.items)
+    write_report(cfg, result.day, result.report)
+
+    second = FakeSource([{"id": "a", "title": "Morning record", "date": "2026-10-02"},
+                         {"id": "b", "title": "Afternoon record", "date": "2026-10-03"}])
+    _, _, again = run(tmp_path, monkeypatch, [second])
+    assert [i["id"] for i in again.items] == ["b"]
+    assert "Morning record" in again.report and "Afternoon record" in again.report
+    assert "**2 new record(s)" in again.report
+    write_report(cfg, again.day, again.report)
+
+    assert sorted(p.name for p in cfg.reports_dir.iterdir()) == ["2026-10-03.md", "latest.md"]
+    assert (cfg.reports_dir / "2026-10-03.md").read_text() == again.report
+
+
+def test_report_lists_sources_found_by_an_earlier_run():
+    from civic_scout import report
+    items = [{"id": "1", "source": "warn", "title": "Layoff"}, {"id": "2", "source": "pmn", "title": "Agenda"}]
+    text = report.build(date(2026, 10, 3), items, {"pmn": "Notices", "warn": "WARN"}, {"pmn": "ok (5 fetched)"},
+                        None, {})
+    assert "| Notices | 1 | ok (5 fetched) |" in text
+    assert "| WARN | 1 | earlier run today |" in text

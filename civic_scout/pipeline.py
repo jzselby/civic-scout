@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 from . import analyze, link, report
 from .config import Config
 from .http import Http
-from .sources import selected
+from .sources import ALL, selected
 from .store import Store, was_reported
 
 log = logging.getLogger(__name__)
@@ -66,9 +66,20 @@ def reported_on(store: Store, day: date, new_items: list[dict] = ()) -> list[dic
     return list(out.values())
 
 
+def day_connections(store: Store, day: date, items: list[dict]) -> dict[str, list[dict]]:
+    return link.connections(items, store.everything() + items, day)
+
+
 def day_briefing(cfg: Config, store: Store, day: date, items: list[dict], labels: dict[str, str]) -> str | None:
-    conns = link.connections(items, store.everything() + items, day)
-    return analyze.brief(items, conns, labels, day, cfg.model)
+    return analyze.brief(items, day_connections(store, day, items), labels, day, cfg.model)
+
+
+def day_report(store: Store, day: date, items: list[dict], health: dict[str, str], briefing: str | None,
+               labels: dict[str, str] | None = None) -> str:
+    """The day's report: every record reported today, whichever run found it, so a
+    repeat run rewrites the day's one report instead of adding a second."""
+    labels = {**{s.name: s.label for s in ALL}, **(labels or {})}
+    return report.build(day, items, labels, health, briefing, day_connections(store, day, items))
 
 
 def collect(cfg: Config, store: Store, http: Http, day: date) -> RunResult:
@@ -125,5 +136,5 @@ def enrich(cfg: Config, store: Store, result: RunResult, use_claude: bool = True
     result.today_items = reported_on(store, result.day, result.items)
     if use_claude:
         result.briefing = day_briefing(cfg, store, result.day, result.today_items, result.labels)
-    result.report = report.build(result.day, result.items, result.labels, result.health, result.briefing,
-                                 result.connections)
+    result.report = day_report(store, result.day, result.today_items, result.health, result.briefing,
+                               result.labels)
