@@ -212,4 +212,7 @@ def brief(items: list[dict], connections: dict[str, list[dict]], labels: dict[st
     if response is None:
         return None
     text = "".join(b.text for b in response.content if getattr(b, "type", None) == "text").strip()
+    # The report already has a title; drop one if Claude adds its own.
+    if text.startswith("# "):
+        text = text.split("\n", 1)[1].strip() if "\n" in text else ""
     return text or None

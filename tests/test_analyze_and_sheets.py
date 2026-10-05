@@ -27,7 +27,7 @@ def test_claude_notes_merge_into_items_and_feed_the_briefing(tmp_path, monkeypat
                 category="Development / housing", why_it_matters="A rezone for 200 apartments.",
                 places=["730 W 900 S"], names=["West End Apartments"])])
             return SimpleNamespace(parsed_output=notes)
-        return SimpleNamespace(content=[SimpleNamespace(type="text", text="**Top stories**\n- rezone")])
+        return SimpleNamespace(content=[SimpleNamespace(type="text", text="# Morning briefing\n\n**Top stories**\n- rezone")])
 
     monkeypatch.setattr(analyze, "_call", fake_call)
     cfg = Config(data_dir=tmp_path / "data")
