@@ -52,10 +52,27 @@ DEFAULT_BODIES: list[tuple[str, str, str, str]] = [
     ("1376", "University of Utah Board of Trustees", "University of Utah - Board of Trustees", "University of Utah"),
     ("1383", "Salt Lake Community College Trustees", "Salt Lake Community College--Board of Trustees",
      "Utah Board of Higher Education"),
+    ("1495", "State Charter School Board", "State Charter School Board", "State Charter School Board"),
+    # Development and housing (checked 2026-10-05).
+    ("9033", "SLC Community Reinvestment Agency", "Community Reinvestment Agency", "Salt Lake City"),
+    ("8711", "Utah Fairpark Area Investment and Restoration District",
+     "Fairpark Area Investment and Restoration District Board", "Fairpark Area Investment"),
+    ("6439", "Point of the Mountain State Land Authority", "Point of the Mountain State Land Authority Board",
+     "Point of the Mountain State Land Authority"),
+    ("5341", "SL County Mountainous Planning District", "Mountain Planning District", "Salt Lake County"),
+    ("6223", "Housing Connect (SL County housing authority)", "Board of Commissioners", "Housing Connect"),
+    # Environment and health (checked 2026-10-05).
+    ("38", "Utah Air Quality Board", "Air Quality Board", "Department of Environmental Quality"),
+    ("40", "Utah Water Quality Board", "Water Quality Board", "Department of Environmental Quality"),
+    ("5281", "Waste Management and Radiation Control Board", "Waste Management and Radiation Control Board",
+     "Department of Environmental Quality"),
+    ("7937", "Great Salt Lake Advisory Council", "Great Salt Lake Advisory Council", "Great Salt Lake Advisory Council"),
+    ("885", "Metropolitan Water District of Salt Lake & Sandy", "Board of Trustees",
+     "Metropolitan Water District of Salt Lake"),
+    ("1498", "Salt Lake County Board of Health", "Salt Lake County Board of Health", "Salt Lake County"),
 ]
-# Not yet found: the current UTA Board of Trustees (940 is the deactivated old board;
-# UTA's notices since 2026 don't appear under a new body yet)
-# and the SLC Community Reinvestment Agency board (2017 is the County's RDA).
+# Not yet found: the current UTA Board of Trustees. 940 is "Board of Trustees
+# (Deactivated)"; its last notice is for June 24, 2026, and no newer UTA body was found.
 
 # Body pages list only upcoming notices, so this cap is rarely reached.
 MAX_PER_BODY = 30
@@ -122,8 +139,11 @@ class PublicNotices:
     guidance = """\
 Source "pmn": agendas and notices posted to the Utah Public Notice Website by public
 bodies (city and county councils, planning commissions, school district boards, the
-state school and higher-education boards, university trustees, the state liquor
-commission, the Inland Port Authority and others). `org` is the public body; `text`
+state school, charter school and higher-education boards, university trustees, the state
+liquor commission, development authorities (Inland Port, Fairpark district, Point of the
+Mountain, SLC's Community Reinvestment Agency), the county housing authority, the state
+air, water and waste boards, the Great Salt Lake Advisory Council, the county health
+board, a water district and others). `org` is the public body; `text`
 holds the notice and the text of its attached agenda.
 - high: votes on budgets, taxes, fees, bonds or large contracts; school closures,
   boundary changes, superintendent or president hires, contracts and departures,
@@ -133,10 +153,17 @@ holds the notice and the text of its attached agenda.
   impact; closures, layoffs, settlements, lawsuits, audits, firings or hirings of
   top officials; closed sessions on litigation or property; the liquor commission
   granting or denying licenses for recognizable bars, restaurants, clubs or
-  distilleries; anything likely to be contentious.
+  distilleries; charter school approvals, closures, probation or expansions;
+  redevelopment money, tax increment, land sales or project areas; stadium,
+  Fairpark or Point of the Mountain deals; public housing plans, rent or
+  voucher changes; air, water or radioactive-waste rules, permits, variances,
+  penalties and settlements, especially naming a company or a local site;
+  water rates, supply or conservation decisions; Great Salt Lake water levels
+  or policy; public-health orders or fees; anything likely to be contentious.
 - medium: routine items with a news hook, appointments, study sessions on big topics.
 - low: routine minutes, cancellations, ceremonial items, consent agendas without
-  anything notable.
+  anything notable, operator certification and committee housekeeping, meeting
+  schedules.
 For each notice, why_it_matters should name the specific agenda item(s) worth a
 reporter's time, not summarize the whole agenda. List in `places` every street
 address on the agenda and in `names` every business, developer or applicant named."""
