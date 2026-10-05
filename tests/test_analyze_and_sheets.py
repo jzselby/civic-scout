@@ -314,6 +314,20 @@ def test_top_stories_holds_high_for_30_days_and_medium_for_7(monkeypatch):
     assert keys == ["s:h-new", "s:m-new", "s:h-old"]
 
 
+def test_top_stories_holds_medium_until_its_date_within_30_days():
+    sh = FakeSpreadsheet()
+    pool = [
+        {"source": "s", "id": "hearing", "title": "a", "importance": "medium", "first_seen": "2026-09-20",
+         "date": "2026-10-14"},
+        {"source": "s", "id": "held", "title": "b", "importance": "medium", "first_seen": "2026-09-20",
+         "date": "2026-09-22"},
+        {"source": "s", "id": "far", "title": "c", "importance": "medium", "first_seen": "2026-08-20",
+         "date": "2026-12-10"},
+    ]
+    ws, headers = sheets.write_top(sh, date(2026, 10, 5), pool, {}, {})
+    assert [r[headers.index("Key")] for r in ws.grid[1:]] == ["s:hearing"]
+
+
 def test_several_runs_in_one_day_leave_one_briefing_row(monkeypatch):
     sh = FakeSpreadsheet()
     monkeypatch.setattr(gspread, "service_account_from_dict", lambda info: SimpleNamespace(open_by_key=lambda k: sh))
