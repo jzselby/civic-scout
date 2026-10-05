@@ -66,3 +66,11 @@ def test_big_warn_notice_is_high_without_claude():
     item = {"source": "warn", "id": "x", "workers": 120}
     pipeline.apply_rules(item)
     assert item["importance"] == "high"
+
+
+def test_was_reported_flags_old_backlog_items():
+    from civic_scout.store import was_reported
+    assert was_reported({"reported": False}) is False
+    assert was_reported({"first_seen": "2026-10-05T15:00:00+00:00", "date": "2026-09-30"})
+    assert not was_reported({"first_seen": "2026-10-05T15:00:00+00:00", "date": "2026-08-01"})
+    assert was_reported({"first_seen": "2026-10-05T15:00:00+00:00"})

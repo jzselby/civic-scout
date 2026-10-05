@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 
 from ..config import Config
 from ..http import Http
-from .text_utils import iso, stable_id
+from .text_utils import clip, iso, page_text, stable_id
 
 log = logging.getLogger(__name__)
 
@@ -52,45 +52,98 @@ def closure_links(html: str, base: str) -> list[str]:
     return out
 
 
+_DATE = re.compile(r"^\d{1,2}/\d{1,2}/\d{4}$")
+_INSP_BUTTON = re.compile(r"__doPostBack\('([^']*InspButton[^']*)'")
+
+
+def parse_closures(html: str) -> list[dict]:
+    """Rows of the Closures table: name, address, date closed, date reopened, and the
+    postback target of the row's Inspections button."""
+    soup = BeautifulSoup(html, "lxml")
+    rows = []
+    for tr in soup.find_all("tr"):
+        if tr.find("tr"):  # skip layout rows that wrap the whole table
+            continue
+        cells = [td.get_text(" ", strip=True) for td in tr.find_all("td")]
+        cells = [c for c in cells if c and c.lower() != "inspections"]
+        dates = [c for c in cells if _DATE.match(c)]
+        words = [c for c in cells if not _DATE.match(c)]
+        if not dates or len(words) < 2:
+            continue
+        button = None
+        for a in tr.find_all("a", href=True):
+            m = _INSP_BUTTON.search(a["href"])
+            if m:
+                button = m[1]
+        rows.append({"name": words[0], "address": words[1], "closed": iso(dates[0]),
+                     "reopened": iso(dates[1]) if len(dates) > 1 else None, "button": button})
+    return rows
+
+
+def open_closures(http: Http) -> tuple[str, str]:
+    search = http.get(SITE)
+    return postback(http, search.url, search.text, CLOSURES_BUTTON)
+
+
 class RestaurantClosures:
     name = "restaurants"
-    label = "SL County restaurant closures"
-    # Off until the parser is fitted to the live closures page (see the probe).
-    default_enabled = False
+    label = "SL County health closures"
+    default_enabled = True
     guidance = """\
-Source "restaurants": Salt Lake County Health Department closures of food
-establishments (restaurants, food trucks, markets) for imminent health hazards.
-- high: any closure of a restaurant or business the public would recognize, a chain
-  location, a repeat closure, or one with a striking reason (pests, sewage, no hot
-  water for days, illness outbreak).
-- medium: other closures.
-- low: a listing that only records a reopening with nothing notable.
-why_it_matters should give the name, address, closure date, the reason as stated, and
-whether it has reopened."""
+Source "restaurants": Salt Lake County Health Department closures for imminent health
+hazards, mostly restaurants and food trucks but also pools, spas and lodging. `text`
+(when present) is the establishment's inspection report, which usually gives the
+reason; `details` gives the closing and reopening dates.
+- high: any closure of a restaurant, chain location or business the public would
+  recognize; a repeat closure; a striking reason (pests, sewage, no hot water,
+  illness outbreak); a hotel or public pool.
+- medium: other closures (an apartment complex pool, a small market).
+- low: nothing notable.
+why_it_matters should give the name, address, closure date, the reason as the
+inspection report states it, and whether it has reopened."""
 
     def fetch(self, cfg: Config, http: Http, seen: set[str]) -> list[dict]:
-        return []
+        url, html = open_closures(http)
+        rows = parse_closures(html)
+        if not rows and "Date Closed" not in html:
+            log.error("Health closures page didn't load as expected (%s)", url)
+        items = []
+        for row in rows:
+            item_id = stable_id(row["name"], row["address"], row["closed"])
+            if item_id in seen:
+                continue
+            text = ""
+            if row["button"]:
+                try:
+                    _, report = postback(http, url, html, row["button"])
+                    text = clip(page_text(report), 8000)
+                except Exception as exc:
+                    log.warning("Inspection report for %s not read (%s)", row["name"], exc)
+            details = f"Closed {row['closed']}" + (f"; reopened {row['reopened']}" if row["reopened"] else "; not reopened")
+            items.append({
+                "id": item_id,
+                "title": f"Health closure: {row['name'].title()}",
+                "date": row["closed"],
+                "url": WELCOME,
+                "org": row["name"].title(),
+                "place": row["address"],
+                "details": details,
+                "text": text,
+            })
+        return items
 
     def probe(self, cfg: Config, http: Http) -> dict[str, bytes]:
         out = {}
         try:
-            search = http.get(SITE)
-            url, html = postback(http, search.url, search.text, CLOSURES_BUTTON)
+            url, html = open_closures(http)
             print(f"restaurants: closures postback -> {url} ({len(html)} chars)")
-            out["closures-postback.html"] = html.encode()
+            out["closures.html"] = html.encode()
+            rows = parse_closures(html)
+            print(f"restaurants: {len(rows)} closure rows: {rows[:5]}")
+            if rows and rows[0]["button"]:
+                _, report = postback(http, url, html, rows[0]["button"])
+                out["inspection-report.html"] = report.encode()
+                print("restaurants: first inspection report:", page_text(report)[:1500])
         except Exception as exc:
-            out["closures-postback.error.txt"] = f"{type(exc).__name__}: {exc}".encode()
-        for name, url in (("welcome.html", WELCOME), ("search.html", SITE), ("county.html", COUNTY_PAGE)):
-            try:
-                html = http.text(url)
-            except Exception as exc:
-                out[name + ".error.txt"] = str(exc).encode()
-                continue
-            out[name] = html.encode()
-            for i, link in enumerate(closure_links(html, url)[:3]):
-                print(f"restaurants: closure link on {name}: {link}")
-                try:
-                    out[f"closures-{name}-{i}.html"] = http.text(link).encode()
-                except Exception as exc:
-                    out[f"closures-{name}-{i}.error.txt"] = str(exc).encode()
+            out["closures.error.txt"] = f"{type(exc).__name__}: {exc}".encode()
         return out

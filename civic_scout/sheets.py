@@ -24,6 +24,7 @@ from gspread.utils import ValueRenderOption
 
 from . import link
 from .link import item_key
+from .store import was_reported
 
 log = logging.getLogger(__name__)
 
@@ -412,7 +413,7 @@ def write_top(sh: gspread.Spreadsheet, today: date, pool_items: list[dict], conn
     cutoff = (today - timedelta(days=TOP_DAYS)).isoformat()
     pool = {item_key(i): i for i in pool_items}
     top = [i for i in pool.values() if i.get("importance") == "high" and not i.get("hidden")
-           and (i.get("first_seen") or today.isoformat())[:10] >= cutoff]
+           and was_reported(i) and (i.get("first_seen") or today.isoformat())[:10] >= cutoff]
     top.sort(key=lambda i: ((i.get("first_seen") or today.isoformat())[:10], i.get("date") or ""), reverse=True)
     # Connections for every row, not just this run's: older top stories gain links too.
     top_connections = {**link.connections(top, list(pool.values()), today), **connections}

@@ -7,10 +7,25 @@ Claude (`text`) is never stored.
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 TRANSIENT_FIELDS = ("text",)
+
+
+def was_reported(item: dict, days_back: int = 14) -> bool:
+    """Whether a stored item was reported, or only recorded as seen because it was older
+    than the look-back window. Items stored before the `reported` flag existed are
+    judged by their date against when they were first seen."""
+    if "reported" in item:
+        return bool(item["reported"])
+    seen, dated = (item.get("first_seen") or "")[:10], (item.get("date") or "")[:10]
+    if not seen or not dated:
+        return True
+    try:
+        return date.fromisoformat(dated) >= date.fromisoformat(seen) - timedelta(days=days_back)
+    except ValueError:
+        return True
 
 
 def _clean(item: dict) -> dict:

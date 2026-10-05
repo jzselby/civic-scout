@@ -87,3 +87,13 @@ def test_dates():
     assert iso("2026/10/06 07:00 PM") == "2026-10-06"
     assert iso("August 2026 New Business Licenses") == "2026-08-01"
     assert iso("nothing here") is None
+
+
+def test_health_closures_table_parses_rows_and_inspection_buttons():
+    from civic_scout.sources import restaurants
+    rows = restaurants.parse_closures(read("closures.html"))
+    assert [(r["name"], r["address"], r["closed"], r["reopened"]) for r in rows] == [
+        ("SOUTH RIDGE TOWNHOMES - W/P", "10668 S MONICA RIDGE WY", "2026-06-11", None),
+        ("VIETOPIA BISTRO", "1407 W 9000 S", "2026-09-28", "2026-09-30"),
+    ]
+    assert rows[1]["button"] == "ctl00$PageContent$VW_EST_PUBLIC4TableControlRepeater$ctl02$InspButton$_Button"

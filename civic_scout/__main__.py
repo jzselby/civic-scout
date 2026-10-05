@@ -18,7 +18,7 @@ from . import analyze, link, pipeline, sheets
 from .config import Config
 from .http import Http
 from .sources import ALL, selected
-from .store import Store
+from .store import Store, was_reported
 
 log = logging.getLogger("civic_scout")
 
@@ -47,9 +47,15 @@ def cmd_run(cfg: Config, args) -> int:
         log.info("GOOGLE_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_JSON not set; skipping the sheet")
 
     cfg.reports_dir.mkdir(parents=True, exist_ok=True)
-    (cfg.reports_dir / f"{day.isoformat()}.md").write_text(result.report, encoding="utf-8")
+    # A second run on the same day gets its own file rather than replacing the first.
+    path, n = cfg.reports_dir / f"{day.isoformat()}.md", 2
+    while path.exists():
+        path, n = cfg.reports_dir / f"{day.isoformat()}-{n}.md", n + 1
+    path.write_text(result.report, encoding="utf-8")
     (cfg.reports_dir / "latest.md").write_text(result.report, encoding="utf-8")
     for source in selected(cfg.sources):
+        for i in result.old:
+            i["reported"] = False
         mine = [i for i in result.items + result.old if i["source"] == source.name]
         store.source(source.name).add(mine)
 
@@ -91,7 +97,8 @@ def cmd_review_existing(cfg: Config, args) -> int:
     store = Store(cfg.data_dir)
     items = store.everything()
     cutoff = (pipeline.today() - timedelta(days=sheets.TOP_DAYS)).isoformat()
-    recent = [i for i in items if (i.get("first_seen") or "")[:10] >= cutoff and i.get("importance")]
+    recent = [i for i in items if (i.get("first_seen") or "")[:10] >= cutoff and i.get("importance")
+              and was_reported(i, cfg.days_back) and not i.get("hidden")]
     labels = {s.name: s.label for s in ALL}
     changes = analyze.review(recent, labels, cfg.review_model)
     changed_n = analyze.apply_review(recent, changes)
