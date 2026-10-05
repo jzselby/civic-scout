@@ -138,6 +138,9 @@ inspection report states it, and whether it has reopened."""
             url, html = open_closures(http)
             print(f"restaurants: closures postback -> {url} ({len(html)} chars)")
             out["closures.html"] = html.encode()
+            at = html.find("Date Closed")
+            print("restaurants: raw HTML from the table header on:\n" + html[at:at + 6000] if at >= 0
+                  else "restaurants: no 'Date Closed' in the page")
             rows = parse_closures(html)
             print(f"restaurants: {len(rows)} closure rows: {rows[:5]}")
             if rows and rows[0]["button"]:

@@ -89,16 +89,25 @@ What the ratings mean:
 - medium: worth a look or a brief; a useful lead or a step in a story we follow.
 - low: routine paperwork.
 
+Keep (or raise) to high, whatever the meeting date: a proposed or decided school
+closure, consolidation or boundary change; a tax, fee or tuition increase; layoffs of
+50+ or a business closing; a lawsuit, settlement, audit finding or investigation; a
+top official hired, fired or resigning; a health closure of a restaurant or business
+people know; a rezoning or project that would change a neighborhood. These are news
+the first time they appear, even if the hearing has passed or the vote is weeks away.
+
 Be skeptical of:
 - trade permits (electrical, plumbing, mechanical, fire alarm/sprinkler, low voltage)
   for a project already public: at most medium, unless the permit itself is the first
   sign of the project or reveals a big new number;
 - several records about the same project or meeting: keep the single most
   informative one at its level and lower the others;
-- meetings that already happened, where the record reports no outcome;
+- agendas for meetings that already happened whose items are routine, with no
+  outcome reported (a past date alone is not a reason to lower a record that reveals
+  something new);
 - placeholder, test, withdrawn or incomplete records: low.
-Raise a rating only when a record is clearly underrated (e.g. a closure, layoff or
-lawsuit marked low).
+Raise a rating when a record is clearly underrated (e.g. a closure, layoff or
+lawsuit marked low or medium). A day with no high records is fine.
 
 Each input record has `key`, `source`, `importance` (the current rating), `headline`,
 `why_it_matters`, and may have `category`, `date`, `org`, `place`, `details`.
