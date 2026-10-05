@@ -106,9 +106,12 @@ Be skeptical of:
   duplicates; judge each on its own, and a meeting's overall agenda record may be
   lowered when its items have records of their own;
 - agendas for meetings that already happened whose items are routine, with no
-  outcome reported (a past date alone is not a reason to lower a record that reveals
-  something new);
+  outcome reported. A past date alone is never a reason to lower a record: a vote,
+  cancellation, tabling, approval or study reported from a past meeting is news;
 - placeholder, test, withdrawn or incomplete records: low.
+You see only a headline and summary, not what has already been published, so don't
+lower a record as a "known story" or "follow-up" unless another record in this list
+covers it.
 Move a rating one step at a time (high to medium, medium to low). Use low only for
 routine paperwork; a record with a real news angle that just isn't urgent is medium.
 Raise a rating when a record is clearly underrated (e.g. a closure, layoff or
@@ -119,7 +122,9 @@ Each input record has `key`, `source`, `importance` (the current rating), `headl
 Reporters see every high and medium record; low records are hidden in an archive. So
 lowering to medium is cheap, but lowering to low means a reporter will never see it.
 Only lower a record to low when it is plainly one of these, and say which as `reason`:
-- "routine_permit": a trade or minor permit for a project that is already public;
+- "routine_permit": a trade permit (electrical, plumbing, mechanical, fire, low
+  voltage) or minor permit for a project that is already public. Never the first
+  record naming a new business, tenant or project: that is a lead, keep it medium;
 - "duplicate": another record in this list covers the same thing better;
 - "placeholder": a test, placeholder, withdrawn or empty record;
 - "procedural": routine paperwork (minutes approval, a cancelled meeting, a

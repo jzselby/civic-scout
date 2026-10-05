@@ -35,7 +35,8 @@ ALL = "All records"
 BRIEFING_HEADERS = ["Run date", "New records", "High importance", "Briefing"]
 RECORD_HEADERS = ["First seen", "Date", "Source", "Importance", "Category", "Headline", "Why it matters",
                   "Editor's note", "Who", "Where", "Details", "Connections", "Link", "Key"]
-# Top stories keeps high records this many days, medium ones MEDIUM_DAYS.
+# Top stories keeps high records this many days, medium ones MEDIUM_DAYS (or until
+# their meeting or hearing date, within TOP_DAYS).
 TOP_DAYS = 30
 MEDIUM_DAYS = 7
 MAX_CELL = 50_000
@@ -422,17 +423,25 @@ def format_existing(sheet_id: str, service_account_json: str) -> None:
 def write_top(sh: gspread.Spreadsheet, today: date, pool_items: list[dict], connections: dict[str, list[dict]],
               labels: dict[str, str]) -> tuple[gspread.Worksheet, list[str]]:
     """Regenerate Top stories, the tab reporters work from: high records first seen in
-    the last TOP_DAYS days and medium ones from the last MEDIUM_DAYS, newest run first
-    and high before medium within a run."""
-    keep = {"high": (today - timedelta(days=TOP_DAYS)).isoformat(),
-            "medium": (today - timedelta(days=MEDIUM_DAYS)).isoformat()}
+    the last TOP_DAYS days and medium ones from the last MEDIUM_DAYS (longer, up to
+    TOP_DAYS, while the record's date is still ahead, so an upcoming hearing stays
+    until it happens), newest run first and high before medium within a run."""
+    since_top = (today - timedelta(days=TOP_DAYS)).isoformat()
+    since_medium = (today - timedelta(days=MEDIUM_DAYS)).isoformat()
     pool = {item_key(i): i for i in pool_items}
 
     def seen(i: dict) -> str:
         return (i.get("first_seen") or today.isoformat())[:10]
 
-    top = [i for i in pool.values() if i.get("importance") in keep and not i.get("hidden")
-           and was_reported(i) and seen(i) >= keep[i["importance"]]]
+    def kept(i: dict) -> bool:
+        if i.get("importance") == "high":
+            return seen(i) >= since_top
+        if i.get("importance") == "medium":
+            upcoming = (i.get("date") or "")[:10] >= today.isoformat()
+            return seen(i) >= (since_top if upcoming else since_medium)
+        return False
+
+    top = [i for i in pool.values() if kept(i) and not i.get("hidden") and was_reported(i)]
     top.sort(key=lambda i: (seen(i), i["importance"] == "high", i.get("date") or ""), reverse=True)
     # Connections for every row, not just this run's: older top stories gain links too.
     top_connections = {**link.connections(top, list(pool.values()), today), **connections}
