@@ -73,11 +73,14 @@ class FakeWorksheet:
         self.grid: list[list] = []
 
     def update(self, values, range_name, value_input_option=None):
-        row = int(range_name[1:]) - 1
+        row, col = gspread.utils.a1_to_rowcol(range_name)
+        row, col = row - 1, col - 1
         while len(self.grid) < row + len(values):
             self.grid.append([])
         for i, v in enumerate(values):
-            self.grid[row + i] = list(v)
+            line = self.grid[row + i]
+            line.extend([""] * (col + len(v) - len(line)))
+            line[col:col + len(v)] = list(v)
 
     def row_values(self, n):
         return self.grid[n - 1] if len(self.grid) >= n else []
@@ -100,6 +103,9 @@ class FakeWorksheet:
     def add_rows(self, n):
         self.row_count += n
 
+    def get_all_values(self):
+        return self.grid
+
 
 class FakeSpreadsheet:
     def __init__(self):
@@ -110,6 +116,9 @@ class FakeSpreadsheet:
             raise gspread.WorksheetNotFound(title)
         return self.tabs[title]
 
+    def del_worksheet(self, ws):
+        del self.tabs[ws.title]
+
     def add_worksheet(self, title, rows, cols):
         self.tabs[title] = FakeWorksheet(title, rows, cols)
         return self.tabs[title]
@@ -117,6 +126,7 @@ class FakeSpreadsheet:
 
 def test_sheet_tabs_are_created_and_filled(monkeypatch):
     sh = FakeSpreadsheet()
+    sh.add_worksheet("Sheet1", 1000, 26)
     gc = SimpleNamespace(open_by_key=lambda key: sh)
     monkeypatch.setattr(gspread, "service_account_from_dict", lambda info: gc)
     items = [
@@ -142,3 +152,16 @@ def test_sheet_tabs_are_created_and_filled(monkeypatch):
     top = sh.tabs[sheets.TOP].grid
     keys = [r[top[0].index("Key")] for r in top[1:]]
     assert keys == ["pmn:1", "pmn:0"]
+    assert "Sheet1" not in sh.tabs
+
+
+def test_refresh_rewrites_connections_by_key(monkeypatch):
+    sh = FakeSpreadsheet()
+    monkeypatch.setattr(gspread, "service_account_from_dict", lambda info: SimpleNamespace(open_by_key=lambda k: sh))
+    ws = sh.add_worksheet(sheets.ALL, 10, 13)
+    ws.update([["Key", "Connections", "Notes"], ["pmn:1", "junk roof permit", "keep me"], ["warn:2", "", ""]], "A1")
+    conns = {"warn:2": [{"title": "Permit", "source": "slc_permits", "date": "2026-10-01"}]}
+    changed = sheets.refresh_connections("id", "{}", conns, {"slc_permits": "SLC permits"})
+    assert changed == 2
+    assert ws.grid[1] == ["pmn:1", "", "keep me"]
+    assert ws.grid[2][:2] == ["warn:2", "Permit (SLC permits, 2026-10-01)"]

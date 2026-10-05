@@ -13,7 +13,7 @@ import os
 import sys
 from pathlib import Path
 
-from . import analyze, pipeline, sheets
+from . import analyze, link, pipeline, sheets
 from .config import Config
 from .http import Http
 from .sources import ALL, selected
@@ -63,6 +63,17 @@ def cmd_run(cfg: Config, args) -> int:
     return 0
 
 
+def cmd_refresh_connections(cfg: Config, args) -> int:
+    if not (cfg.google_sheet_id and cfg.google_service_account_json):
+        log.error("GOOGLE_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_JSON not set")
+        return 1
+    items = Store(cfg.data_dir).everything()
+    conns = link.connections(items, items, pipeline.today())
+    sheets.refresh_connections(cfg.google_sheet_id, cfg.google_service_account_json, conns,
+                               {s.name: s.label for s in ALL})
+    return 0
+
+
 def cmd_probe(cfg: Config, args) -> int:
     http = Http(cfg.http_timeout)
     out_dir = Path(args.out)
@@ -105,6 +116,7 @@ def main(argv: list[str] | None = None) -> int:
     probe.add_argument("--sources", help="comma-separated source names (default: all)")
     probe.add_argument("--out", default="probe")
     sub.add_parser("sources", help="list sources")
+    sub.add_parser("refresh-connections", help="recompute the sheet's Connections column from stored records")
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
@@ -121,6 +133,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "probe":
         return cmd_probe(cfg, args)
+    if args.command == "refresh-connections":
+        return cmd_refresh_connections(cfg, args)
     return cmd_run(cfg, args)
 
 

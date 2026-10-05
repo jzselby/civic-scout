@@ -50,3 +50,17 @@ def test_matches_within_one_source_are_not_connections():
     a = {"source": "slc_permits", "id": "1", "title": "Electrical", "place": "1116 S Richards St", "date": "2026-09-29"}
     b = {"source": "slc_permits", "id": "2", "title": "Plumbing", "place": "1116 S Richards St", "date": "2026-09-23"}
     assert connections([a], [b], today) == {}
+
+
+def test_a_bodys_meeting_place_is_not_a_connection():
+    today = date(2026, 10, 3)
+    agendas = [{"source": "pmn", "id": str(n), "title": "Council agenda", "org": "Salt Lake City Council",
+                "places": ["451 South State Street", f"{n} E 100 S"], "date": "2026-10-06"} for n in (1, 2, 3)]
+    # The rezone address is on two notices (hearing + agenda): still a subject, not a venue.
+    agendas[1]["places"].append("1 E 100 S")
+    roof = {"source": "slc_permits", "id": "R", "title": "City Hall re-roof", "place": "451 S STATE ST",
+            "date": "2026-09-27"}
+    rezone = {"source": "slc_permits", "id": "Z", "title": "Rezone", "place": "1 E 100 S", "date": "2026-09-27"}
+    out = connections(agendas, [roof, rezone], today)
+    assert set(out) == {"pmn:1", "pmn:2"}
+    assert all([m["key"] for m in ms] == ["slc_permits:Z"] for ms in out.values())

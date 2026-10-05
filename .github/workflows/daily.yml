@@ -20,6 +20,10 @@ on:
         description: "Dry run: print the report only; write nothing and mark nothing seen"
         type: boolean
         default: false
+      refresh_connections:
+        description: "Only recompute the sheet's Connections column (no fetching, no Claude)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -65,7 +69,9 @@ jobs:
           SOURCES: ${{ inputs.sources }}
           DAYS_BACK: ${{ inputs.days_back || '14' }}
           DRY_RUN: ${{ inputs.dry_run }}
+          REFRESH: ${{ inputs.refresh_connections }}
         run: |
+          if [ "$REFRESH" = "true" ]; then python -m civic_scout refresh-connections; exit; fi
           args=(run)
           if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); else args+=(--require-claude); fi
           python -m civic_scout "${args[@]}"

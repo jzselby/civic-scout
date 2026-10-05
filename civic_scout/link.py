@@ -82,6 +82,24 @@ def _recent(item: dict, cutoff: date) -> bool:
         return True
 
 
+VENUE_MIN_NOTICES = 3
+
+
+def meeting_places(items: list[dict]) -> set[str]:
+    """Addresses on 3+ of one public body's notices: where it meets (e.g. City Hall),
+    not what it's deciding about. Matching on them links every agenda to every permit
+    at City Hall. A subject address typically shows up twice (a hearing notice and the
+    agenda), so it stays matchable."""
+    seen: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    for item in items:
+        if item.get("source") != "pmn":
+            continue
+        for kind, value in keys_for(item):
+            if kind == "address":
+                seen[value][item.get("org") or ""] += 1
+    return {addr for addr, orgs in seen.items() if max(orgs.values()) >= VENUE_MIN_NOTICES}
+
+
 def connections(new_items: list[dict], all_items: list[dict], today: date, days: int = 365) -> dict[str, list[dict]]:
     """For each new item, items from *other* sources (last `days`) sharing an address or name.
 
@@ -91,14 +109,18 @@ def connections(new_items: list[dict], all_items: list[dict], today: date, days:
     """
     cutoff = today - timedelta(days=days)
     bodies = {normalize_name(i.get("org")) for i in all_items + new_items if i.get("source") == "pmn"}
+    venues = meeting_places(all_items + new_items)
+
+    def usable(k: tuple[str, str]) -> bool:
+        return not ((k[0] == "name" and k[1] in bodies) or (k[0] == "address" and k[1] in venues))
+
     index: dict[tuple[str, str], list[dict]] = defaultdict(list)
     for item in all_items + new_items:
         if item.get("hidden") or not _recent(item, cutoff):
             continue
         for k in keys_for(item):
-            if k[0] == "name" and k[1] in bodies:
-                continue
-            index[k].append(item)
+            if usable(k):
+                index[k].append(item)
     # Keys shared by very many items (a common street name, a big agency) carry no signal.
     out: dict[str, list[dict]] = {}
     for item in new_items:
@@ -106,7 +128,7 @@ def connections(new_items: list[dict], all_items: list[dict], today: date, days:
             continue
         matches: dict[str, dict] = {}
         for k in keys_for(item):
-            if k[0] == "name" and k[1] in bodies:
+            if not usable(k):
                 continue
             others = [o for o in index.get(k, []) if o["source"] != item["source"]]
             if len(others) > 15:

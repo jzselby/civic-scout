@@ -20,6 +20,7 @@ from typing import Any
 
 import gspread
 
+from . import link
 from .link import item_key
 
 log = logging.getLogger(__name__)
@@ -47,8 +48,14 @@ def hyperlink(url: str | None, label: str) -> str:
     return '=HYPERLINK("{}", "{}")'.format(url.replace('"', '""'), label[:200].replace('"', '""'))
 
 
-def record_values(item: dict, label: str, connections: list[dict] | None) -> dict[str, Any]:
-    conn = "; ".join(f"{c['title']} ({c['source']}, {c.get('date') or ''})" for c in (connections or [])[:5])
+def connections_text(connections: list[dict] | None, labels: dict[str, str]) -> str:
+    return "; ".join(f"{c['title']} ({labels.get(c['source'], c['source'])}, {c.get('date') or ''})"
+                     for c in (connections or [])[:5])
+
+
+def record_values(item: dict, label: str, connections: list[dict] | None,
+                  labels: dict[str, str] | None = None) -> dict[str, Any]:
+    conn = connections_text(connections, labels or {})
     return {
         "First seen": (item.get("first_seen") or date.today().isoformat())[:10],
         "Date": text(item.get("date")),
@@ -110,7 +117,7 @@ def publish(sheet_id: str, service_account_json: str, today: date, items: list[d
     order = {"high": 0, "medium": 1, "low": 2}
     ranked = sorted(items, key=lambda i: (order.get(i.get("importance"), 3), i.get("date") or ""))
     _insert_top(ws, headers, [record_values(i, labels.get(i["source"], i["source"]),
-                                            connections.get(item_key(i))) for i in ranked])
+                                            connections.get(item_key(i)), labels) for i in ranked])
 
     # Top stories is regenerated from the store each run, newest first.
     cutoff = (today - timedelta(days=TOP_DAYS)).isoformat()
@@ -119,13 +126,51 @@ def publish(sheet_id: str, service_account_json: str, today: date, items: list[d
     top = [i for i in pool.values() if i.get("importance") == "high" and not i.get("hidden")
            and (i.get("first_seen") or today.isoformat())[:10] >= cutoff]
     top.sort(key=lambda i: ((i.get("first_seen") or today.isoformat())[:10], i.get("date") or ""), reverse=True)
+    # Connections for every row, not just this run's: older top stories gain links too.
+    top_connections = {**link.connections(top, list(pool.values()), today), **connections}
     ws, headers = _worksheet(sh, TOP, RECORD_HEADERS)
     ws.batch_clear([f"A2:{gspread.utils.rowcol_to_a1(max(ws.row_count, 2), len(headers))}"])
     rows = _rows(headers, [record_values(i, labels.get(i["source"], i["source"]),
-                                         connections.get(item_key(i))) for i in top])
+                                         top_connections.get(item_key(i)), labels) for i in top])
     if rows:
         if ws.row_count < len(rows) + 1:
             ws.add_rows(len(rows) + 1 - ws.row_count)
         ws.update(rows, "A2", value_input_option="USER_ENTERED")
+    # A new spreadsheet starts with an empty "Sheet1"; remove it once the real tabs exist.
+    try:
+        blank = sh.worksheet("Sheet1")
+        if not any(blank.get_all_values()):
+            sh.del_worksheet(blank)
+    except gspread.WorksheetNotFound:
+        pass
     log.info("Sheet updated: %d new records, %d top stories (%d from this run)",
              len(items), len(top), len([i for i in top if item_key(i) in new_keys]))
+
+
+def refresh_connections(sheet_id: str, service_account_json: str, connections: dict[str, list[dict]],
+                        labels: dict[str, str]) -> int:
+    """Rewrite the Connections column of every row, matched by Key, from freshly computed
+    connections (e.g. after the matching rules change). Returns the number of cells changed."""
+    gc = gspread.service_account_from_dict(json.loads(service_account_json))
+    sh = gc.open_by_key(sheet_id)
+    changed = 0
+    for title in (ALL, TOP):
+        try:
+            ws = sh.worksheet(title)
+        except gspread.WorksheetNotFound:
+            continue
+        grid = ws.get_all_values()
+        if len(grid) < 2 or "Key" not in grid[0] or "Connections" not in grid[0]:
+            continue
+        key_col, conn_col = grid[0].index("Key"), grid[0].index("Connections")
+        column = []
+        for row in grid[1:]:
+            key = row[key_col] if key_col < len(row) else ""
+            old = row[conn_col] if conn_col < len(row) else ""
+            new = text(connections_text(connections.get(key), labels)) if key else old
+            changed += new != old
+            column.append([new])
+        letter = gspread.utils.rowcol_to_a1(1, conn_col + 1).rstrip("1")
+        ws.update(column, f"{letter}2", value_input_option="USER_ENTERED")
+    log.info("Refreshed connections: %d cell(s) changed", changed)
+    return changed
