@@ -100,8 +100,11 @@ Be skeptical of:
 - trade permits (electrical, plumbing, mechanical, fire alarm/sprinkler, low voltage)
   for a project already public: at most medium, unless the permit itself is the first
   sign of the project or reveals a big new number;
-- several records about the same project or meeting: keep the single most
-  informative one at its level and lower the others;
+- several records about the same project: keep the single most informative one at
+  its level and lower the others. Separate items on one agenda (a fee hike, a zoning
+  ban and a land sale at the same council meeting) are separate stories, not
+  duplicates; judge each on its own, and a meeting's overall agenda record may be
+  lowered when its items have records of their own;
 - agendas for meetings that already happened whose items are routine, with no
   outcome reported (a past date alone is not a reason to lower a record that reveals
   something new);
