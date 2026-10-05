@@ -79,20 +79,16 @@ civic_scout run --dry-run --no-summary`, `python -m civic_scout sources`.
 
 ## Open items
 
-1. **Closure reasons missing.** `restaurants` pulls each place's inspection *history* page;
-   the violations (the reason) are one more postback into the specific inspection. Next:
-   in `restaurants.py`, after the history postback, press the newest inspection's detail
-   button and pass that text to Claude. Probe first to see the history page's buttons.
-2. **UTA board not watched.** Body 940 is UTA's deactivated board; its current notices
+1. **UTA board not watched.** Body 940 is UTA's deactivated board; its current notices
    don't show under a new body yet. Find a recent UTA notice id and run the probe with
    `pmn_notices`.
-3. **SLC Community Reinvestment Agency board not watched.** 2017 is the County's RDA, not
+2. **SLC Community Reinvestment Agency board not watched.** 2017 is the County's RDA, not
    SLC's CRA. Find a recent CRA notice id (agendas are on utah.gov/pmn) and probe it.
-4. **Editor calibration.** It now errs toward visibility (the owner's priority). Ratings
+3. **Editor calibration.** It now errs toward visibility (the owner's priority). Ratings
    vary a bit between runs (LLM nondeterminism). If Top stories grows too long on normal
    days, tune `REVIEW_PROMPT` rather than loosening `HIDE_REASONS`. Watch a week of
    normal (non-backlog) runs before changing anything.
-5. **Business license list** is one item per month (PDF). Per-business items would
+4. **Business license list** is one item per month (PDF). Per-business items would
    improve address matching; the PDF's layout hasn't been inspected yet (probe it).
 
 ## Next sources the owner approved in principle

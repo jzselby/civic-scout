@@ -1,0 +1,712 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head id="ctl00_Head1"><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta name="keywords" content="UTENVPBL" /><title>
+	Salt Lake Health Inspection Results
+</title><link href="../App_Themes/Mount%20Redmond/BaseStyles.css" type="text/css" rel="stylesheet" /><link href="../App_Themes/Mount%20Redmond/Styles.css" type="text/css" rel="stylesheet" /></head>
+    <body id="ctl00_Body1" class="pBack">
+        <form name="aspnetForm" method="post" action="./ShowINSPECTIONRecordPage.aspx" id="aspnetForm">
+<input type="hidden" name="ctl00_scriptManager1_HiddenField" id="ctl00_scriptManager1_HiddenField" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="(trimmed)" />
+
+<script language="javascript"  type="text/javascript" src="/UTEnvPbl/ApplicationWebForm.js"></script><script language="javascript"  type="text/javascript" src="/UTEnvPbl/SetFocus.js"></script><script language="javascript"  type="text/javascript" src="/UTEnvPbl/ApplicationWebUIValidation.js"></script><script language="javascript"  type="text/javascript" src="/UTEnvPbl/JQuery.js"></script><script language="javascript"  type="text/javascript" src="/UTEnvPbl/LegacyFunctions.js"></script>
+<script src="/UTEnvPbl/ScriptResource.axd?d=4kgL_WhFOowo4x5_qw-IenoyQ2Vs9rj1o4bCJ2LBaAJW8lYs7rd8X2n6FAkUY891lEpOaDZP9kuffscH_eHElkwzLXRaa6OmtkkEXGWmYOZP1uwH0&amp;t=f2cd5c5" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+var PageMethods = function() {
+PageMethods.initializeBase(this);
+this._timeout = 0;
+this._userContext = null;
+this._succeeded = null;
+this._failed = null;
+}
+PageMethods.prototype = {
+_get_path:function() {
+ var p = this.get_path();
+ if (p) return p;
+ else return PageMethods._staticInstance.get_path();},
+SortListItems:function(str,succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'SortListItems',false,{str:str},succeededCallback,failedCallback,userContext); },
+GetRecordFieldValue:function(tableName,recordID,columnName,fieldName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'GetRecordFieldValue',false,{tableName:tableName,recordID:recordID,columnName:columnName,fieldName:fieldName,title:title,closeBtnText:closeBtnText,persist:persist,popupWindowHeight:popupWindowHeight,popupWindowWidth:popupWindowWidth,popupWindowScrollBar:popupWindowScrollBar},succeededCallback,failedCallback,userContext); },
+GetImage:function(tableName,recordID,columnName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'GetImage',false,{tableName:tableName,recordID:recordID,columnName:columnName,title:title,closeBtnText:closeBtnText,persist:persist,popupWindowHeight:popupWindowHeight,popupWindowWidth:popupWindowWidth,popupWindowScrollBar:popupWindowScrollBar},succeededCallback,failedCallback,userContext); }}
+PageMethods.registerClass('PageMethods',Sys.Net.WebServiceProxy);
+PageMethods._staticInstance = new PageMethods();
+PageMethods.set_path = function(value) { PageMethods._staticInstance.set_path(value); }
+PageMethods.get_path = function() { return PageMethods._staticInstance.get_path(); }
+PageMethods.set_timeout = function(value) { PageMethods._staticInstance.set_timeout(value); }
+PageMethods.get_timeout = function() { return PageMethods._staticInstance.get_timeout(); }
+PageMethods.set_defaultUserContext = function(value) { PageMethods._staticInstance.set_defaultUserContext(value); }
+PageMethods.get_defaultUserContext = function() { return PageMethods._staticInstance.get_defaultUserContext(); }
+PageMethods.set_defaultSucceededCallback = function(value) { PageMethods._staticInstance.set_defaultSucceededCallback(value); }
+PageMethods.get_defaultSucceededCallback = function() { return PageMethods._staticInstance.get_defaultSucceededCallback(); }
+PageMethods.set_defaultFailedCallback = function(value) { PageMethods._staticInstance.set_defaultFailedCallback(value); }
+PageMethods.get_defaultFailedCallback = function() { return PageMethods._staticInstance.get_defaultFailedCallback(); }
+PageMethods.set_enableJsonp = function(value) { PageMethods._staticInstance.set_enableJsonp(value); }
+PageMethods.get_enableJsonp = function() { return PageMethods._staticInstance.get_enableJsonp(); }
+PageMethods.set_jsonpCallbackParameter = function(value) { PageMethods._staticInstance.set_jsonpCallbackParameter(value); }
+PageMethods.get_jsonpCallbackParameter = function() { return PageMethods._staticInstance.get_jsonpCallbackParameter(); }
+PageMethods.set_path("ShowINSPECTIONRecordPage.aspx");
+PageMethods.SortListItems= function(str,onSuccess,onFailed,userContext) {PageMethods._staticInstance.SortListItems(str,onSuccess,onFailed,userContext); }
+PageMethods.GetRecordFieldValue= function(tableName,recordID,columnName,fieldName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,onSuccess,onFailed,userContext) {PageMethods._staticInstance.GetRecordFieldValue(tableName,recordID,columnName,fieldName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,onSuccess,onFailed,userContext); }
+PageMethods.GetImage= function(tableName,recordID,columnName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,onSuccess,onFailed,userContext) {PageMethods._staticInstance.GetImage(tableName,recordID,columnName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,onSuccess,onFailed,userContext); }
+//]]>
+</script>
+
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="4E13DB46" />
+            <input name="ctl00$pageLeftCoordinate" type="hidden" id="ctl00_pageLeftCoordinate" /><input name="ctl00$pageTopCoordinate" type="hidden" id="ctl00_pageTopCoordinate" />
+            <span id="ctl00_PageSettings"></span>
+            <script language="JavaScript" type="text/javascript">clearRTL()</script>
+            
+<input type="hidden" name="isd_geo_location" id="isd_geo_location" value="<location>
+<latitude>37.40</latitude>
+<longitude>-121.93</longitude>
+<unit>meters</unit>
+<error>LOCATION_ERROR_DISABLED</error>
+</location>
+" />
+<script type="text/javascript">
+<!--
+ISD_GeolocationInit();
+//-->
+</script>
+          <script language="JavaScript" type="text/javascript">avoidTabFocused();</script>
+<script language="javascript" src="../Scripts/Footer.js"></script><table cellpadding="0" cellspacing="0" border="0" class="pWrapper"><tr><td colspan="3"><table border="0" cellpadding="0" cellspacing="0" style="width:100%;"><tr><td class="pageTL"><img src="../Images/space.gif" class="pageTLSpace" alt="" /></td><td class="pageT"><img src="../Images/space.gif" class="pageTSpace" alt="" /></td><td class="pageTR"><img src="../Images/space.gif" class="pageTRSpace" alt="" /></td></tr></table>
+</td></tr><tr><td class="pageL"><img src="../Images/space.gif" class="pageLSpace" alt="" /></td><td class="pageC"><table border="0" cellpadding="0" cellspacing="0" style="width: 100%"><tr><td class="marginmL">&nbsp;</td><td class="pcmL"></td><td class="pcmC"></td><td class="marginmR">&nbsp;</td></tr><tr><td class="marginL">&nbsp;</td><td class="pcL"></td><td class="pcC">
+    <a id="StartOfPageContent"></a>
+    <div id="scrollRegion" class="scrollRegion">              
+      <div id="ctl00_PageContent_UpdatePanel1_UpdateProgress1" style="display:none;">
+	
+				<div class="ajaxUpdatePanel">
+				</div>
+				<div style="position:absolute; padding:30px;" class="updatingContainer">
+					<img src="../Images/updating.gif" alt="Updating" />
+				</div>
+			
+</div>
+		<div id="ctl00_PageContent_UpdatePanel1">
+	
+
+                <table cellpadding="0" cellspacing="0" border="0"><tr><td>
+
+<div onkeypress="return (!Fev_HandleFormSubmitKeyPress('ctl00$PageContent$OKButton', event));" >
+
+
+	<table class="dv" cellpadding="0" cellspacing="0" border="0"><tr><td class="panelTL"><img src="../Images/space.gif" class="panelTLSpace" alt="" /></td><td class="panelT"></td><td class="panelTR"><img src="../Images/space.gif" class="panelTRSpace" alt="" /></td></tr><tr><td class="panelHeaderL"></td><td class="dh">
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="dhel"><img src="../Images/space.gif" alt="" /></td><td class="dhb"><table cellpadding="0" cellspacing="0" border="0"><tr><td class="dht" valign="middle">
+                        Establishment Information
+                      </td></tr></table>
+</td><td class="dher"><img src="../Images/space.gif" alt="" /></td></tr></table>
+
+                </td><td class="panelHeaderR"></td></tr><tr><td class="panelL"></td><td>
+                  <div id="ctl00_PageContent_CollapsibleRegion1">
+		<table class="dBody" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td>
+                    <div id="ctl00_PageContent_VW_EST_PUBLIC2RecordControlPanel">
+			<table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="fls">Name</td><td class="dfv">VIETOPIA BISTRO </td></tr><tr><td class="fls">Address</td><td class="dfv">1407 W 9000 S </td></tr><tr><td class="fls">City/State/ZIP</td><td class="dfv">WEST JORDAN, UT 84088 </td></tr><tr><td class="fls">Phone</td><td class="dfv">(515) 710-5952 </td></tr><tr><td class="fls">Establishment Type</td><td class="dfv">Restaurants: plated</td></tr><tr id="ctl00_PageContent_rankrow">
+				<td class="fls">Rank</td>
+				<td class="dfv"><span style="white-space:nowrap;">
+4%</span>
+</td>
+			</tr>
+			</table>
+		</div>
+
+                  </td></tr></table>
+
+	</div>
+                </td><td class="panelR"></td></tr></table>
+	<input type="hidden" name="ctl00$PageContent$VW_EST_PUBLIC2RecordControl_PostbackTracker" id="ctl00_PageContent_VW_EST_PUBLIC2RecordControl_PostbackTracker" />
+
+
+
+</div>
+
+
+</td></tr><tr><td>
+
+<div onkeypress="return (!Fev_HandleFormSubmitKeyPress('ctl00$PageContent$OKButton', event));" >
+
+
+	<table class="dv" cellpadding="0" cellspacing="0" border="0"><tr><td class="panelTL"><img src="../Images/space.gif" class="panelTLSpace" alt="" /></td><td class="panelT"></td><td class="panelTR"><img src="../Images/space.gif" class="panelTRSpace" alt="" /></td></tr><tr><td class="panelHeaderL"></td><td class="dh">
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="dhel"><img src="../Images/space.gif" alt="" /></td><td class="dhb"><table cellpadding="0" cellspacing="0" border="0"><tr><td class="dht" valign="middle">
+                        Salt Lake Health Inspection Information
+                      </td></tr></table>
+</td><td class="dher"><img src="../Images/space.gif" alt="" /></td></tr></table>
+
+                </td><td class="panelHeaderR"></td></tr><tr><td class="panelL"></td><td>
+                  <div id="ctl00_PageContent_CollapsibleRegion">
+		<table class="dBody" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td>
+                    <div id="ctl00_PageContent_INSPECTIONRecordControlPanel">
+			<table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="fls">Inspection Date</td><td class="dfv">9/28/2026 </td></tr><tr><td class="fls">Inspection Type</td><td class="dfv">07 - Critical Item </td></tr><tr id="ctl00_PageContent_scorerow">
+				<td class="fls">Score</td>
+				<td class="dfv"><span style="white-space:nowrap;">
+176</span>
+ </td>
+			</tr>
+			<tr id="ctl00_PageContent_critalrow">
+				<td class="fls">Number of Critical Violations</td>
+				<td class="dfv" style="color:Red">11</td>
+			</tr>
+			<tr id="ctl00_PageContent_noncritrow">
+				<td class="fls">Number of Non-Critical Violations</td>
+				<td class="dfv" style="color:Blue">33</td>
+			</tr>
+			</table>
+		</div>
+
+                  </td></tr></table>
+
+	</div>
+                </td><td class="panelR"></td></tr></table>
+	<input type="hidden" name="ctl00$PageContent$INSPECTIONRecordControl_PostbackTracker" id="ctl00_PageContent_INSPECTIONRecordControl_PostbackTracker" />
+
+
+
+</div>
+
+
+</td></tr><tr><td>
+                        
+            	<table class="dv" cellpadding="0" cellspacing="0" border="0"><tr><td class="panelTL"><img src="../Images/space.gif" class="panelTLSpace" alt="" /></td><td class="panelT"></td><td class="panelTR"><img src="../Images/space.gif" class="panelTRSpace" alt="" /></td></tr><tr><td class="panelHeaderL"></td><td class="dh">
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="dhel"><img src="../Images/space.gif" alt="" /></td><td class="dhb"><table cellpadding="0" cellspacing="0" border="0"><tr><td class="dht" valign="middle">
+                        Violation Summary
+                      </td></tr></table>
+</td><td class="dher"><img src="../Images/space.gif" alt="" /></td></tr></table>
+
+                </td><td class="panelHeaderR"></td></tr><tr><td class="panelL"></td><td>
+                  <div id="ctl00_PageContent_CollapsibleRegion2">
+		<table class="dBody" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="tre">
+                    <table id="INSPECTION_VIOLATIONTableControlGrid" cellpadding="0" cellspacing="0" border="0" width="100%" onkeydown="captureUpDownKey(this, event)"><tr class="tch"><th class="dBody" colspan="7">		<table>
+			<tr><td class="fls" style="text-align:left;color:red;">Red Text = Critical Violation</td><td class="fls" style="text-align:left;color:green;">PHR = Public Health Rationale (Why is this a violation?)</td></tr>
+			<tr><td class="fls" style="text-align:left;color:blue;">Blue Text = Non-Critical Violation</td><td class="fls" style="text-align:left;color:black;">COS = Corrected on site during inspection.</td></tr>
+		</table>
+		</td></th></tr><tr class="tch"><th class="thcnb" style="text-align:center;"><a id="ctl00_PageContent_COUNTY_CODELabel" title="Sort by Code" href="javascript:__doPostBack(&#39;ctl00$PageContent$COUNTY_CODELabel&#39;,&#39;&#39;)">Code</a></th><th class="thcnb" style="text-align:center;">Observed Violations</th><th class="thcnb">Points</th><th class="thcnb">Critical</th><th class="thcnb">Occurrences</th><th class="thcnb">COS</th><th class="thcnb" style="text-align:center;">PHR</th></tr>		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl00_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl00_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl00$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">4.2.18**</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Employees personal beverages are not separated from food preparation areas.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl00_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl00$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Eating, Drinking, or Using Tobacco**</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl01_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl01_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl01$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.3.37</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Food is being stored on the floor in the walk-in.
+Food is being stored on the floor.
+Food in the storage room is not covered to prevent contamination.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+3</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl01_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl01$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Food Storage.</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl02_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl02_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl02$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">4.3.57*</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Potentially hazardous food was not cooled to 41°F within a total of 6 hours.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl02_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl02$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Cooling*</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl03_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl03_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl03$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">4.3.59*</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Cooked noodles are being held at  47°F in the walk in cooler. (Discard)</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl03_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl03$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Cold Holding*</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl04_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl04_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl04$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">4.3.60**</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Potentially hazardous and ready to eat foods that are prepared on-site and held for more than 24 hours are not date-marked.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl04_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl04$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Ready-to-Eat, Potentially hazardous food (time/temperature control for safety food) - Date Marking.**</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl05_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl05_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl05$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">4.4.1*</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Food is being stored in non-food grade containers.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl05_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl05$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Characteristics - Multi-use*</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl06_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl06_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl06$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.4.11</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Various surfaces are lined with clear plastic wrap.
+Various surfaces are lined with spray foam.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+2</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl06_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl06$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Nonfood-Contact Surfaces</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl07_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl07_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl07$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.4.13</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Domestic style freezer is not durable for commercial use.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl07_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl07$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Equipment and Utensils - Design and Construction</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl08_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl08_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl08$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.4.61</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>The 3-compartment sink is not sealed to the adjacent wall.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl08_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl08$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Fixed Equipment-Spacing or Sealing</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl09_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl09_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl09$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.4.64</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Cutting boards are scratched and scored and no longer easily cleanable.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl09_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl09$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Cutting Surfaces</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl10_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl10_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl10$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">4.4.82*</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Interior surfaces of the ventilation hood are unclean.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl10_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl10$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Equipment, Food-Contact Surfaces, Nonfood-Contact Surfaces, and Utensils-Cleaning*</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl11_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl11_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl11$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.4.85</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>There is an accumulation of food debris and grease under the grill.
+Shelves in the kitchen are dirty.
+Exterior surfaces of food containers are dirty.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+3</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl11_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl11$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Nonfood-Contact Surfaces-Cleaning</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl12_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl12_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl12$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">4.5.23*</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>A handwashing sink is not conveniently located in food preparation areas. (Back storage room where spices are being prepared)</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl12_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl12$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Handwashing Sinks-Location*</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl13_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl13_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl13$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">4.5.26**</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Hand sinks are being used for purposes other than hand washing.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl13_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl13$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Using a Handwashing Sink.**</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl14_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl14_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl14$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.5.30</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>There is a leak at the ice machine. 
+There is a leak at the ware wash machine. 
+The 3-compartment sink faucet is leaking.
+There is an apparent open sewer pipe in the kitchen next to the grease trap.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+4</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl14_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl14$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">System Maintained in Good Repair Non-critical</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl15_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl15_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl15$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.6.1</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Various floor surfaces are not smooth, durable, easily cleanable and non-absorbent.
+Various wall surfaces are not smooth, durable, easily cleanable and non-absorbent.
+Various ceiling surfaces are not smooth, durable, easily cleanable and non-absorbent.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+3</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl15_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl15$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Surface Characteristics-Indoor Areas</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl16_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl16_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl16$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.6.15</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>An exterior door is not tight fitting.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl16_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl16$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Outer Openings-Protected</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl17_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl17_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl17$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.6.32</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>There is an obnoxious odor in the kitchen area.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl17_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl17$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Ventilation-Mechanical</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl18_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl18_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl18$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.6.40</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Various walls are damaged.
+Various floor surfaces are damaged.
+Various ceiling surfaces are damaged.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+3</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl18_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl18$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Repairing-Physical Facilities</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl19_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl19_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl19$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.6.41</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>The floor is dirty in various areas.
+Walls are dirty in various areas.
+The ceiling is dirty in various areas.
+Floor sinks are dirty.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+4</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl19_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl19$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Cleaning-Frequency and Restrictions</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl20_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl20_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl20$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.6.43</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Ceiling air vents are dusty.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl20_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl20$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Cleaning Ventilation Systems-Nuisance and Discharge Prohibition</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl21_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl21_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl21$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.6.5</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Not all floor/wall junctures are coved and sealed.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl21_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl21$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Floor and Wall Junctures-Coved and Enclosed or Sealed</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl22_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl22_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl22$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.6.50</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Fly strips are hung over food prep areas.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl22_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl22$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Controlling Pests- (Non Critical)</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl23_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl23_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl23$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">4.6.50**</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>There are live cockroaches in the establishment.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl23_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl23$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Controlling Pests**</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl24_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl24_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl24$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.6.51</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Dead cockroaches have not been removed from the premises.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl24_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl24$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Removing Dead or Trapped Birds, Insects, Rodents and Other Pests</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl25_MyTR">
+			<td class="ttc" style="color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl25_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl25$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Blue">4.6.53</font></a>  
+</td>
+			<td class="ttc" style="color:#0000FF;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Items that are unnecessary to the operation of the food establishment are stored on the premises. (Reach-in and ice machine stored outside).
+Nonfunctional equipment is stored on the premises.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><span style="white-space:nowrap;">
+2</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#0000FF;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#0000FF;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl25_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl25$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Maintaining Premises-Unnecessary Items and Litter</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl26_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl26_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl26$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">4.7.4**</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Toxic materials that are not used for food establishment operations are stored in the food establishment.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl26_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl26$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Restriction-Poisonous or Toxic Materials**</font></a></td>
+		</tr>
+		
+		
+<tr id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl27_MyTR">
+			<td class="ttc" style="color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl27_COUNTY_CODE" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl27$COUNTY_CODE&#39;,&#39;&#39;)"><font color="Red">7.4.4 (ii)</font></a>  
+</td>
+			<td class="ttc" style="color:#FF0000;"><table border="0" cellpadding="0" cellspacing="0"><tr><td>Permit is suspended due to the presence of live cockroaches in the establishment and significant harborage conditions.</td></tr></table> </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+&nbsp;</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">Yes </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><span style="white-space:nowrap;">
+1</span>
+ </td>
+			<td class="ttc" style="text-align:center;color:#FF0000;">No  
+</td>
+			<td class="ttc" style="text-align:center;color:#FF0000;"><a id="ctl00_PageContent_INSPECTION_VIOLATIONTableControlRepeater_ctl27_VIOLATION_ID" title="Click to view Public Health Rationale (PHR)" RedirectURL="../VIOLATION_CODE/ShowVIOLATION_CODE_PHRPage.aspx?VIOLATION_CODE={INSPECTION_VIOLATIONTableControlRow:NoUrlEncode:FV:VIOLATION_ID}" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_VIOLATIONTableControlRepeater$ctl27$VIOLATION_ID&#39;,&#39;&#39;)"><font color="Green">Summary Permit Suspension - Imminent Health Hazard</font></a></td>
+		</tr>
+		
+
+</table>
+
+                  </td></tr></table>
+
+	</div>
+                </td><td class="panelR"></td></tr></table>
+	<input type="hidden" name="ctl00$PageContent$INSPECTION_VIOLATIONTableControl_PostbackTracker" id="ctl00_PageContent_INSPECTION_VIOLATIONTableControl_PostbackTracker" />
+
+</td></tr><tr><td class="recordPanelButtonsAlignment"><table cellpadding="0" cellspacing="0" border="0" class="pageButtonsContainer"><tr><td><table cellpadding="0" cellspacing="0" border="0"><tr><td><table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_OKButton__Button" title="Return to previous page" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$OKButton$_Button&#39;,&#39;&#39;)">Back</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td></tr></table>
+</td></tr></table>
+</td></tr></table>
+      
+</div>
+
+    </div>
+    <div id="detailPopup" class="detailRolloverPopup" onmouseout="detailRolloverPopupClose();" onmouseover="clearTimeout(gPopupTimer);"></div>
+                   <div class="QDialog" id="dialog" style="display:none;">
+                          <iframe id="QuickPopupIframe" style="width:100%;height:100%;border:none"></iframe>
+                   </div>                  
+    
+</td><td class="marginR">&nbsp;</td></tr><tr><td class="marginBL">&nbsp;</td><td class="pcB" colspan="2"><table cellpadding="0" cellspacing="0" border="0"><tr><td class="footer"><table cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td>&nbsp;Copyright &copy; 2009 <a href="http://www.cdpehs.com/" target="_blank">Powered by CDP</a>&nbsp;All rights reserved.&nbsp;&nbsp;</td>
+<td> (2026.13 9/22/2026 isd12.2.0)</td>
+</tr>
+</table>
+</td></tr></table></td><td class="marginBR">&nbsp;</td></tr></table>
+</td><td class="pageR"><img src="../Images/space.gif" class="pageRSpace" alt="" /></td></tr><tr><td colspan="3"><table cellpadding="0" cellspacing="0" border="0"><tr><td class="pageBL"><img src="../Images/space.gif" class="pageBLSpace" alt="" /></td><td class="pageB"><img src="../Images/space.gif" class="pageBSpace" alt="" /></td><td class="pageBR"><img src="../Images/space.gif" class="pageBRSpace" alt="" /></td></tr></table>
+</td></tr></table>
+<script language="javascript" type="text/javascript">var ctrl = ""; function pageLoadedHandler1(sender, args) { setTimeout("setTimeoutFocus()", 1000); }function setTimeoutFocus() { setFocus(ctrl); }Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(pageLoadedHandler1);</script>
+<script type="text/javascript">
+//<![CDATA[
+openPopupPage('QPageSize');(function() {var fn = function() {$get("ctl00_scriptManager1_HiddenField").value = '';Sys.Application.remove_init(fn);};Sys.Application.add_init(fn);})();//]]>
+</script>
+</form>
+    </body>
+</html>
