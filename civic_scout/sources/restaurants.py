@@ -3,6 +3,11 @@
 The County closes about one food establishment a week for an imminent health hazard
 and lists current closures on its inspection site (public.cdpehs.com, "Closures").
 Closed places that reopened stay listed two weeks; ones that haven't, six months.
+
+The reason is on the Inspection Results page of the inspection that closed the place:
+Closures > a row's Inspections button (its inspection history) > that inspection's
+Inspection Results button. Each step is an ASP.NET postback in a server session, so
+none of these pages has a lasting URL.
 """
 
 from __future__ import annotations
@@ -15,13 +20,11 @@ from bs4 import BeautifulSoup
 
 from ..config import Config
 from ..http import Http
-from .text_utils import clip, iso, page_text, stable_id
+from .text_utils import clip, iso, stable_id
 
 log = logging.getLogger(__name__)
 
 SITE = "https://public.cdpehs.com/UTEnvPbl/"
-WELCOME = SITE + "ESTABLISHMENT/WelcomePage.aspx"
-COUNTY_PAGE = "https://www.saltlakecounty.gov/health/food-protection/inspections/"
 
 
 CLOSURES_BUTTON = "ctl00$PageContent$Closedbut$_Button"
@@ -84,6 +87,52 @@ def parse_closures(html: str) -> list[dict]:
     return rows
 
 
+_VIOL_BUTTON = re.compile(r"__doPostBack\('([^']*ViolButton[^']*)'")
+
+
+def parse_history(html: str) -> list[dict]:
+    """Rows of an establishment's inspection history, newest first: date, inspection
+    type, and the postback target of the row's Inspection Results button."""
+    soup = BeautifulSoup(html, "lxml")
+    rows = []
+    for tr in soup.find_all("tr"):
+        tds = tr.find_all("td", recursive=False)
+        a = tds[0].find("a", href=_VIOL_BUTTON) if tds else None
+        if a is None:
+            continue
+        cells = [td.get_text(" ", strip=True) for td in tds[1:]]
+        date = next((c for c in cells if _DATE.match(c)), None)
+        if not date:
+            continue
+        rest = cells[cells.index(date) + 1:]
+        rows.append({"date": iso(date), "type": rest[0] if rest else "",
+                     "button": _VIOL_BUTTON.search(a["href"])[1]})
+    return rows
+
+
+def closing_inspections(history: list[dict], closed: str) -> list[dict]:
+    """The inspections that closed the place: those dated on the closing date, else the
+    newest one before it. Follow-ups after reopening describe a cleaned-up kitchen."""
+    same_day = [r for r in history if r["date"] == closed]
+    if same_day:
+        return same_day
+    before = [r for r in history if r["date"] and r["date"] < closed]
+    return before[:1]
+
+
+def report_text(html: str) -> str:
+    """Readable text of an inspection page. Unlike page_text this keeps the <form>,
+    which on ASP.NET pages wraps the whole page, and drops the legend and footer."""
+    soup = BeautifulSoup(html, "lxml")
+    for tag in soup(["script", "style", "noscript"]):
+        tag.decompose()
+    lines = [line.strip() for line in (soup.body or soup).get_text("\n").splitlines()]
+    lines = [line for line in lines if line and line not in ("Back", "Powered by CDP")]
+    text = "\n".join(lines)
+    text = re.sub(r"Red Text = Critical.*?COS = Corrected on site during inspection\.\n", "", text, flags=re.S)
+    return re.split(r"\n\s*Copyright ©", text)[0].strip()
+
+
 def open_closures(http: Http) -> tuple[str, str]:
     search = http.get(SITE)
     return postback(http, search.url, search.text, CLOSURES_BUTTON)
@@ -96,8 +145,9 @@ class RestaurantClosures:
     guidance = """\
 Source "restaurants": Salt Lake County Health Department closures for imminent health
 hazards, mostly restaurants and food trucks but also pools, spas and lodging. `text`
-(when present) is the establishment's inspection report, which usually gives the
-reason; `details` gives the closing and reopening dates.
+(when present) is the inspection report from the closing date: the inspector's
+observed violations, which give the reason (critical violations are what close a
+place); `details` gives the closing and reopening dates.
 - high: any closure of a restaurant, chain location or business the public would
   recognize; a repeat closure; a striking reason (pests, sewage, no hot water,
   illness outbreak); a hotel or public pool.
@@ -119,8 +169,7 @@ inspection report states it, and whether it has reopened."""
             text = ""
             if row["button"]:
                 try:
-                    _, report = postback(http, url, html, row["button"])
-                    text = clip(page_text(report), 8000)
+                    text = clip(self.closing_report(http, url, html, row), 12000)
                 except Exception as exc:
                     log.warning("Inspection report for %s not read (%s)", row["name"], exc)
             details = f"Closed {row['closed']}" + (f"; reopened {row['reopened']}" if row["reopened"] else "; not reopened")
@@ -128,13 +177,25 @@ inspection report states it, and whether it has reopened."""
                 "id": item_id,
                 "title": f"Health closure: {row['name'].title()}",
                 "date": row["closed"],
-                "url": WELCOME,
+                "url": SITE,
                 "org": row["name"].title(),
                 "place": row["address"],
                 "details": details,
                 "text": text,
             })
         return items
+
+    @staticmethod
+    def closing_report(http: Http, url: str, html: str, row: dict) -> str:
+        """Text of the inspection results that closed the place, or of its inspection
+        history when no inspection matches the closing date."""
+        hist_url, history = postback(http, url, html, row["button"])
+        reports = [report_text(postback(http, hist_url, history, insp["button"])[1])
+                   for insp in closing_inspections(parse_history(history), row["closed"])]
+        if not reports:
+            log.warning("No inspection on or before %s for %s", row["closed"], row["name"])
+            return report_text(history)
+        return "\n\n".join(reports)
 
     def probe(self, cfg: Config, http: Http) -> dict[str, bytes]:
         out = {}
@@ -147,27 +208,20 @@ inspection report states it, and whether it has reopened."""
                   else "restaurants: no 'Date Closed' in the page")
             rows = parse_closures(html)
             print(f"restaurants: {len(rows)} closure rows: {rows[:5]}")
-            # Each row's inspection history, then the results of its newest inspection,
-            # printed raw so the parsers can be fitted from the job log.
-            for i, row in enumerate(rows):
-                if not row["button"]:
-                    continue
+            # The newest closure's history and closing-date results, printed raw so
+            # parsers can be fitted from the job log.
+            row = rows[-1] if rows else None
+            if row and row["button"]:
                 hist_url, history = postback(http, url, html, row["button"])
-                out[f"history-{i}.html"] = history.encode()
-                at = history.find("Establishment Information")
-                print(f"restaurants: history {i} ({row['name']}) -> {hist_url} ({len(history)} chars)")
-                if i == len(rows) - 1:
-                    print("restaurants: raw history HTML:\n" + history[at:at + 9000])
-                buttons = re.findall(r"__doPostBack\(&#39;([^&]*ViolButton[^&]*)&#39;|__doPostBack\('([^']*ViolButton[^']*)'",
-                                     history)
-                buttons = [a or b for a, b in buttons]
-                print(f"restaurants: {len(buttons)} result buttons: {buttons[:3]}")
-                if buttons:
-                    res_url, results = postback(http, hist_url, history, buttons[0])
-                    out[f"results-{i}.html"] = results.encode()
-                    print(f"restaurants: results {i} -> {res_url} ({len(results)} chars)")
-                    body = results.find("<body")
-                    print("restaurants: raw results HTML:\n" + results[body:body + 30000])
+                out["history.html"] = history.encode()
+                print(f"restaurants: raw history HTML ({row['name']}):\n{history}")
+                picks = closing_inspections(parse_history(history), row["closed"])
+                print(f"restaurants: closing inspections: {picks}")
+                if picks:
+                    _, results = postback(http, hist_url, history, picks[0]["button"])
+                    out["results.html"] = results.encode()
+                    print(f"restaurants: raw results HTML:\n{results}")
+                print("restaurants: report text:\n" + self.closing_report(http, url, html, row)[:4000])
         except Exception as exc:
             out["closures.error.txt"] = f"{type(exc).__name__}: {exc}".encode()
         return out
