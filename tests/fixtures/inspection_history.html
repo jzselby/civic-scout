@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head id="ctl00_Head1"><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta name="keywords" content="UTENVPBL" /><title>
+	Salt Lake Health Inspection History
+</title><link href="../App_Themes/Mount%20Redmond/BaseStyles.css" type="text/css" rel="stylesheet" /><link href="../App_Themes/Mount%20Redmond/Styles.css" type="text/css" rel="stylesheet" /></head>
+    <body id="ctl00_Body1" class="pBack">
+        <form name="aspnetForm" method="post" action="./ShowINSPECTIONTablePage.aspx" id="aspnetForm">
+<input type="hidden" name="ctl00_scriptManager1_HiddenField" id="ctl00_scriptManager1_HiddenField" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="(trimmed)" />
+
+<script language="javascript"  type="text/javascript" src="/UTEnvPbl/ApplicationWebForm.js"></script><script language="javascript"  type="text/javascript" src="/UTEnvPbl/SetFocus.js"></script><script language="javascript"  type="text/javascript" src="/UTEnvPbl/ApplicationWebUIValidation.js"></script><script language="javascript"  type="text/javascript" src="/UTEnvPbl/JQuery.js"></script><script language="javascript"  type="text/javascript" src="/UTEnvPbl/LegacyFunctions.js"></script>
+<script src="/UTEnvPbl/ScriptResource.axd?d=4kgL_WhFOowo4x5_qw-IenoyQ2Vs9rj1o4bCJ2LBaAJW8lYs7rd8X2n6FAkUY891lEpOaDZP9kuffscH_eHElkwzLXRaa6OmtkkEXGWmYOZP1uwH0&amp;t=f2cd5c5" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+var PageMethods = function() {
+PageMethods.initializeBase(this);
+this._timeout = 0;
+this._userContext = null;
+this._succeeded = null;
+this._failed = null;
+}
+PageMethods.prototype = {
+_get_path:function() {
+ var p = this.get_path();
+ if (p) return p;
+ else return PageMethods._staticInstance.get_path();},
+SortListItems:function(str,succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'SortListItems',false,{str:str},succeededCallback,failedCallback,userContext); },
+GetRecordFieldValue:function(tableName,recordID,columnName,fieldName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'GetRecordFieldValue',false,{tableName:tableName,recordID:recordID,columnName:columnName,fieldName:fieldName,title:title,closeBtnText:closeBtnText,persist:persist,popupWindowHeight:popupWindowHeight,popupWindowWidth:popupWindowWidth,popupWindowScrollBar:popupWindowScrollBar},succeededCallback,failedCallback,userContext); },
+GetImage:function(tableName,recordID,columnName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,succeededCallback, failedCallback, userContext) {
+return this._invoke(this._get_path(), 'GetImage',false,{tableName:tableName,recordID:recordID,columnName:columnName,title:title,closeBtnText:closeBtnText,persist:persist,popupWindowHeight:popupWindowHeight,popupWindowWidth:popupWindowWidth,popupWindowScrollBar:popupWindowScrollBar},succeededCallback,failedCallback,userContext); }}
+PageMethods.registerClass('PageMethods',Sys.Net.WebServiceProxy);
+PageMethods._staticInstance = new PageMethods();
+PageMethods.set_path = function(value) { PageMethods._staticInstance.set_path(value); }
+PageMethods.get_path = function() { return PageMethods._staticInstance.get_path(); }
+PageMethods.set_timeout = function(value) { PageMethods._staticInstance.set_timeout(value); }
+PageMethods.get_timeout = function() { return PageMethods._staticInstance.get_timeout(); }
+PageMethods.set_defaultUserContext = function(value) { PageMethods._staticInstance.set_defaultUserContext(value); }
+PageMethods.get_defaultUserContext = function() { return PageMethods._staticInstance.get_defaultUserContext(); }
+PageMethods.set_defaultSucceededCallback = function(value) { PageMethods._staticInstance.set_defaultSucceededCallback(value); }
+PageMethods.get_defaultSucceededCallback = function() { return PageMethods._staticInstance.get_defaultSucceededCallback(); }
+PageMethods.set_defaultFailedCallback = function(value) { PageMethods._staticInstance.set_defaultFailedCallback(value); }
+PageMethods.get_defaultFailedCallback = function() { return PageMethods._staticInstance.get_defaultFailedCallback(); }
+PageMethods.set_enableJsonp = function(value) { PageMethods._staticInstance.set_enableJsonp(value); }
+PageMethods.get_enableJsonp = function() { return PageMethods._staticInstance.get_enableJsonp(); }
+PageMethods.set_jsonpCallbackParameter = function(value) { PageMethods._staticInstance.set_jsonpCallbackParameter(value); }
+PageMethods.get_jsonpCallbackParameter = function() { return PageMethods._staticInstance.get_jsonpCallbackParameter(); }
+PageMethods.set_path("ShowINSPECTIONTablePage.aspx");
+PageMethods.SortListItems= function(str,onSuccess,onFailed,userContext) {PageMethods._staticInstance.SortListItems(str,onSuccess,onFailed,userContext); }
+PageMethods.GetRecordFieldValue= function(tableName,recordID,columnName,fieldName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,onSuccess,onFailed,userContext) {PageMethods._staticInstance.GetRecordFieldValue(tableName,recordID,columnName,fieldName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,onSuccess,onFailed,userContext); }
+PageMethods.GetImage= function(tableName,recordID,columnName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,onSuccess,onFailed,userContext) {PageMethods._staticInstance.GetImage(tableName,recordID,columnName,title,closeBtnText,persist,popupWindowHeight,popupWindowWidth,popupWindowScrollBar,onSuccess,onFailed,userContext); }
+//]]>
+</script>
+
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="1322E53E" />
+            <input name="ctl00$pageLeftCoordinate" type="hidden" id="ctl00_pageLeftCoordinate" /><input name="ctl00$pageTopCoordinate" type="hidden" id="ctl00_pageTopCoordinate" />
+            <span id="ctl00_PageSettings"></span>
+            <script language="JavaScript" type="text/javascript">clearRTL()</script>
+            
+<input type="hidden" name="isd_geo_location" id="isd_geo_location" value="<location>
+<latitude>37.40</latitude>
+<longitude>-121.93</longitude>
+<unit>meters</unit>
+<error>LOCATION_ERROR_DISABLED</error>
+</location>
+" />
+<script type="text/javascript">
+<!--
+ISD_GeolocationInit();
+//-->
+</script>
+          <script language="JavaScript" type="text/javascript">avoidTabFocused();</script>
+<script language="javascript" src="../Scripts/Footer.js"></script><table cellpadding="0" cellspacing="0" border="0" class="pWrapper"><tr><td colspan="3"><table border="0" cellpadding="0" cellspacing="0" style="width:100%;"><tr><td class="pageTL"><img src="../Images/space.gif" class="pageTLSpace" alt="" /></td><td class="pageT"><img src="../Images/space.gif" class="pageTSpace" alt="" /></td><td class="pageTR"><img src="../Images/space.gif" class="pageTRSpace" alt="" /></td></tr></table>
+</td></tr><tr><td class="pageL"><img src="../Images/space.gif" class="pageLSpace" alt="" /></td><td class="pageC"><table border="0" cellpadding="0" cellspacing="0" style="width: 100%"><tr><td class="marginmL">&nbsp;</td><td class="pcmL"></td><td class="pcmC"></td><td class="marginmR">&nbsp;</td></tr><tr><td class="marginL">&nbsp;</td><td class="pcL"></td><td class="pcC">
+    <a id="StartOfPageContent"></a>
+    <div id="scrollRegion" class="scrollRegion">              
+      <div id="ctl00_PageContent_UpdatePanel1_UpdateProgress1" style="display:none;">
+	
+				<div class="ajaxUpdatePanel">
+				</div>
+				<div style="position:absolute; padding:30px;" class="updatingContainer">
+					<img src="../Images/updating.gif" alt="Updating" />
+				</div>
+			
+</div>
+		<div id="ctl00_PageContent_UpdatePanel1">
+	
+
+                <table cellpadding="0" cellspacing="0" border="0"><tr><td>
+
+<div onkeypress="return (!Fev_HandleFormSubmitKeyPress('ctl00$PageContent$OKButton', event));" >
+
+
+	<table class="dv" cellpadding="0" cellspacing="0" border="0"><tr><td class="panelTL"><img src="../Images/space.gif" class="panelTLSpace" alt="" /></td><td class="panelT"></td><td class="panelTR"><img src="../Images/space.gif" class="panelTRSpace" alt="" /></td></tr><tr><td class="panelHeaderL"></td><td class="dh">
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="dhel"><img src="../Images/space.gif" alt="" /></td><td class="dhb"><table cellpadding="0" cellspacing="0" border="0"><tr><td class="dht" valign="middle">
+                        Establishment Information
+                      </td></tr></table>
+</td><td class="dher"><img src="../Images/space.gif" alt="" /></td></tr></table>
+
+                </td><td class="panelHeaderR"></td></tr><tr><td class="panelL"></td><td>
+                  <div id="ctl00_PageContent_CollapsibleRegion1">
+		<table class="dBody" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td>
+                    <div id="ctl00_PageContent_VW_EST_PUBLIC2RecordControlPanel">
+			<table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="fls">Name</td><td class="dfv">VIETOPIA BISTRO </td></tr><tr><td class="fls">Address</td><td class="dfv">1407 W 9000 S </td></tr><tr><td class="fls">City/State/ZIP</td><td class="dfv">WEST JORDAN, UT 84088 </td></tr><tr><td class="fls">Phone</td><td class="dfv">(515) 710-5952 </td></tr><tr><td class="fls">Establishment Type</td><td class="dfv">Restaurants: plated</td></tr><tr id="ctl00_PageContent_rankrow">
+				<td class="fls">Rank</td>
+				<td class="dfv"><span style="white-space:nowrap;">
+4%</span>
+</td>
+			</tr>
+			<tr id="ctl00_PageContent_closing_datedisprow">
+				<td class="fls" colspan="2" style="color:Red;text-align:left;font-weight:bold;font-size:9pt;text-decoration:underline;">Establishment Closed on  
+9/28/2026</td>
+			</tr>
+			</table>
+		</div>
+
+                  </td></tr></table>
+
+	</div>
+                </td><td class="panelR"></td></tr></table>
+	<input type="hidden" name="ctl00$PageContent$VW_EST_PUBLIC2RecordControl_PostbackTracker" id="ctl00_PageContent_VW_EST_PUBLIC2RecordControl_PostbackTracker" />
+
+
+
+</div>
+
+
+</td></tr><tr><td>
+                        	<table class="dv" cellpadding="0" cellspacing="0" border="0"><tr><td class="panelTL"><img src="../Images/space.gif" class="panelTLSpace" alt="" /></td><td class="panelT"></td><td class="panelTR"><img src="../Images/space.gif" class="panelTRSpace" alt="" /></td></tr><tr><td class="panelHeaderL"></td><td class="dh">
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="dhel"><img src="../Images/space.gif" alt="" /></td><td class="dhb"><table cellpadding="0" cellspacing="0" border="0"><tr><td class="dht" valign="middle">
+                        Salt Lake Health Inspection History
+                      </td></tr></table>
+</td><td class="dher"><img src="../Images/space.gif" alt="" /></td></tr></table>
+
+                </td><td class="panelHeaderR"></td></tr><tr><td class="panelL"></td><td>
+                  <div id="ctl00_PageContent_CollapsibleRegion">
+		<table class="dBody" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td class="tre">
+                    <table id="INSPECTIONTableControlGrid" cellpadding="0" cellspacing="0" border="0" width="100%" onkeydown="captureUpDownKey(this, event)"><tr class="tch"><th class="thc"></th><th class="thc" scope="col" style="text-align:center;">
+                           <a id="ctl00_PageContent_INSPECTION_DATELabel" title="Sort by Date" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTION_DATELabel&#39;,&#39;&#39;)">Date</a>    
+                            </th><th class="thc" scope="col">
+                           Inspection Type    
+                            </th><th id="ctl00_PageContent_hdscore" class="thc" scope="col">
+                           Score    
+                            </th>
+		<th id="ctl00_PageContent_hdcritical" class="thc" scope="col">Critical Violations</th>
+		<th id="ctl00_PageContent_hdnoncritical" class="thc" scope="col">Non-Critical Violations</th>
+		</tr>		
+<tr><td class="tic" scope="row">
+                          
+                        <table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl00_ViolButton__Button" title="Show detailed inspection results" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTIONTableControlRepeater$ctl00$ViolButton$_Button&#39;,&#39;&#39;)">Inspection Results</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td><td class="ttc">10/2/2026 </td><td class="ttc">02 - Followup </td><td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl00_colscore" class="ttc" style="text-align: right;"><span style="white-space:nowrap;">
+12</span>
+ </td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl00_colcritical" class="ttc" style="text-align:center;color:Red;"></td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl00_colnoncritical" class="ttc" style="text-align:center;color:Blue;">12</td>
+		</tr>
+		
+<tr><td class="tic" scope="row">
+                          
+                        <table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl01_ViolButton__Button" title="Show detailed inspection results" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTIONTableControlRepeater$ctl01$ViolButton$_Button&#39;,&#39;&#39;)">Inspection Results</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td><td class="ttc">10/1/2026 </td><td class="ttc">02 - Followup </td><td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl01_colscore" class="ttc" style="text-align: right;"><span style="white-space:nowrap;">
+5</span>
+ </td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl01_colcritical" class="ttc" style="text-align:center;color:Red;">1</td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl01_colnoncritical" class="ttc" style="text-align:center;color:Blue;">2</td>
+		</tr>
+		
+<tr><td class="tic" scope="row">
+                          
+                        <table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl02_ViolButton__Button" title="Show detailed inspection results" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTIONTableControlRepeater$ctl02$ViolButton$_Button&#39;,&#39;&#39;)">Inspection Results</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td><td class="ttc">9/29/2026 </td><td class="ttc">02 - Followup </td><td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl02_colscore" class="ttc" style="text-align: right;"><span style="white-space:nowrap;">
+14</span>
+ </td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl02_colcritical" class="ttc" style="text-align:center;color:Red;">1</td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl02_colnoncritical" class="ttc" style="text-align:center;color:Blue;">11</td>
+		</tr>
+		
+<tr><td class="tic" scope="row">
+                          
+                        <table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl03_ViolButton__Button" title="Show detailed inspection results" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTIONTableControlRepeater$ctl03$ViolButton$_Button&#39;,&#39;&#39;)">Inspection Results</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td><td class="ttc">9/28/2026 </td><td class="ttc">07 - Critical Item </td><td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl03_colscore" class="ttc" style="text-align: right;"><span style="white-space:nowrap;">
+176</span>
+ </td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl03_colcritical" class="ttc" style="text-align:center;color:Red;">11</td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl03_colnoncritical" class="ttc" style="text-align:center;color:Blue;">33</td>
+		</tr>
+		
+<tr><td class="tic" scope="row">
+                          
+                        <table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl04_ViolButton__Button" title="Show detailed inspection results" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTIONTableControlRepeater$ctl04$ViolButton$_Button&#39;,&#39;&#39;)">Inspection Results</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td><td class="ttc">9/8/2026 </td><td class="ttc">02 - Followup </td><td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl04_colscore" class="ttc" style="text-align: right;"><span style="white-space:nowrap;">
+3</span>
+ </td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl04_colcritical" class="ttc" style="text-align:center;color:Red;">1</td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl04_colnoncritical" class="ttc" style="text-align:center;color:Blue;"></td>
+		</tr>
+		
+<tr><td class="tic" scope="row">
+                          
+                        <table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl05_ViolButton__Button" title="Show detailed inspection results" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTIONTableControlRepeater$ctl05$ViolButton$_Button&#39;,&#39;&#39;)">Inspection Results</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td><td class="ttc">9/1/2026 </td><td class="ttc">01 - Routine </td><td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl05_colscore" class="ttc" style="text-align: right;"><span style="white-space:nowrap;">
+81</span>
+ </td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl05_colcritical" class="ttc" style="text-align:center;color:Red;">13</td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl05_colnoncritical" class="ttc" style="text-align:center;color:Blue;">29</td>
+		</tr>
+		
+<tr><td class="tic" scope="row">
+                          
+                        <table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl06_ViolButton__Button" title="Show detailed inspection results" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTIONTableControlRepeater$ctl06$ViolButton$_Button&#39;,&#39;&#39;)">Inspection Results</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td><td class="ttc">11/10/2025 </td><td class="ttc">02 - Followup </td><td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl06_colscore" class="ttc" style="text-align: right;"><span style="white-space:nowrap;">
+12</span>
+ </td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl06_colcritical" class="ttc" style="text-align:center;color:Red;">2</td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl06_colnoncritical" class="ttc" style="text-align:center;color:Blue;"></td>
+		</tr>
+		
+<tr><td class="tic" scope="row">
+                          
+                        <table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl07_ViolButton__Button" title="Show detailed inspection results" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTIONTableControlRepeater$ctl07$ViolButton$_Button&#39;,&#39;&#39;)">Inspection Results</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td><td class="ttc">11/6/2025 </td><td class="ttc">01 - Routine </td><td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl07_colscore" class="ttc" style="text-align: right;"><span style="white-space:nowrap;">
+59</span>
+ </td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl07_colcritical" class="ttc" style="text-align:center;color:Red;">8</td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl07_colnoncritical" class="ttc" style="text-align:center;color:Blue;">25</td>
+		</tr>
+		
+<tr><td class="tic" scope="row">
+                          
+                        <table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl08_ViolButton__Button" title="Show detailed inspection results" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTIONTableControlRepeater$ctl08$ViolButton$_Button&#39;,&#39;&#39;)">Inspection Results</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td><td class="ttc">1/28/2025 </td><td class="ttc">02 - Followup </td><td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl08_colscore" class="ttc" style="text-align: right;"><span style="white-space:nowrap;">
+49</span>
+ </td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl08_colcritical" class="ttc" style="text-align:center;color:Red;">9</td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl08_colnoncritical" class="ttc" style="text-align:center;color:Blue;">1</td>
+		</tr>
+		
+<tr><td class="tic" scope="row">
+                          
+                        <table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl09_ViolButton__Button" title="Show detailed inspection results" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$INSPECTIONTableControlRepeater$ctl09$ViolButton$_Button&#39;,&#39;&#39;)">Inspection Results</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td><td class="ttc">1/21/2025 </td><td class="ttc">01 - Routine </td><td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl09_colscore" class="ttc" style="text-align: right;"><span style="white-space:nowrap;">
+108</span>
+ </td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl09_colcritical" class="ttc" style="text-align:center;color:Red;">18</td>
+		<td id="ctl00_PageContent_INSPECTIONTableControlRepeater_ctl09_colnoncritical" class="ttc" style="text-align:center;color:Blue;">30</td>
+		</tr>
+
+</table>
+
+                  </td></tr></table>
+
+	</div>
+                </td><td class="panelR"></td></tr></table>
+	<input type="hidden" name="ctl00$PageContent$INSPECTIONTableControl_PostbackTracker" id="ctl00_PageContent_INSPECTIONTableControl_PostbackTracker" />
+
+
+            </td></tr><tr><td class="recordPanelButtonsAlignment"><table cellpadding="0" cellspacing="0" border="0" class="pageButtonsContainer"><tr><td><table cellpadding="0" cellspacing="0" border="0"><tr><td><table class="buttonPadding" cellspacing="0" cellpadding="0" border="0" onmouseover="this.style.cursor='pointer'; return true;" onclick="clickLinkButtonText(this, event);"><tr><td class="bTL"><img src="../Images/space.gif" alt="" class="bTLSpace" /></td><td class="bT"><img src="../Images/space.gif" alt="" class="bTSpace" /></td><td class="bTR"><img src="../Images/space.gif" alt="" class="bTRSpace" /></td></tr><tr><td class="bL"><img src="../Images/space.gif" alt="" class="bLSpace" /></td><td class="bC"><a id="ctl00_PageContent_OKButton__Button" title="Return to previous page" class="button_link" href="javascript:__doPostBack(&#39;ctl00$PageContent$OKButton$_Button&#39;,&#39;&#39;)">Back</a></td><td class="bR"><img src="../Images/space.gif" alt="" class="bRSpace" /></td></tr><tr><td class="bBL"><img src="../Images/space.gif" alt="" class="bBLSpace" /></td><td class="bB"><img src="../Images/space.gif" alt="" class="bBSpace" /></td><td class="bBR"><img src="../Images/space.gif" alt="" class="bBRSpace" /></td></tr></table></td></tr></table>
+</td></tr></table>
+</td></tr></table>
+      
+</div>
+
+    </div>
+    <div id="detailPopup" class="detailRolloverPopup" onmouseout="detailRolloverPopupClose();" onmouseover="clearTimeout(gPopupTimer);"></div>
+                   <div class="QDialog" id="dialog" style="display:none;">
+                          <iframe id="QuickPopupIframe" style="width:100%;height:100%;border:none"></iframe>
+                   </div>                  
+    
+</td><td class="marginR">&nbsp;</td></tr><tr><td class="marginBL">&nbsp;</td><td class="pcB" colspan="2"><table cellpadding="0" cellspacing="0" border="0"><tr><td class="footer"><table cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td>&nbsp;Copyright &copy; 2009 <a href="http://www.cdpehs.com/" target="_blank">Powered by CDP</a>&nbsp;All rights reserved.&nbsp;&nbsp;</td>
+<td> (2026.13 9/22/2026 isd12.2.0)</td>
+</tr>
+</table>
+</td></tr></table></td><td class="marginBR">&nbsp;</td></tr></table>
+</td><td class="pageR"><img src="../Images/space.gif" class="pageRSpace" alt="" /></td></tr><tr><td colspan="3"><table cellpadding="0" cellspacing="0" border="0"><tr><td class="pageBL"><img src="../Images/space.gif" class="pageBLSpace" alt="" /></td><td class="pageB"><img src="../Images/space.gif" class="pageBSpace" alt="" /></td><td class="pageBR"><img src="../Images/space.gif" class="pageBRSpace" alt="" /></td></tr></table>
+</td></tr></table>
+<script language="javascript" type="text/javascript">var ctrl = ""; function pageLoadedHandler1(sender, args) { setTimeout("setTimeoutFocus()", 1000); }function setTimeoutFocus() { setFocus(ctrl); }Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(pageLoadedHandler1);</script>
+<script type="text/javascript">
+//<![CDATA[
+openPopupPage('QPageSize');(function() {var fn = function() {$get("ctl00_scriptManager1_HiddenField").value = '';Sys.Application.remove_init(fn);};Sys.Application.add_init(fn);})();//]]>
+</script>
+</form>
+    </body>
+</html>

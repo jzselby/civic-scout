@@ -97,3 +97,44 @@ def test_health_closures_table_parses_rows_and_inspection_buttons():
         ("VIETOPIA BISTRO", "1407 W 9000 S", "2026-09-28", "2026-09-30"),
     ]
     assert rows[1]["button"] == "ctl00$PageContent$VW_EST_PUBLIC4TableControlRepeater$ctl02$InspButton$_Button"
+
+
+def test_health_closure_reason_comes_from_the_closing_inspection():
+    from civic_scout.sources import restaurants
+    history = restaurants.parse_history(read("inspection_history.html"))
+    assert [h["date"] for h in history[:4]] == ["2026-10-02", "2026-10-01", "2026-09-29", "2026-09-28"]
+    # Follow-ups after the closure describe the cleanup; the closing-date inspection gives the reason.
+    picks = restaurants.closing_inspections(history, "2026-09-28")
+    assert [(p["type"], p["button"]) for p in picks] == [
+        ("07 - Critical Item", "ctl00$PageContent$INSPECTIONTableControlRepeater$ctl03$ViolButton$_Button")]
+    assert restaurants.closing_inspections(history, "2026-09-30")[0]["date"] == "2026-09-29"
+    assert restaurants.closing_inspections(history, "2020-01-01") == []
+
+    text = restaurants.report_text(read("inspection_results.html"))
+    assert text.startswith("Establishment Information") and "VIETOPIA BISTRO" in text
+    assert "There are live cockroaches in the establishment." in text
+    assert "open sewer pipe" in text
+    assert "Red Text" not in text and "Copyright" not in text and "__doPostBack" not in text
+
+
+def test_health_closures_fetch_presses_through_to_the_closing_results():
+    from types import SimpleNamespace
+    from civic_scout.sources import restaurants
+    pages = {"Closedbut": "closures.html", "InspButton": "inspection_history.html",
+             "ViolButton": "inspection_results.html"}
+    pressed = []
+
+    class FakeHttp:
+        def get(self, url):
+            return SimpleNamespace(url=url, text="<form></form>")
+
+        def post(self, url, data):
+            pressed.append(data["__EVENTTARGET"])
+            page = next(v for k, v in pages.items() if k in data["__EVENTTARGET"])
+            return SimpleNamespace(url=url, text=read(page))
+
+    items = restaurants.RestaurantClosures().fetch(None, FakeHttp(), seen=set())
+    vietopia = next(i for i in items if i["org"] == "Vietopia Bistro")
+    assert "live cockroaches" in vietopia["text"]
+    assert vietopia["url"] == restaurants.SITE
+    assert "ctl00$PageContent$INSPECTIONTableControlRepeater$ctl03$ViolButton$_Button" in pressed
