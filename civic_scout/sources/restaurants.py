@@ -147,10 +147,27 @@ inspection report states it, and whether it has reopened."""
                   else "restaurants: no 'Date Closed' in the page")
             rows = parse_closures(html)
             print(f"restaurants: {len(rows)} closure rows: {rows[:5]}")
-            if rows and rows[0]["button"]:
-                _, report = postback(http, url, html, rows[0]["button"])
-                out["inspection-report.html"] = report.encode()
-                print("restaurants: first inspection report:", page_text(report)[:1500])
+            # Each row's inspection history, then the results of its newest inspection,
+            # printed raw so the parsers can be fitted from the job log.
+            for i, row in enumerate(rows):
+                if not row["button"]:
+                    continue
+                hist_url, history = postback(http, url, html, row["button"])
+                out[f"history-{i}.html"] = history.encode()
+                at = history.find("Establishment Information")
+                print(f"restaurants: history {i} ({row['name']}) -> {hist_url} ({len(history)} chars)")
+                if i == len(rows) - 1:
+                    print("restaurants: raw history HTML:\n" + history[at:at + 9000])
+                buttons = re.findall(r"__doPostBack\(&#39;([^&]*ViolButton[^&]*)&#39;|__doPostBack\('([^']*ViolButton[^']*)'",
+                                     history)
+                buttons = [a or b for a, b in buttons]
+                print(f"restaurants: {len(buttons)} result buttons: {buttons[:3]}")
+                if buttons:
+                    res_url, results = postback(http, hist_url, history, buttons[0])
+                    out[f"results-{i}.html"] = results.encode()
+                    print(f"restaurants: results {i} -> {res_url} ({len(results)} chars)")
+                    body = results.find("<body")
+                    print("restaurants: raw results HTML:\n" + results[body:body + 30000])
         except Exception as exc:
             out["closures.error.txt"] = f"{type(exc).__name__}: {exc}".encode()
         return out
