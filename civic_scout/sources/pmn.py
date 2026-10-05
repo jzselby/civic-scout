@@ -174,6 +174,16 @@ address on the agenda and in `names` every business, developer or applicant name
 
     def probe(self, cfg: Config, http: Http) -> dict[str, bytes]:
         out = {}
+        for nid in cfg.pmn_notices:
+            try:
+                html = http.text(NOTICE_URL.format(nid))
+            except Exception as exc:
+                print(f"PMN notice {nid}: {exc}")
+                continue
+            ids = sorted(set(re.findall(r"/pmn/sitemap/publicbody/(\d+)\.html", html)))
+            text = page_text(html)
+            print(f"PMN notice {nid}: body ids {ids}, body {field(text, 'Public Body')!r}, "
+                  f"entity {field(text, 'Entity')!r}, title {field(text, 'Notice Title')!r}")
         for body_id, *_ in body_list(cfg):
             try:
                 html = http.text(BODY_URL.format(body_id))

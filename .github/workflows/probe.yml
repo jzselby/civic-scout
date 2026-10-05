@@ -11,6 +11,9 @@ on:
       pmn_bodies:
         description: "Public Notice body ids to check instead of the defaults (comma-separated)"
         default: ""
+      pmn_notices:
+        description: "Public Notice notice ids whose body ids to look up (comma-separated)"
+        default: ""
 
 permissions:
   contents: read
@@ -29,6 +32,7 @@ jobs:
       - name: Probe
         env:
           PMN_BODIES: ${{ inputs.pmn_bodies || vars.PMN_BODIES }}
+          PMN_NOTICES: ${{ inputs.pmn_notices }}
           SOURCES: ${{ inputs.sources }}
         run: python -m civic_scout probe --out probe
       - name: Show samples in the log

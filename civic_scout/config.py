@@ -26,6 +26,8 @@ class Config:
     google_service_account_json: str | None = None
     # Per-source settings (comma-separated env vars); empty means the source's defaults.
     pmn_bodies: tuple[str, ...] = ()
+    # Probe only: notice ids whose public body ids to look up.
+    pmn_notices: tuple[str, ...] = ()
     slcbuilding_url: str = "https://raw.githubusercontent.com/jzselby/slcbuilding/main/data/permits.jsonl"
     http_timeout: int = 60
     extra: dict = field(default_factory=dict)
@@ -43,6 +45,7 @@ class Config:
             google_sheet_id=env.get("GOOGLE_SHEET_ID") or None,
             google_service_account_json=env.get("GOOGLE_SERVICE_ACCOUNT_JSON") or None,
             pmn_bodies=_list(env.get("PMN_BODIES")),
+            pmn_notices=_list(env.get("PMN_NOTICES")),
             slcbuilding_url=env.get("SLCBUILDING_URL") or cls.slcbuilding_url,
             http_timeout=int(env.get("HTTP_TIMEOUT") or 60),
         )
