@@ -75,6 +75,50 @@ in two sections.
 """
 
 
+REVIEW_PROMPT = """\
+You are the assignment editor at a Salt Lake City newsroom, reviewing the importance
+ratings another screener gave to today's new public records before they reach
+reporters. Your job is to tighten them. Reporters stop trusting a list where
+everything is "high".
+
+What the ratings mean:
+- high: a reporter should start making calls today. The public would care, the
+  record reveals something new (not a routine step in a story already known), and a
+  competitor would be embarrassed to have it first. On a typical day only a handful
+  of records across all sources deserve this; more than ~10 is a sign of inflation.
+- medium: worth a look or a brief; a useful lead or a step in a story we follow.
+- low: routine paperwork.
+
+Be skeptical of:
+- trade permits (electrical, plumbing, mechanical, fire alarm/sprinkler, low voltage)
+  for a project already public: at most medium, unless the permit itself is the first
+  sign of the project or reveals a big new number;
+- several records about the same project or meeting: keep the single most
+  informative one at its level and lower the others;
+- meetings that already happened, where the record reports no outcome;
+- placeholder, test, withdrawn or incomplete records: low.
+Raise a rating only when a record is clearly underrated (e.g. a closure, layoff or
+lawsuit marked low).
+
+Each input record has `key`, `source`, `importance` (the current rating), `headline`,
+`why_it_matters`, and may have `category`, `date`, `org`, `place`, `details`.
+Return only the records whose rating you change, each with the new `importance` and a
+`note` of at most 20 words for the reporter: why it moved (e.g. "Routine trade
+permit for the already-reported Hive on 11th."). Return an empty list if every rating
+holds.
+"""
+
+
+class Change(BaseModel):
+    key: str
+    importance: Importance
+    note: str
+
+
+class Review(BaseModel):
+    changes: list[Change]
+
+
 class ItemNotes(BaseModel):
     key: str
     headline: str
@@ -182,6 +226,49 @@ def rate(items: list[dict], guidance: str, model: str) -> dict[str, ItemNotes]:
         for note in response.parsed_output.items:
             notes[note.key] = note
     return notes
+
+
+def review(items: list[dict], labels: dict[str, str], model: str) -> dict[str, Change]:
+    """A second, skeptical pass over the ratings (all sources, including pre-rated
+    ones). Returns the changes keyed 'source:id'; empty if Claude is unavailable."""
+    rated = [i for i in items if i.get("importance") and not i.get("hidden")]
+    if not rated or not available() or not model:
+        return {}
+    payload = []
+    for i in rated:
+        entry = {"key": f"{i['source']}:{i['id']}", "source": labels.get(i["source"], i["source"]),
+                 "importance": i["importance"], "category": i.get("category"),
+                 "headline": i.get("headline") or i.get("title"), "why_it_matters": i.get("why_it_matters"),
+                 "date": i.get("date"), "org": i.get("org"), "place": i.get("place"),
+                 "details": (i.get("details") or "")[:300]}
+        payload.append({k: v for k, v in entry.items() if v})
+    counts = {lvl: sum(1 for i in rated if i["importance"] == lvl) for lvl in ("high", "medium", "low")}
+    log.info("Editor review of %d ratings (%s) with %s", len(rated), counts, model)
+    changes: dict[str, Change] = {}
+    for batch in _batches(payload):
+        prompt = (f"{len(batch)} rated records (today's totals: {counts}):\n\n"
+                  + json.dumps(batch, indent=1))
+        response = _call(anthropic.Anthropic(), model, REVIEW_PROMPT, prompt, output_format=Review)
+        if response is None or response.parsed_output is None:
+            continue
+        known = {p["key"] for p in batch}
+        for c in response.parsed_output.changes:
+            if c.key in known:
+                changes[c.key] = c
+    return changes
+
+
+def apply_review(items: list[dict], changes: dict[str, Change]) -> int:
+    """Apply the editor's changes; the screener's rating is kept as `first_importance`."""
+    n = 0
+    for item in items:
+        c = changes.get(f"{item['source']}:{item['id']}")
+        if c and c.importance != item.get("importance"):
+            item.setdefault("first_importance", item.get("importance"))
+            item["importance"] = c.importance
+            item["editor_note"] = c.note
+            n += 1
+    return n
 
 
 def brief(items: list[dict], connections: dict[str, list[dict]], labels: dict[str, str], today: date,

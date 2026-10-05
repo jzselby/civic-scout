@@ -42,8 +42,19 @@ DEFAULT_BODIES: list[tuple[str, str, str, str]] = [
     ("1266", "SLC Historic Landmark Commission", "Historic Landmark Commission", "Salt Lake City"),
     ("13", "Alcoholic Beverage Services Commission", "Alcoholic Beverage Services Commission",
      "Alcoholic Beverage Services"),
+    # Education (checked 2026-10-05).
+    ("767", "Granite School District Board", "Board of Education", "Granite School District"),
+    ("738", "Jordan School District Board", "Board of Education", "Jordan School District"),
+    ("1281", "Canyons School District Board", "Canyons School District Board of Education", "Canyons School District"),
+    ("1094", "Murray School District Board", "Murray City School Board", "Murray City School District"),
+    ("1499", "Utah State Board of Education", "State Board of Education", "State Board of Education"),
+    ("83", "Utah Board of Higher Education", "Utah Board of Higher Education", "Utah Board of Higher Education"),
+    ("1376", "University of Utah Board of Trustees", "University of Utah - Board of Trustees", "University of Utah"),
+    ("1383", "Salt Lake Community College Trustees", "Salt Lake Community College--Board of Trustees",
+     "Utah Board of Higher Education"),
 ]
-# Not yet found: the current UTA Board of Trustees (940 is the deactivated old board)
+# Not yet found: the current UTA Board of Trustees (940 is the deactivated old board;
+# UTA's notices since 2026 don't appear under a new body yet)
 # and the SLC Community Reinvestment Agency board (2017 is the County's RDA).
 
 # Body pages list only upcoming notices, so this cap is rarely reached.
@@ -110,10 +121,14 @@ class PublicNotices:
     default_enabled = True
     guidance = """\
 Source "pmn": agendas and notices posted to the Utah Public Notice Website by public
-bodies (city councils, planning commissions, school boards, the state liquor
+bodies (city and county councils, planning commissions, school district boards, the
+state school and higher-education boards, university trustees, the state liquor
 commission, the Inland Port Authority and others). `org` is the public body; `text`
 holds the notice and the text of its attached agenda.
-- high: votes on budgets, taxes, fees, bonds or large contracts; rezonings, master
+- high: votes on budgets, taxes, fees, bonds or large contracts; school closures,
+  boundary changes, superintendent or president hires, contracts and departures,
+  tuition and fee increases, curriculum or book-removal fights, school safety
+  incidents; rezonings, master
   plan changes and large developments; new policies or ordinances with public
   impact; closures, layoffs, settlements, lawsuits, audits, firings or hirings of
   top officials; closed sessions on litigation or property; the liquor commission

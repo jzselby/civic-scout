@@ -30,8 +30,12 @@ restaurant inspections.
 for each source:      fetch the current list → drop records already seen
                       → records dated before the look-back window (default 14 days)
                         are remembered but not reported, so a first run isn't a flood
-rate (Claude)         headline, importance (high/medium/low), category, why it
+rate (Claude Opus)    headline, importance (high/medium/low), category, why it
                       matters, plus the names and addresses each record mentions
+editor (Claude Sonnet) a skeptical second pass over every rating, as an assignment
+                      editor: "high" means a reporter should start calls today, so
+                      routine trade permits, repeat items about one project and past
+                      meetings get lowered; each change carries an Editor's note
 connect               normalize addresses ("1124 East 100 South, Unit 3" → "1124 E 100 S")
                       and names ("Postino, LLC" → "POSTINO"); match records across
                       sources, over the past year
@@ -60,7 +64,8 @@ civic_scout/
   are bold and every source in it is a clickable link.
 - **Top stories**: high-importance records from the last 30 days, newest first.
   Rebuilt every run, so don't type notes here.
-- **All records**: every new record, sorted newest first. Add your own columns (Notes,
+- **All records**: every new record, sorted newest first. When the editor pass changed
+  a rating, the **Editor's note** column says why. Add your own columns (Notes,
   Assigned to); runs write by column heading and leave other columns alone. Don't
   rename the built-in headings.
 
@@ -106,11 +111,13 @@ pip install -r requirements.txt
 python -m civic_scout run --dry-run --no-summary        # no Claude, no writes
 python -m civic_scout run --sources pmn,warn --dry-run  # just some sources
 python -m civic_scout probe --out probe                 # save raw pages
+python -m civic_scout review-existing --dry-run         # what the editor would change
 python -m pytest
 ```
 
 Settings (environment variables): `SOURCES`, `DAYS_BACK`, `SUMMARY_MODEL` (default
-`claude-opus-5-5`), `PMN_BODIES`, `SLCBUILDING_URL`, `HTTP_TIMEOUT`.
+`claude-opus-5-5`), `REVIEW_MODEL` (the editor pass; default `claude-sonnet-5-5`, empty
+turns it off), `PMN_BODIES`, `SLCBUILDING_URL`, `HTTP_TIMEOUT`.
 
 ## Adding a source
 

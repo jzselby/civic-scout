@@ -90,6 +90,10 @@ def enrich(cfg: Config, store: Store, result: RunResult, use_claude: bool = True
             item.update(headline=note.headline, importance=note.importance, category=note.category,
                         why_it_matters=note.why_it_matters, names=note.names, places=note.places)
         apply_rules(item)
+    if use_claude:
+        changed = analyze.apply_review(result.items, analyze.review(result.items, result.labels, cfg.review_model))
+        if changed:
+            log.info("Editor review changed %d rating(s)", changed)
     result.connections = link.connections(result.items, store.everything(), result.day)
     if use_claude:
         result.briefing = analyze.brief(result.items, result.connections, result.labels, result.day, cfg.model)

@@ -28,6 +28,10 @@ on:
         description: "Only apply the sheet's formatting (no fetching, no Claude)"
         type: boolean
         default: false
+      review_existing:
+        description: "Only re-run the editor's review over the last 30 days' records (uses Claude; honors dry run)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -75,7 +79,12 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run }}
           REFRESH: ${{ inputs.refresh_connections }}
           FORMAT: ${{ inputs.format_sheet }}
+          REVIEW: ${{ inputs.review_existing }}
         run: |
+          if [ "$REVIEW" = "true" ]; then
+            if [ "$DRY_RUN" = "true" ]; then python -m civic_scout review-existing --dry-run; else python -m civic_scout review-existing; fi
+            exit
+          fi
           if [ "$FORMAT" = "true" ]; then python -m civic_scout format-sheet; exit; fi
           if [ "$REFRESH" = "true" ]; then python -m civic_scout refresh-connections; exit; fi
           args=(run)

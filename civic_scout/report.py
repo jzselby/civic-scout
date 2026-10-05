@@ -17,6 +17,11 @@ def link(item: dict, label: str | None = None) -> str:
     return f"[{label}]({item['url']})" if item.get("url") else label
 
 
+def why(item: dict) -> str:
+    note = item.get("editor_note")
+    return cell(item.get("why_it_matters")) + (f" *Editor: {cell(note)}*" if note else "")
+
+
 def _sort_key(item: dict):
     return (IMPORTANCE_ORDER.get(item.get("importance"), 3), item.get("date") or "")
 
@@ -42,7 +47,7 @@ def build(today: date, items: list[dict], labels: dict[str, str], health: dict[s
         parts += ["## High importance\n", "| Source | Date | Headline | Why it matters |", "|---|---|---|---|"]
         for i in sorted(high, key=_sort_key):
             parts.append(f"| {cell(labels.get(i['source']))} | {cell(i.get('date'))} "
-                         f"| {link(i, i.get('headline') or i.get('title'))} | {cell(i.get('why_it_matters'))} |")
+                         f"| {link(i, i.get('headline') or i.get('title'))} | {why(i)} |")
         parts.append("")
 
     if connections:
@@ -70,6 +75,6 @@ def build(today: date, items: list[dict], labels: dict[str, str], health: dict[s
         for i in sorted(group, key=_sort_key):
             parts.append(f"| {cell(i.get('importance'))} | {cell(i.get('date'))} "
                          f"| {link(i, i.get('headline') or i.get('title'))} | {cell(i.get('org'))} "
-                         f"| {cell(i.get('place'))} | {cell(i.get('why_it_matters'))} |")
+                         f"| {cell(i.get('place'))} | {why(i)} |")
         parts.append("")
     return "\n".join(parts)

@@ -22,6 +22,8 @@ class Config:
     reports_dir: Path = Path("reports")
     debug_dir: Path = Path("debug")
     model: str = "claude-opus-5-5"
+    # The skeptical second pass over ratings ("assignment editor"); "" turns it off.
+    review_model: str = "claude-sonnet-5-5"
     google_sheet_id: str | None = None
     google_service_account_json: str | None = None
     # Per-source settings (comma-separated env vars); empty means the source's defaults.
@@ -42,6 +44,7 @@ class Config:
             reports_dir=Path(env.get("REPORTS_DIR", "reports")),
             debug_dir=Path(env.get("DEBUG_DIR", "debug")),
             model=env.get("SUMMARY_MODEL") or "claude-opus-5-5",
+            review_model=env.get("REVIEW_MODEL", "claude-sonnet-5-5"),
             google_sheet_id=env.get("GOOGLE_SHEET_ID") or None,
             google_service_account_json=env.get("GOOGLE_SERVICE_ACCOUNT_JSON") or None,
             pmn_bodies=_list(env.get("PMN_BODIES")),

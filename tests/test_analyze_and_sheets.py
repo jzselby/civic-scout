@@ -27,6 +27,11 @@ def test_claude_notes_merge_into_items_and_feed_the_briefing(tmp_path, monkeypat
                 category="Development / housing", why_it_matters="A rezone for 200 apartments.",
                 places=["730 W 900 S"], names=["West End Apartments"])])
             return SimpleNamespace(parsed_output=notes)
+        if output_format is analyze.Review:
+            assert model == "claude-sonnet-5-5" and '"importance": "high"' in prompt
+            return SimpleNamespace(parsed_output=analyze.Review(changes=[analyze.Change(
+                key="fake:7", importance="medium", note="Routine step in a known rezoning."),
+                analyze.Change(key="made:up", importance="high", note="ignored")]))
         return SimpleNamespace(content=[SimpleNamespace(type="text", text="# Morning briefing\n\n**Top stories**\n- rezone")])
 
     monkeypatch.setattr(analyze, "_call", fake_call)
@@ -35,7 +40,11 @@ def test_claude_notes_merge_into_items_and_feed_the_briefing(tmp_path, monkeypat
     result = pipeline.collect(cfg, store, None, date(2026, 10, 3))
     pipeline.enrich(cfg, store, result)
     [item] = result.items
-    assert item["importance"] == "high" and item["places"] == ["730 W 900 S"]
+    assert item["places"] == ["730 W 900 S"]
+    # The editor's review lowered it, keeping the screener's rating and a note.
+    assert (item["importance"], item["first_importance"]) == ("medium", "high")
+    assert item["editor_note"] == "Routine step in a known rezoning."
+    assert "Editor: Routine step" in result.report
     assert result.briefing.startswith("**Top stories**")
     assert "Council weighs West End rezone" in calls[1][1]
     assert "Council weighs West End rezone" in result.report
@@ -49,6 +58,7 @@ def test_records_claude_failed_to_rate_are_held_for_the_next_run(tmp_path, monke
     monkeypatch.setattr(analyze, "rate", lambda items, guidance, model: {"fake:1": analyze.ItemNotes(
         key="fake:1", headline="h", importance="low", category="Other", why_it_matters="w")})
     monkeypatch.setattr(analyze, "brief", lambda *a: None)
+    monkeypatch.setattr(analyze, "review", lambda *a: {})
     cfg = Config(data_dir=tmp_path / "data")
     store = Store(cfg.data_dir)
     result = pipeline.collect(cfg, store, None, date(2026, 10, 3))
@@ -86,7 +96,12 @@ class FakeWorksheet:
             line[col:col + len(v)] = list(v)
 
     def row_values(self, n):
-        return self.grid[n - 1] if len(self.grid) >= n else []
+        return list(self.grid[n - 1]) if len(self.grid) >= n else []
+
+    def insert_cols(self, values, col, inherit_from_before=False):
+        for i, column in enumerate(values):
+            for r, line in enumerate(self.grid):
+                line.insert(col - 1 + i, column[r] if r < len(column) else "")
 
     def append_rows(self, rows, value_input_option=None, table_range=None):
         self.grid += [list(r) for r in rows]
@@ -226,3 +241,31 @@ def test_format_existing_upgrades_old_rows_and_briefings(monkeypatch):
     rich = [r["updateCells"] for r in sh.requests if "updateCells" in r]
     assert rich and rich[0]["rows"][0]["values"][0]["userEnteredValue"]["stringValue"] == "TOP\n• A (x)"
     assert len([r for r in sh.requests if "createDeveloperMetadata" in r]) == 2
+
+
+def test_a_new_column_is_inserted_next_to_its_neighbor(monkeypatch):
+    sh = FakeSpreadsheet()
+    ws = sh.add_worksheet(sheets.ALL, 10, 13)
+    old = [h for h in sheets.RECORD_HEADERS if h != "Editor's note"]
+    ws.update([old, ["x"] * len(old)], "A1")
+    _, headers = sheets._worksheet(sh, sheets.ALL, sheets.RECORD_HEADERS)
+    assert headers == sheets.RECORD_HEADERS
+    assert ws.grid[0] == sheets.RECORD_HEADERS
+    assert ws.grid[1][headers.index("Editor's note")] == ""
+
+
+def test_update_ratings_rewrites_changed_rows_and_top_stories(monkeypatch):
+    sh = FakeSpreadsheet()
+    monkeypatch.setattr(gspread, "service_account_from_dict", lambda info: SimpleNamespace(open_by_key=lambda k: sh))
+    ws = sh.add_worksheet(sheets.ALL, 10, 14)
+    h = sheets.RECORD_HEADERS
+    row = lambda key, imp: [imp if c == "Importance" else key if c == "Key" else "" for c in h]
+    ws.update([h, row("pmn:1", "High"), row("pmn:2", "High")], "A1")
+    lowered = {"source": "pmn", "id": "1", "title": "t1", "importance": "medium", "editor_note": "Routine.",
+               "first_seen": "2026-10-05"}
+    kept = {"source": "pmn", "id": "2", "title": "t2", "importance": "high", "first_seen": "2026-10-05"}
+    sheets.update_ratings("id", "{}", [lowered], [lowered, kept], {}, date(2026, 10, 5))
+    assert ws.grid[1][h.index("Importance")] == "Medium" and ws.grid[1][h.index("Editor's note")] == "Routine."
+    assert ws.grid[2][h.index("Importance")] == "High"
+    top = sh.tabs[sheets.TOP].grid
+    assert [r[h.index("Key")] for r in top[1:]] == ["pmn:2"]

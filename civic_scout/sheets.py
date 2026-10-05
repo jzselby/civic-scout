@@ -32,7 +32,7 @@ TOP = "Top stories"
 ALL = "All records"
 BRIEFING_HEADERS = ["Run date", "New records", "High importance", "Briefing"]
 RECORD_HEADERS = ["First seen", "Date", "Source", "Importance", "Category", "Headline", "Why it matters",
-                  "Who", "Where", "Details", "Connections", "Link", "Key"]
+                  "Editor's note", "Who", "Where", "Details", "Connections", "Link", "Key"]
 TOP_DAYS = 30
 MAX_CELL = 50_000
 
@@ -66,6 +66,7 @@ def record_values(item: dict, label: str, connections: list[dict] | None,
         "Category": text(item.get("category")),
         "Headline": hyperlink(item.get("url"), item.get("headline") or item.get("title") or ""),
         "Why it matters": text(item.get("why_it_matters")),
+        "Editor's note": text(item.get("editor_note")),
         "Who": text(item.get("org")),
         "Where": text(item.get("place") or ", ".join((item.get("places") or [])[:3])),
         "Details": text(item.get("details")),
@@ -85,12 +86,22 @@ def _worksheet(sh: gspread.Spreadsheet, title: str, headers: list[str]) -> tuple
         ws.format("1:1", {"textFormat": {"bold": True}})
         return ws, list(headers)
     existing = ws.row_values(1)
-    missing = [h for h in headers if h not in existing]
-    if missing:
-        if ws.col_count < len(existing) + len(missing):
-            ws.add_cols(len(existing) + len(missing) - ws.col_count)
-        ws.update([existing + missing], "A1")
-        existing += missing
+    for n, name in enumerate(headers):
+        if name in existing:
+            continue
+        # A new column goes right after its neighbor in our order (e.g. "Editor's note"
+        # after "Why it matters"), or at the end if that neighbor isn't there.
+        before = next((h for h in reversed(headers[:n]) if h in existing), None)
+        if before is None:
+            if ws.col_count < len(existing) + 1:
+                ws.add_cols(1)
+            ws.update([[name]], gspread.utils.rowcol_to_a1(1, len(existing) + 1))
+            existing.append(name)
+        else:
+            at = existing.index(before) + 1
+            ws.insert_cols([[name]], col=at + 1, inherit_from_before=True)
+            existing.insert(at, name)
+        log.info("Added %r column to %r", name, ws.title)
     return ws, existing
 
 
@@ -163,7 +174,7 @@ def rich_cell(sheet_id: int, row: int, col: int, plain: str, runs: list[dict]) -
 FORMAT_KEY = "civic_scout_format"
 # Bumping this re-applies the formatting on the next run, replacing each tab's
 # conditional-format rules (including any added by hand).
-FORMAT_VERSION = "1"
+FORMAT_VERSION = "2"
 
 
 def _rgb(hex_color: str) -> dict:
@@ -189,6 +200,7 @@ COLUMN_STYLE: dict[str, tuple[int, str | None, dict | None]] = {
     "Category": (140, "WRAP", None),
     "Headline": (320, "WRAP", None),
     "Why it matters": (440, "WRAP", None),
+    "Editor's note": (240, "WRAP", None),
     "Who": (170, "WRAP", None),
     "Where": (190, "WRAP", None),
     "Details": (220, "CLIP", None),
@@ -393,6 +405,61 @@ def format_existing(sheet_id: str, service_account_json: str) -> None:
         pass
 
 
+def write_top(sh: gspread.Spreadsheet, today: date, pool_items: list[dict], connections: dict[str, list[dict]],
+              labels: dict[str, str]) -> tuple[gspread.Worksheet, list[str]]:
+    """Regenerate Top stories: high-importance records first seen in the last TOP_DAYS
+    days, newest first."""
+    cutoff = (today - timedelta(days=TOP_DAYS)).isoformat()
+    pool = {item_key(i): i for i in pool_items}
+    top = [i for i in pool.values() if i.get("importance") == "high" and not i.get("hidden")
+           and (i.get("first_seen") or today.isoformat())[:10] >= cutoff]
+    top.sort(key=lambda i: ((i.get("first_seen") or today.isoformat())[:10], i.get("date") or ""), reverse=True)
+    # Connections for every row, not just this run's: older top stories gain links too.
+    top_connections = {**link.connections(top, list(pool.values()), today), **connections}
+    ws, headers = _worksheet(sh, TOP, RECORD_HEADERS)
+    ws.batch_clear([f"A2:{gspread.utils.rowcol_to_a1(max(ws.row_count, 2), len(headers))}"])
+    rows = _rows(headers, [record_values(i, labels.get(i["source"], i["source"]),
+                                         top_connections.get(item_key(i)), labels) for i in top])
+    if rows:
+        if ws.row_count < len(rows) + 1:
+            ws.add_rows(len(rows) + 1 - ws.row_count)
+        ws.update(rows, "A2", value_input_option="USER_ENTERED")
+    log.info("Top stories: %d record(s)", len(rows))
+    return ws, headers
+
+
+def update_ratings(sheet_id: str, service_account_json: str, changed: list[dict], all_items: list[dict],
+                   labels: dict[str, str], today: date) -> None:
+    """After a re-review: rewrite Importance and Editor's note on All records rows (by
+    Key) for the changed records, then regenerate Top stories."""
+    gc = gspread.service_account_from_dict(json.loads(service_account_json))
+    sh = gc.open_by_key(sheet_id)
+    ws, headers = _worksheet(sh, ALL, RECORD_HEADERS)
+    by_key = {item_key(i): i for i in changed}
+    grid = ws.get_all_values(value_render_option=ValueRenderOption.formula)
+    k, imp, note = headers.index("Key"), headers.index("Importance"), headers.index("Editor's note")
+    imps, notes, n = [], [], 0
+    for row in grid[1:]:
+        row = row + [""] * (len(headers) - len(row))
+        item = by_key.get(row[k])
+        if item:
+            n += 1
+            imps.append([(item.get("importance") or "").capitalize()])
+            notes.append([text(item.get("editor_note"))])
+        else:
+            imps.append([row[imp]])
+            notes.append([row[note]])
+    if imps:
+        ws.update(imps, f"{_letter(imp)}2", value_input_option="USER_ENTERED")
+        ws.update(notes, f"{_letter(note)}2", value_input_option="USER_ENTERED")
+    log.info("All records: %d rating(s) updated", n)
+    write_top(sh, today, all_items, {}, labels)
+    state = _format_state(sh)
+    for tab, reqs in ((ws, record_format_requests), (sh.worksheet(TOP), record_format_requests)):
+        if _needs_format(state, tab):
+            _apply_format(sh, tab, state, reqs(tab.id, tab.row_values(1)))
+
+
 def publish(sheet_id: str, service_account_json: str, today: date, items: list[dict], labels: dict[str, str],
             briefing: str | None, connections: dict[str, list[dict]], all_stored: list[dict]) -> None:
     gc = gspread.service_account_from_dict(json.loads(service_account_json))
@@ -418,23 +485,7 @@ def publish(sheet_id: str, service_account_json: str, today: date, items: list[d
                                                      connections.get(item_key(i)), labels) for i in items]),
                        value_input_option="USER_ENTERED", table_range="A1")
 
-    # Top stories is regenerated from the store each run, newest first.
-    cutoff = (today - timedelta(days=TOP_DAYS)).isoformat()
-    new_keys = {item_key(i) for i in items}
-    pool = {item_key(i): i for i in all_stored + items}
-    top = [i for i in pool.values() if i.get("importance") == "high" and not i.get("hidden")
-           and (i.get("first_seen") or today.isoformat())[:10] >= cutoff]
-    top.sort(key=lambda i: ((i.get("first_seen") or today.isoformat())[:10], i.get("date") or ""), reverse=True)
-    # Connections for every row, not just this run's: older top stories gain links too.
-    top_connections = {**link.connections(top, list(pool.values()), today), **connections}
-    top_ws, top_headers = ws, headers = _worksheet(sh, TOP, RECORD_HEADERS)
-    ws.batch_clear([f"A2:{gspread.utils.rowcol_to_a1(max(ws.row_count, 2), len(headers))}"])
-    rows = _rows(headers, [record_values(i, labels.get(i["source"], i["source"]),
-                                         top_connections.get(item_key(i)), labels) for i in top])
-    if rows:
-        if ws.row_count < len(rows) + 1:
-            ws.add_rows(len(rows) + 1 - ws.row_count)
-        ws.update(rows, "A2", value_input_option="USER_ENTERED")
+    top_ws, top_headers = write_top(sh, today, all_stored + items, connections, labels)
     # Presentation only: a failure here must not lose the data written above.
     try:
         state = _format_state(sh)
@@ -453,8 +504,7 @@ def publish(sheet_id: str, service_account_json: str, today: date, items: list[d
             sh.del_worksheet(blank)
     except gspread.WorksheetNotFound:
         pass
-    log.info("Sheet updated: %d new records, %d top stories (%d from this run)",
-             len(items), len(top), len([i for i in top if item_key(i) in new_keys]))
+    log.info("Sheet updated: %d new records", len(items))
 
 
 def refresh_connections(sheet_id: str, service_account_json: str, connections: dict[str, list[dict]],

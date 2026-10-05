@@ -41,6 +41,13 @@ class Http:
         resp.raise_for_status()
         return resp
 
+    def post(self, url: str, data: dict, **kwargs) -> requests.Response:
+        self._pace(url)
+        log.debug("POST %s", url)
+        resp = self.session.post(url, data=data, timeout=self.timeout, **kwargs)
+        resp.raise_for_status()
+        return resp
+
     def text(self, url: str, **kwargs) -> str:
         resp = self.get(url, **kwargs)
         if not resp.encoding or resp.encoding.lower() == "iso-8859-1":

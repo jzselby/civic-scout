@@ -24,6 +24,23 @@ WELCOME = SITE + "ESTABLISHMENT/WelcomePage.aspx"
 COUNTY_PAGE = "https://www.saltlakecounty.gov/health/food-protection/inspections/"
 
 
+CLOSURES_BUTTON = "ctl00$PageContent$Closedbut$_Button"
+
+
+def postback(http: Http, url: str, html: str, target: str) -> tuple[str, str]:
+    """Press an ASP.NET WebForms button: post the page's form back with its hidden
+    fields and __EVENTTARGET set to the button. Returns (response URL, HTML)."""
+    soup = BeautifulSoup(html, "lxml")
+    form = soup.find("form")
+    data = {i["name"]: i.get("value", "") for i in (form or soup).find_all("input", attrs={"type": "hidden"})
+            if i.get("name")}
+    data["__EVENTTARGET"] = target
+    data["__EVENTARGUMENT"] = ""
+    action = urljoin(url, form["action"]) if form is not None and form.get("action") else url
+    resp = http.post(action, data)
+    return resp.url, resp.text
+
+
 def closure_links(html: str, base: str) -> list[str]:
     soup = BeautifulSoup(html, "lxml")
     out = []
@@ -56,6 +73,13 @@ whether it has reopened."""
 
     def probe(self, cfg: Config, http: Http) -> dict[str, bytes]:
         out = {}
+        try:
+            search = http.get(SITE)
+            url, html = postback(http, search.url, search.text, CLOSURES_BUTTON)
+            print(f"restaurants: closures postback -> {url} ({len(html)} chars)")
+            out["closures-postback.html"] = html.encode()
+        except Exception as exc:
+            out["closures-postback.error.txt"] = f"{type(exc).__name__}: {exc}".encode()
         for name, url in (("welcome.html", WELCOME), ("search.html", SITE), ("county.html", COUNTY_PAGE)):
             try:
                 html = http.text(url)

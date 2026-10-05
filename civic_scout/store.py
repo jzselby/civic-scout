@@ -49,6 +49,18 @@ class SourceStore:
     def all(self) -> list[dict]:
         return [dict(i) for i in self.items.values()]
 
+    def update(self, items: list[dict], fields: tuple[str, ...]) -> None:
+        """Merge these fields from items into stored ones and rewrite the file."""
+        for item in items:
+            stored = self.items.get(item["id"])
+            if stored is not None:
+                stored.update({f: item[f] for f in fields if f in item})
+        tmp = self.path.with_suffix(".tmp")
+        with tmp.open("w", encoding="utf-8") as f:
+            for item in self.items.values():
+                f.write(json.dumps(item, sort_keys=True) + "\n")
+        tmp.replace(self.path)
+
 
 class Store:
     """All sources' stores, under data/<source>.jsonl."""

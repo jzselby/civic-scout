@@ -11,6 +11,7 @@ import argparse
 import logging
 import os
 import sys
+from datetime import timedelta
 from pathlib import Path
 
 from . import analyze, link, pipeline, sheets
@@ -82,6 +83,35 @@ def cmd_format_sheet(cfg: Config, args) -> int:
     return 0
 
 
+def cmd_review_existing(cfg: Config, args) -> int:
+    """Run the editor's review over records already in the sheet (last 30 days)."""
+    if not analyze.available():
+        log.error("ANTHROPIC_API_KEY is not set")
+        return 1
+    store = Store(cfg.data_dir)
+    items = store.everything()
+    cutoff = (pipeline.today() - timedelta(days=sheets.TOP_DAYS)).isoformat()
+    recent = [i for i in items if (i.get("first_seen") or "")[:10] >= cutoff and i.get("importance")]
+    labels = {s.name: s.label for s in ALL}
+    changes = analyze.review(recent, labels, cfg.review_model)
+    changed_n = analyze.apply_review(recent, changes)
+    changed = [i for i in recent if link.item_key(i) in changes and i.get("editor_note")]
+    log.info("Editor review: %d of %d rating(s) changed", changed_n, len(recent))
+    for c in changed:
+        log.info("  %s: %s -> %s (%s)", link.item_key(c), c.get("first_importance"), c["importance"], c["editor_note"])
+    if args.dry_run:
+        return 0
+    for name in {i["source"] for i in changed}:
+        store.source(name).update([i for i in changed if i["source"] == name],
+                                  ("importance", "first_importance", "editor_note"))
+    if cfg.google_sheet_id and cfg.google_service_account_json:
+        merged = {link.item_key(i): i for i in items}
+        merged.update({link.item_key(i): i for i in changed})
+        sheets.update_ratings(cfg.google_sheet_id, cfg.google_service_account_json, changed,
+                              list(merged.values()), labels, pipeline.today())
+    return 0
+
+
 def cmd_probe(cfg: Config, args) -> int:
     http = Http(cfg.http_timeout)
     out_dir = Path(args.out)
@@ -124,6 +154,8 @@ def main(argv: list[str] | None = None) -> int:
     probe.add_argument("--sources", help="comma-separated source names (default: all)")
     probe.add_argument("--out", default="probe")
     sub.add_parser("sources", help="list sources")
+    rev = sub.add_parser("review-existing", help="run the editor's review over the last 30 days' records")
+    rev.add_argument("--dry-run", action="store_true", help="log the changes; write nothing")
     sub.add_parser("format-sheet", help="apply the sheet's formatting now (no fetching, no Claude)")
     sub.add_parser("refresh-connections", help="recompute the sheet's Connections column from stored records")
     args = parser.parse_args(argv)
@@ -142,6 +174,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "probe":
         return cmd_probe(cfg, args)
+    if args.command == "review-existing":
+        return cmd_review_existing(cfg, args)
     if args.command == "format-sheet":
         return cmd_format_sheet(cfg, args)
     if args.command == "refresh-connections":
