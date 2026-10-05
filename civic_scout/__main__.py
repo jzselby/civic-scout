@@ -23,6 +23,14 @@ from .store import Store, was_reported
 log = logging.getLogger("civic_scout")
 
 
+def write_report(cfg: Config, day, text: str) -> None:
+    """One report per day: a later run (or re-review) the same day rewrites it, and its
+    report covers all of the day's records."""
+    cfg.reports_dir.mkdir(parents=True, exist_ok=True)
+    (cfg.reports_dir / f"{day.isoformat()}.md").write_text(text, encoding="utf-8")
+    (cfg.reports_dir / "latest.md").write_text(text, encoding="utf-8")
+
+
 def cmd_run(cfg: Config, args) -> int:
     if args.require_claude and not args.no_summary and not analyze.available():
         # Otherwise every record would be marked seen without a rating, and never rated.
@@ -47,13 +55,7 @@ def cmd_run(cfg: Config, args) -> int:
     elif not args.no_sheet:
         log.info("GOOGLE_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_JSON not set; skipping the sheet")
 
-    cfg.reports_dir.mkdir(parents=True, exist_ok=True)
-    # A second run on the same day gets its own file rather than replacing the first.
-    path, n = cfg.reports_dir / f"{day.isoformat()}.md", 2
-    while path.exists():
-        path, n = cfg.reports_dir / f"{day.isoformat()}-{n}.md", n + 1
-    path.write_text(result.report, encoding="utf-8")
-    (cfg.reports_dir / "latest.md").write_text(result.report, encoding="utf-8")
+    write_report(cfg, day, result.report)
     for source in selected(cfg.sources):
         for i in result.old:
             i["reported"] = False
@@ -123,17 +125,22 @@ def cmd_review_existing(cfg: Config, args) -> int:
     for name in {i["source"] for i in changed}:
         store.source(name).update([i for i in changed if i["source"] == name],
                                   ("importance", "first_importance", "editor_note"))
-    if cfg.google_sheet_id and cfg.google_service_account_json:
+    sheet = cfg.google_sheet_id and cfg.google_service_account_json
+    if sheet:
         merged = {link.item_key(i): i for i in items}
         merged.update({link.item_key(i): i for i in changed})
         sheets.update_ratings(cfg.google_sheet_id, cfg.google_service_account_json, changed,
                               list(merged.values()), labels, pipeline.today())
-        # Ratings changed, so today's briefing is rewritten to match.
-        day = pipeline.today()
-        today_items = pipeline.reported_on(Store(cfg.data_dir), day)
-        if today_items:
+    # Ratings changed, so today's briefing and report are rewritten to match.
+    day = pipeline.today()
+    store = Store(cfg.data_dir)
+    today_items = pipeline.reported_on(store, day)
+    if today_items:
+        briefing = pipeline.day_briefing(cfg, store, day, today_items, labels)
+        if sheet:
             sheets.replace_briefing(cfg.google_sheet_id, cfg.google_service_account_json, day, today_items,
-                                    pipeline.day_briefing(cfg, Store(cfg.data_dir), day, today_items, labels))
+                                    briefing)
+        write_report(cfg, day, pipeline.day_report(store, day, today_items, {}, briefing, labels))
     return 0
 
 
