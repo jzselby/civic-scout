@@ -1,32 +1,102 @@
 # Civic Scout briefing: October 06, 2026
 
-**13 new record(s), 1 high importance.**
+**70 new record(s), 2 high importance.**
 
 | Source | New | Status |
 |---|---|---|
-| Public meeting notices | 0 | ok (0 fetched) |
+| Public meeting notices | 56 | ok (136 fetched) |
 | WARN layoff notices | 0 | ok (283 fetched) |
 | SLC new business licenses | 0 | ok (0 fetched) |
-| SL County health closures | 0 | ok (0 fetched) |
-| SLC permits & planning (slcbuilding) | 13 | ok (13 fetched) |
+| SL County health closures | 1 | ok (1 fetched) |
+| SLC permits & planning (slcbuilding) | 13 | ok (0 fetched) |
 
 ## Top stories
 
-- **187-unit supportive housing building planned at 999 S Main.** A permit filed Oct. 5 covers The Edward, a six-story, $42 million permanent supportive housing building with 187 units, developed with The Road Home and First Step House. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26HIS&capID2=00000&capID3=08021&agencyCode=SLCREF&IsToShowInspection=))
-- **Delta to remove "forever chemical" fire suppression from airport hangar.** Delta Air Lines filed to replace a PFOS-based fire suppression system at its hangar at 3823 W 1200 N with a water-only system. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26BFR&capID2=00000&capID3=00341&agencyCode=SLCREF&IsToShowInspection=))
-- **Fire-damaged warehouse at 380 W 700 S slated for demolition.** A $140,000 permit covers demolition and removal of a 30,000-square-foot warehouse, with work scheduled from mid-October to mid-November. The applicant is listed as Jesus Perez. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26BDM&capID2=00000&capID3=00127&agencyCode=SLCREF&IsToShowInspection=))
+- **187-unit supportive housing tower, The Edward, files for permit**: A $42 million, six-story building with 187 units of permanent supportive housing is planned at 999 S Main St in Salt Lake City. The Road Home and First Step House are developing it. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26HIS&capID2=00000&capID3=08021&agencyCode=SLCREF&IsToShowInspection=))
+- **Utah County to vote Wednesday on $30M bond and a new county administrator**: On Oct. 7 the Utah County Commission votes on issuing about $30 million in sales tax revenue bonds and on a resolution appointing a county administrator. Closed sessions on litigation and property sales are also on the agenda. ([Public meeting notices](https://www.utah.gov/pmn/sitemap/notice/1113099.html))
+- **Delta removes "forever chemical" fire suppression from SLC hangar**: Delta Air Lines filed to replace a PFOS-based fire suppression system with a water-only system at its hangar at 3823 W 1200 N. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26BFR&capID2=00000&capID3=00341&agencyCode=SLCREF&IsToShowInspection=))
+- **Fire-damaged warehouse at 380 W 700 S to be demolished**: A permit lists the owner as Jesus Perez and covers a $140,000 teardown of the 30,000 sq ft warehouse, scheduled from mid-October to mid-November. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26BDM&capID2=00000&capID3=00127&agencyCode=SLCREF&IsToShowInspection=))
 
 ## Also notable
 
-- **Preliminary subdivision filed at 818 W 100 S.** The record does not yet give the project's size or scope. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Planning&TabName=Planning&capID1=26HIS&capID2=00000&capID3=08022&agencyCode=SLCREF&IsToShowInspection=))
+- **21Lux apartments pool closed by health department:** The outdoor pool at 204 W 2100 S was closed Oct. 6 after a Sept. 29 inspection found loose grab rails, a missing skimmer weir, a broken restroom sink and no soap or towels. It has not reopened. ([SL County health closures](https://public.cdpehs.com/UTEnvPbl/))
+- **Preliminary subdivision filed at 818 W 100 S:** The record does not yet give the project's size or scope. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Planning&TabName=Planning&capID1=26HIS&capID2=00000&capID3=08022&agencyCode=SLCREF&IsToShowInspection=))
 
 ## High importance
 
 | Source | Date | Headline | Why it matters |
 |---|---|---|---|
 | SLC permits & planning (slcbuilding) | 2026-10-05 | [New six-story, 187-unit permanent supportive housing building called The Edward.](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26HIS&capID2=00000&capID3=08021&agencyCode=SLCREF&IsToShowInspection=) | The Edward is a $42M, 187-unit permanent supportive housing building at 999 S Main St, developed with The Road Home and First Step House. |
+| Public meeting notices | 2026-10-07 | [Utah County weighs $30M sales tax bond, names new county administrator](https://www.utah.gov/pmn/sitemap/notice/1113099.html) | On Oct. 7 the Utah County Commission votes on issuing about $30 million in sales tax revenue bonds and on a resolution appointing a county administrator. Closed sessions on litigation and property sales are also scheduled. |
 
 ## All new records
+
+### Public meeting notices (56)
+
+| Importance | Date | Record | Who | Where | Why it matters |
+|---|---|---|---|---|---|
+| high | 2026-10-07 | [Utah County weighs $30M sales tax bond, names new county administrator](https://www.utah.gov/pmn/sitemap/notice/1113099.html) | Utah County Commission |  | On Oct. 7 the Utah County Commission votes on issuing about $30 million in sales tax revenue bonds and on a resolution appointing a county administrator. Closed sessions on litigation and property sales are also scheduled. |
+| medium | 2026-09-22 | [Provo passes two rezones and outdoor lighting exemptions ordinance](https://www.utah.gov/pmn/sitemap/notice/1112797.html) | Provo Municipal Council |  | Provo approved rezoning 1878 North Geneva Road to the Lakeview Fields specific development plan zone, a minor rezone at 3998 North 300 West, and loosened outdoor lighting rules on Sept. 22. |
+| medium | 2026-09-22 | [Orem adopts detached ADU rules, moves dispatch to Central Utah 911](https://www.utah.gov/pmn/sitemap/notice/1108079.html) | Orem City Council |  | Sept. 22 agenda: ordinance allowing detached ADUs on lots of 11,000 sq ft or more under new state law, joining Central Utah 911 and leaving the Provo Metro Dispatch arrangement, and a 90-minute short-term rental discussion. |
+| medium | 2026-09-22 | [Alpine, Provo districts move Foothill Orchards annexation properties to Provo schools](https://www.utah.gov/pmn/sitemap/notice/1110109.html) | Alpine School District Board |  | Sept. 22 board votes on joint resolution transferring annexed properties from Alpine to Provo School District for school and tax purposes, and a quit claim deed to Saratoga Springs for road widening. |
+| medium | 2026-09-23 | [Utah County amends 2026 budget, ratifies unnamed settlement agreement](https://www.utah.gov/pmn/sitemap/notice/1110283.html) | Utah County Commission |  | Sept. 23 agenda included a 2026 budget amendment hearing, ratification of an unspecified settlement agreement, a jail fingerprinting fee change and removal of about 34.99 acres north of Santaquin from an agriculture protection area. |
+| medium | 2026-09-23 | [Summit County hearing on $71M rec bond, Soil to Spoil permit revocation](https://www.utah.gov/pmn/sitemap/notice/1110075.html) | Summit County Council |  | Sept. 23: hearing on $71 million Snyderville Basin Recreation GO bonds, possible CUP revocation for Soil to Spoil at 7550 W. Lower Bowl Road, and solid waste plan adoption. *Editor: Same $71M bond hearing covered by newer Oct. 7 record; keep Soil to Spoil CUP revocation as lead for medium.* |
+| medium | 2026-09-24 | [Utah Lake Authority reviews master plans for 11 lake access sites](https://www.utah.gov/pmn/sitemap/notice/1109347.html) | Utah Lake Authority |  | Landmark Design presented master plans and lakewide signage, including three concepts for Utah Lake State Park marina. |
+| medium | 2026-09-25 | [Transportation Commission adds scope and funding to I-215 in Salt Lake](https://www.utah.gov/pmn/sitemap/notice/1052395.html) | Utah Transportation Commission |  | Sept. 25 STIP amendment adds scope and funding to I-215 from SR-201 to North Temple, plus corridor preservation on 4000 South and US-191. *Editor: STIP amendment adding funding to I-215; useful lead but not a call-today story.* |
+| medium | 2026-09-28 | [Provo and Orem councils meet on dispatch contract, Lakeview Parkway](https://www.utah.gov/pmn/sitemap/notice/1111061.html) | Provo Municipal Council |  | Joint work session on dispatch contract, Lakeview Parkway expansion and street safety. *Editor: Joint Provo-Orem session on dispatch contract; Orem is leaving Provo Metro Dispatch.* |
+| medium | 2026-09-29 | [Davis County approves $9.5M library renovation, $9.3M Hill AFB road grant](https://www.utah.gov/pmn/sitemap/notice/1111309.html) | Davis County Commission |  | Sept. 29 agenda: $9,535,906 guaranteed max price with Westland Construction for Bountiful library renovation, $9,268,020 pass-through grant for Falcon Hill frontage road, FrontRunner double-track agreement with UDOT and a 2026 budget amendment. |
+| medium | 2026-09-30 | [Summit County weighs $931K forest fuels contract](https://www.utah.gov/pmn/sitemap/notice/1111431.html) | Summit County Council |  | Contract up to $931,000 with Summit Forests to treat about 1,000 acres in the Upper Weber River Watershed. |
+| medium | 2026-10-01 | [Provo council, school board discuss boundary changes and tax increases](https://www.utah.gov/pmn/sitemap/notice/1111737.html) | Provo Municipal Council |  | Oct. 1 joint meeting covered school construction, boundary changes, the Timpanogos Elementary site and public notice for tax increases. |
+| medium | 2026-10-01 | [Panel to review applicants for Orem justice court judge](https://www.utah.gov/pmn/sitemap/notice/1111123.html) | Orem City Council |  | Selection meeting to replace Judge Reed Parkin, who resigns in December. *Editor: Orem justice court judge resigning in December; top-official departure is a lead.* |
+| medium | 2026-10-01 | [Layton authorizes eminent domain for Angel-Sugar street connection](https://www.utah.gov/pmn/sitemap/notice/1111659.html) | Layton City Council |  | Oct. 1 consent items include eminent domain for the Angel Street and Sugar Street connection and a bid award to Claude H. Nix Construction for secondary water trunk line tunneling under I-15. |
+| medium | 2026-10-06 | [Provo votes on Epic Sports Park development deal, Lakeview Parkway tax increment](https://www.utah.gov/pmn/sitemap/notice/1112259.html) | Provo Municipal Council |  | Oct. 6 votes include a participation agreement with Philo Venture Management for Epic Sports Park commercial development, interlocal tax increment agreements for the Lakeview Parkway CRA, a Springville Rising revenue-sharing deal and rezones to higher-density housing. |
+| medium | 2026-10-06 | [Provo council discusses Towne Centre Mall redevelopment, downtown alcohol sales](https://www.utah.gov/pmn/sitemap/notice/1112257.html) | Provo Municipal Council |  | Oct. 6 work meeting covers Provo Towne Centre Mall redevelopment, alcohol retailing downtown, Epic Sports Park development and Center Street redesign, plus a closed session. |
+| medium | 2026-10-06 | [Davis School Board votes on Antelope Elementary land swap](https://www.utah.gov/pmn/sitemap/notice/1112795.html) | Davis School District Board |  | Oct. 6 business items: land swap at Antelope Elementary, Davis Technical College agreement and final graduation requirements policy. |
+| medium | 2026-10-06 | [Weber, Cache counties agree on Powder Mountain area services](https://www.utah.gov/pmn/sitemap/notice/1112547.html) | Weber County Commission |  | Oct. 6 vote on interlocal agreement with Cache County for services in the Powder Mountain area. |
+| medium | 2026-10-06 | [Ogden RDA weighs incentive deal for senior housing at 151 12th Street](https://www.utah.gov/pmn/sitemap/notice/1112237.html) | Ogden City Council |  | Oct. 6 joint work session covers a participation and incentive agreement for a senior housing project and mid-year budget amendments. |
+| medium | 2026-10-06 | [Tooele County reviews sheriff building study, pay study, budget increase](https://www.utah.gov/pmn/sitemap/notice/1112479.html) | Tooele County Council |  | Oct. 6: sheriff facility expansion study, compensation study, $238,930 General Fund increase and land purchase for the 33rd Parkway extension. |
+| medium | 2026-10-06 | [Summit County holds housing summit](https://www.utah.gov/pmn/sitemap/notice/1112567.html) | Summit County Council |  | Oct. 6 special session housing summit with Housing Authority and partners. |
+| medium | 2026-10-07 | [Weber School District amends fee schedules, meets on litigation](https://www.utah.gov/pmn/sitemap/notice/1113333.html) | Weber School District Board |  | Oct. 7 meeting includes a fee schedule amendment hearing, 2027-28 calendar, new unpaid meal charges policy and a closed session on pending litigation. |
+| medium | 2026-10-07 | [Summit County hears $71M rec bond arguments, Silver Summit mixed-use rezone](https://www.utah.gov/pmn/sitemap/notice/1112357.html) | Summit County Council |  | Oct. 7: public meeting on the $71 million Snyderville Basin Recreation GO bond ballot proposition, Latitudes mixed-use rezone at 6417 N Pace Frontage Rd, and a resolution calling for repeal of state preliminary municipality law. *Editor: Bond hearing and mixed-use rezone are both newsworthy but not urgent calls today; keep as lead.* |
+| medium | 2026-10-13 | [Orem hearing on 9-acre industrial rezone and ADU definitions](https://www.utah.gov/pmn/sitemap/notice/1111885.html) | Orem City Council |  | Oct. 13 hearings on rezoning about 9.29 acres at 1075 South 1675 West from controlled to light manufacturing, plus updated dwelling and ADU definitions. |
+| low | 2026-09-22 | [Provo council hears housing grant report, votes on rezones](https://www.utah.gov/pmn/sitemap/notice/1109017.html) | Provo Municipal Council |  | Routine Sept. 22 meeting with CAPER hearing and minor rezones. |
+| low | 2026-09-22 | [Provo work session on sales tax distribution, Provo River design corridor](https://www.utah.gov/pmn/sitemap/notice/1109015.html) | Provo Municipal Council |  | Routine work session. |
+| low | 2026-09-22 | [Davis County cancels Sept. 22 commission meeting](https://www.utah.gov/pmn/sitemap/notice/1109929.html) | Davis County Commission |  | Routine cancellation. |
+| low | 2026-09-22 | [Tooele County departments present budgets](https://www.utah.gov/pmn/sitemap/notice/1109305.html) | Tooele County Council |  | Routine work session. |
+| low | 2026-09-23 | [Utah County sets hearing on 2026 budget amendments](https://www.utah.gov/pmn/sitemap/notice/1106435.html) | Utah County Commission |  | Routine budget amendment hearing notice. |
+| low | 2026-09-23 | [Notice of hearing on $71M Snyderville Basin recreation bond](https://www.utah.gov/pmn/sitemap/notice/1105831.html) | Summit County Council |  | Bonds up to $71 million for recreation facilities, trails and open space, secured by property taxes. *Editor: Bare notice of $71M bond hearing; covered better by the Summit County agenda records.* |
+| low | 2026-09-24 | [Vacancy posted on North Utah County Water Conservancy District board](https://www.utah.gov/pmn/sitemap/notice/1110891.html) | Utah County Commission |  | Routine board vacancy notice. |
+| low | 2026-09-24 | [Orem posts joint meeting with Provo council](https://www.utah.gov/pmn/sitemap/notice/1111019.html) | Orem City Council |  | Duplicate notice of joint work session. |
+| low | 2026-09-24 | [Transportation Commission tours Summit County road projects](https://www.utah.gov/pmn/sitemap/notice/1067727.html) | Utah Transportation Commission |  | Field tour of Kimball Junction, SR-224 BRT and other projects. |
+| low | 2026-09-25 | [Davis School Board holds training study session](https://www.utah.gov/pmn/sitemap/notice/1110875.html) | Davis School District Board |  | Routine study session. |
+| low | 2026-09-28 | [Weber County posts 2027 budget hearing schedule](https://www.utah.gov/pmn/sitemap/notice/1111253.html) | Weber County Commission |  | Routine budget hearing schedule. |
+| low | 2026-09-29 | [Davis County sets hearing on 2026 budget amendments](https://www.utah.gov/pmn/sitemap/notice/1109243.html) | Davis County Commission |  | Routine budget hearing notice. |
+| low | 2026-09-29 | [Ogden council tours Pineview pipeline construction](https://www.utah.gov/pmn/sitemap/notice/1111055.html) | Ogden City Council |  | Field trip notice. |
+| low | 2026-10-01 | [Layton work session on eminent domain and housing market trends](https://www.utah.gov/pmn/sitemap/notice/1111657.html) | Layton City Council |  | Work session previewing eminent domain item and housing trends. |
+| low | 2026-10-05 | [Weber County work session on HR policies, Cache County deal](https://www.utah.gov/pmn/sitemap/notice/1112561.html) | Weber County Commission |  | Routine work session. |
+| low | 2026-10-06 | [Davis County cancels Oct. 6 commission meeting](https://www.utah.gov/pmn/sitemap/notice/1113191.html) | Davis County Commission |  | Routine cancellation. |
+| low | 2026-10-06 | [Tooele County work session on department staffing requests](https://www.utah.gov/pmn/sitemap/notice/1112467.html) | Tooele County Council |  | Routine budget work session. |
+| low | 2026-10-06 | [Tooele County hearing on 2026 budget increase](https://www.utah.gov/pmn/sitemap/notice/1111129.html) | Tooele County Council |  | Routine budget hearing notice. |
+| low | 2026-10-07 | [Weber School Board study session on fees and safety](https://www.utah.gov/pmn/sitemap/notice/1113341.html) | Weber School District Board |  | Routine study session. |
+| low | 2026-10-14 | [Summit County amends Snyderville Basin code enforcement sections](https://www.utah.gov/pmn/sitemap/notice/1112373.html) | Summit County Council |  | Code conformance with state law. |
+| low | 2026-10-14 | [Summit County amends Eastern Summit code enforcement sections](https://www.utah.gov/pmn/sitemap/notice/1112369.html) | Summit County Council |  | Code conformance with state law. |
+| low | 2026-10-15 | [Layton hearing on 1.5-acre commercial-to-industrial rezone](https://www.utah.gov/pmn/sitemap/notice/1112787.html) | Layton City Council |  | Small rezone of 1.566 acres from CP-2 to M-1. |
+| low | 2026-10-20 | [Davis County cancels Oct. 20 commission meeting](https://www.utah.gov/pmn/sitemap/notice/1113193.html) | Davis County Commission |  | Routine cancellation. |
+| low | 2026-10-27 | [Tooele County sets hearing on 2027 budget](https://www.utah.gov/pmn/sitemap/notice/1110443.html) | Tooele County Council |  | Routine budget hearing notice. |
+| low | 2026-11-03 | [Provo seeks applicants for Metropolitan Water District board](https://www.utah.gov/pmn/sitemap/notice/1109667.html) | Provo Municipal Council |  | Routine board vacancy notice. |
+| low | 2026-11-03 | [Davis County cancels Nov. 3 commission meeting](https://www.utah.gov/pmn/sitemap/notice/1113195.html) | Davis County Commission |  | Routine cancellation. |
+| low | 2026-11-05 | [Transportation Commission road tour in St. George](https://www.utah.gov/pmn/sitemap/notice/1067733.html) | Utah Transportation Commission |  | Placeholder tour notice. |
+| low | 2026-11-06 | [Transportation Commission November meeting notice](https://www.utah.gov/pmn/sitemap/notice/1052397.html) | Utah Transportation Commission |  | Placeholder meeting notice. |
+| low | 2026-11-24 | [Davis County cancels Nov. 24 commission meeting](https://www.utah.gov/pmn/sitemap/notice/1113199.html) | Davis County Commission |  | Routine cancellation. |
+| low | 2026-12-11 | [Transportation Commission December meeting notice](https://www.utah.gov/pmn/sitemap/notice/1052399.html) | Utah Transportation Commission |  | Placeholder meeting notice. |
+| low | 2026-12-22 | [Davis County cancels Dec. 22 commission meeting](https://www.utah.gov/pmn/sitemap/notice/1113203.html) | Davis County Commission |  | Routine cancellation. |
+| low | 2026-12-29 | [Davis County cancels Dec. 29 commission meeting](https://www.utah.gov/pmn/sitemap/notice/1113209.html) | Davis County Commission |  | Routine cancellation. |
+
+### SL County health closures (1)
+
+| Importance | Date | Record | Who | Where | Why it matters |
+|---|---|---|---|---|---|
+| medium | 2026-10-06 | [Health department closes 21Lux apartments outdoor pool](https://public.cdpehs.com/UTEnvPbl/) | 21Lux Apts - Outdoor Pool | 204 W 2100 S | 21Lux Apts outdoor pool at 204 W 2100 S closed Oct. 6; Sept. 29 inspection cited loose grab rails, missing skimmer weir, broken restroom sink, no soap or towels. Not reopened. |
 
 ### SLC permits & planning (slcbuilding) (13)
 
