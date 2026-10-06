@@ -71,6 +71,27 @@ DEFAULT_BODIES: list[tuple[str, str, str, str]] = [
      "Metropolitan Water District of Salt Lake"),
     ("1498", "Salt Lake County Board of Health", "Salt Lake County Board of Health", "Salt Lake County"),
 ]
+# Regional: neighboring counties and regional boards. Their records reach Top stories
+# and the briefing only when rated high (store.is_notable). Checked 2026-10-06.
+REGIONAL_BODIES: list[tuple[str, str, str, str]] = [
+    ("2731", "Utah County Commission", "Board of Commissioners of Utah County", "Utah County"),
+    ("1600", "Provo Municipal Council", "Provo Municipal Council", "Provo"),
+    ("734", "Orem City Council", "City Council", "Orem"),
+    ("762", "Alpine School District Board", "Alpine School District Board of Education", "Alpine School District"),
+    ("1335", "Davis County Commission", "Davis County Commission", "Davis County"),
+    ("315", "Layton City Council", "City Council", "Layton"),
+    ("736", "Davis School District Board", "Board of Education", "Davis School District"),
+    ("2167", "Weber County Commission", "Weber County Commission", "Weber County"),
+    ("6587", "Ogden City Council", "City Council", "Ogden"),
+    ("1144", "Weber School District Board", "Weber School Board of Education", "Weber School District"),
+    ("7189", "Tooele County Council", "Tooele County Council", "Tooele County"),
+    ("1330", "Summit County Council", "Summit County Council", "Summit County"),
+    ("2262", "Wasatch Front Regional Council", "Wasatch Front Regional Council", "Wasatch Front Regional Council"),
+    ("7775", "Utah Lake Authority", "Utah Lake Authority Governing Board", "Utah Lake Authority"),
+    ("60", "Utah Transportation Commission", "Transportation Commission", "Department of Transportation"),
+]
+REGIONAL_IDS = {body_id for body_id, *_ in REGIONAL_BODIES}
+
 # Not yet found: the current UTA Board of Trustees. 940 is "Board of Trustees
 # (Deactivated)"; its last notice is for June 24, 2026, and no newer UTA body was found.
 
@@ -88,7 +109,7 @@ _FOOTER = re.compile(r"\n(Subscribe by Email|Subscribe\nSubscribe by Email|Publi
 
 def body_list(cfg: Config) -> list[tuple[str, str, str, str]]:
     if not cfg.pmn_bodies:
-        return DEFAULT_BODIES
+        return DEFAULT_BODIES + REGIONAL_BODIES
     out = []
     for spec in cfg.pmn_bodies:
         body_id, _, name = spec.partition("=")
@@ -164,6 +185,17 @@ holds the notice and the text of its attached agenda.
 - low: routine minutes, cancellations, ceremonial items, consent agendas without
   anything notable, operator certification and committee housekeeping, meeting
   schedules.
+Regional bodies, outside Salt Lake County: the Utah, Davis, Weber, Tooele and Summit
+county commissions and councils, the Provo, Orem, Layton and Ogden city councils, the
+Alpine, Davis and Weber school boards, the Wasatch Front Regional Council, the Utah
+Lake Authority and the state Transportation Commission. The bar for these is higher:
+only their high items reach reporters. Rate high only what Salt Lake readers would
+care about or what is a major regional story: data centers, large plants or
+warehouses, big developments or annexations; tax increases, bonds or large budget
+moves; freeways, transit, airport or regional water projects; Great Salt Lake, Utah
+Lake or Jordan River decisions; school closures, boundary changes or superintendent
+changes in the large districts; 2034 Olympic venues; major lawsuits, scandals or
+firings of top officials. Everything else from them is medium or low.
 For each notice, why_it_matters should name the specific agenda item(s) worth a
 reporter's time, not summarize the whole agenda. List in `places` every street
 address on the agenda and in `names` every business, developer or applicant named."""
@@ -186,6 +218,8 @@ address on the agenda and in `names` every business, developer or applicant name
                     continue
                 item = self._notice(http, notice_id, link_text, body_name)
                 if item:
+                    if body_id in REGIONAL_IDS:
+                        item["regional"] = True
                     items.append(item)
         return items
 

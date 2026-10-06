@@ -43,6 +43,29 @@ def test_pmn_skips_a_body_whose_page_is_not_the_expected_body(monkeypatch):
     assert items[0]["org"] == "Council" and "AGENDA PDF TEXT" in items[0]["text"]
 
 
+def test_pmn_marks_notices_from_regional_bodies(monkeypatch):
+    class FakeHttp:
+        def text(self, url):
+            return read("pmn_body.html") if "publicbody" in url else read("pmn_notice.html")
+
+        def content(self, url):
+            return b""
+
+    from civic_scout.config import Config
+    monkeypatch.setattr(pmn, "DEFAULT_BODIES", [])
+    monkeypatch.setattr(pmn, "REGIONAL_BODIES", [("1360", "Council", "Salt Lake City Council", "Salt Lake City")])
+    monkeypatch.setattr(pmn, "REGIONAL_IDS", {"1360"})
+    monkeypatch.setattr(pmn, "pdf_text", lambda data: "")
+    items = pmn.PublicNotices().fetch(Config(), FakeHttp(), seen={"1110609", "1112213"})
+    assert [(i["id"], i.get("regional")) for i in items] == [("1112241", True)]
+
+
+def test_pmn_regional_bodies_are_separate_from_the_core_list():
+    core = {body_id for body_id, *_ in pmn.DEFAULT_BODIES}
+    assert not core & pmn.REGIONAL_IDS
+    assert pmn.REGIONAL_IDS == {body_id for body_id, *_ in pmn.REGIONAL_BODIES}
+
+
 def test_warn_table_parses_rows_and_skips_blank_ones():
     items = warn.parse(read("warn.html"))
     assert len(items) == 5

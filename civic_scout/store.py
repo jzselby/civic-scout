@@ -28,6 +28,15 @@ def was_reported(item: dict, days_back: int = 14) -> bool:
         return True
 
 
+def is_notable(item: dict) -> bool:
+    """Whether a record belongs in Top stories and the briefing: high or medium, except
+    that records from regional sources (bodies outside Salt Lake County) count only
+    when high. The rest stay in All records."""
+    if item.get("regional"):
+        return item.get("importance") == "high"
+    return item.get("importance") in ("high", "medium")
+
+
 def _clean(item: dict) -> dict:
     return {k: v for k, v in item.items() if k not in TRANSIENT_FIELDS}
 

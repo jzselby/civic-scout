@@ -25,7 +25,7 @@ from gspread.utils import ValueRenderOption
 
 from . import link
 from .link import item_key
-from .store import was_reported
+from .store import is_notable, was_reported
 
 log = logging.getLogger(__name__)
 
@@ -434,6 +434,8 @@ def write_top(sh: gspread.Spreadsheet, today: date, pool_items: list[dict], conn
         return (i.get("first_seen") or today.isoformat())[:10]
 
     def kept(i: dict) -> bool:
+        if not is_notable(i):
+            return False
         if i.get("importance") == "high":
             return seen(i) >= since_top
         if i.get("importance") == "medium":

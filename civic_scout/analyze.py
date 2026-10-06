@@ -11,6 +11,8 @@ from typing import Literal
 import anthropic
 from pydantic import BaseModel, Field
 
+from .store import is_notable
+
 log = logging.getLogger(__name__)
 
 Importance = Literal["high", "medium", "low"]
@@ -322,7 +324,7 @@ def apply_review(items: list[dict], changes: dict[str, Change]) -> int:
 def brief(items: list[dict], connections: dict[str, list[dict]], labels: dict[str, str], today: date,
           model: str) -> str | None:
     """Markdown briefing across sources, or None if Claude is unavailable or nothing qualifies."""
-    notable = [i for i in items if i.get("importance") in ("high", "medium")]
+    notable = [i for i in items if is_notable(i)]
     if not notable or not available():
         return None
     payload = []

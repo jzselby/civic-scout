@@ -66,6 +66,14 @@ Planning District 5341, Housing Connect 6223, Air Quality Board 38, Water Qualit
 40, Waste Management and Radiation Control Board 5281, Great Salt Lake Advisory Council
 7937, Metropolitan Water District of SL & Sandy 885, SL County Board of Health 1498.
 
+Regional bodies (`REGIONAL_BODIES` in `sources/pmn.py`; records carry `regional: true`
+and reach Top stories and the briefing only when High, see `store.is_notable`): Utah
+County Commission 2731, Provo council 1600, Orem council 734, Alpine SD 762, Davis
+County Commission 1335, Layton council 315, Davis SD 736, Weber County Commission 2167,
+Ogden council 6587, Weber SD 1144, Tooele County Council 7189, Summit County Council
+1330, Wasatch Front Regional Council 2262, Utah Lake Authority 7775, Transportation
+Commission 60.
+
 ## Workflows
 
 `daily.yml` (Actions → Civic Scout daily briefing → Run workflow), inputs:
