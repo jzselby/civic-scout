@@ -328,6 +328,34 @@ def test_top_stories_holds_medium_until_its_date_within_30_days():
     assert [r[headers.index("Key")] for r in ws.grid[1:]] == ["s:hearing"]
 
 
+def test_top_stories_takes_only_high_records_from_regional_bodies():
+    sh = FakeSpreadsheet()
+    pool = [
+        {"source": "pmn", "id": "rh", "title": "a", "importance": "high", "first_seen": "2026-10-05", "regional": True},
+        {"source": "pmn", "id": "rm", "title": "b", "importance": "medium", "first_seen": "2026-10-05", "regional": True},
+        {"source": "pmn", "id": "m", "title": "c", "importance": "medium", "first_seen": "2026-10-05"},
+    ]
+    ws, headers = sheets.write_top(sh, date(2026, 10, 5), pool, {}, {})
+    assert [r[headers.index("Key")] for r in ws.grid[1:]] == ["pmn:rh", "pmn:m"]
+
+
+def test_briefing_leaves_out_regional_records_below_high(monkeypatch):
+    sent = {}
+    monkeypatch.setattr(analyze, "available", lambda: True)
+    monkeypatch.setattr(analyze.anthropic, "Anthropic", lambda: None)
+
+    def call(client, model, system, prompt):
+        sent["prompt"] = prompt
+        return SimpleNamespace(content=[SimpleNamespace(type="text", text="Brief")])
+
+    monkeypatch.setattr(analyze, "_call", call)
+    items = [{"source": "pmn", "id": "rm", "title": "Regional", "importance": "medium", "regional": True},
+             {"source": "pmn", "id": "m", "title": "Local", "importance": "medium"}]
+    analyze.brief(items, {}, {}, date(2026, 10, 5), "model")
+    assert "pmn:m" in sent["prompt"] and "pmn:rm" not in sent["prompt"]
+    assert analyze.brief(items[:1], {}, {}, date(2026, 10, 5), "model") is None
+
+
 def test_several_runs_in_one_day_leave_one_briefing_row(monkeypatch):
     sh = FakeSpreadsheet()
     monkeypatch.setattr(gspread, "service_account_from_dict", lambda info: SimpleNamespace(open_by_key=lambda k: sh))
