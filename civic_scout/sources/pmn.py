@@ -70,6 +70,9 @@ DEFAULT_BODIES: list[tuple[str, str, str, str]] = [
     ("885", "Metropolitan Water District of Salt Lake & Sandy", "Board of Trustees",
      "Metropolitan Water District of Salt Lake"),
     ("1498", "Salt Lake County Board of Health", "Salt Lake County Board of Health", "Salt Lake County"),
+    # Transportation (checked 2026-10-06): they decide Salt Lake road and transit projects too.
+    ("2262", "Wasatch Front Regional Council", "Wasatch Front Regional Council", "Wasatch Front Regional Council"),
+    ("60", "Utah Transportation Commission", "Transportation Commission", "Department of Transportation"),
 ]
 # Regional: neighboring counties and regional boards. Their records reach Top stories
 # and the briefing only when rated high (store.is_notable). Checked 2026-10-06.
@@ -86,9 +89,7 @@ REGIONAL_BODIES: list[tuple[str, str, str, str]] = [
     ("1144", "Weber School District Board", "Weber School Board of Education", "Weber School District"),
     ("7189", "Tooele County Council", "Tooele County Council", "Tooele County"),
     ("1330", "Summit County Council", "Summit County Council", "Summit County"),
-    ("2262", "Wasatch Front Regional Council", "Wasatch Front Regional Council", "Wasatch Front Regional Council"),
     ("7775", "Utah Lake Authority", "Utah Lake Authority Governing Board", "Utah Lake Authority"),
-    ("60", "Utah Transportation Commission", "Transportation Commission", "Department of Transportation"),
 ]
 REGIONAL_IDS = {body_id for body_id, *_ in REGIONAL_BODIES}
 
@@ -164,7 +165,8 @@ state school, charter school and higher-education boards, university trustees, t
 liquor commission, development authorities (Inland Port, Fairpark district, Point of the
 Mountain, SLC's Community Reinvestment Agency), the county housing authority, the state
 air, water and waste boards, the Great Salt Lake Advisory Council, the county health
-board, a water district and others). `org` is the public body; `text`
+board, a water district, the Wasatch Front Regional Council and the state
+Transportation Commission, and others). `org` is the public body; `text`
 holds the notice and the text of its attached agenda.
 - high: votes on budgets, taxes, fees, bonds or large contracts; school closures,
   boundary changes, superintendent or president hires, contracts and departures,
@@ -180,15 +182,15 @@ holds the notice and the text of its attached agenda.
   voucher changes; air, water or radioactive-waste rules, permits, variances,
   penalties and settlements, especially naming a company or a local site;
   water rates, supply or conservation decisions; Great Salt Lake water levels
-  or policy; public-health orders or fees; anything likely to be contentious.
+  or policy; public-health orders or fees; freeway, road or transit projects
+  and funding in or near Salt Lake County; anything likely to be contentious.
 - medium: routine items with a news hook, appointments, study sessions on big topics.
 - low: routine minutes, cancellations, ceremonial items, consent agendas without
   anything notable, operator certification and committee housekeeping, meeting
   schedules.
 Regional bodies, outside Salt Lake County: the Utah, Davis, Weber, Tooele and Summit
 county commissions and councils, the Provo, Orem, Layton and Ogden city councils, the
-Alpine, Davis and Weber school boards, the Wasatch Front Regional Council, the Utah
-Lake Authority and the state Transportation Commission. The bar for these is higher:
+Alpine, Davis and Weber school boards and the Utah Lake Authority. The bar for these is higher:
 only their high items reach reporters. Rate high only what Salt Lake readers would
 care about or what is a major regional story: data centers, large plants or
 warehouses, big developments or annexations; tax increases, bonds or large budget

@@ -71,8 +71,8 @@ and reach Top stories and the briefing only when High, see `store.is_notable`): 
 County Commission 2731, Provo council 1600, Orem council 734, Alpine SD 762, Davis
 County Commission 1335, Layton council 315, Davis SD 736, Weber County Commission 2167,
 Ogden council 6587, Weber SD 1144, Tooele County Council 7189, Summit County Council
-1330, Wasatch Front Regional Council 2262, Utah Lake Authority 7775, Transportation
-Commission 60.
+1330, Utah Lake Authority 7775. The Wasatch Front Regional Council 2262 and the
+Transportation Commission 60 are regular bodies, since they decide Salt Lake projects.
 
 ## Workflows
 
