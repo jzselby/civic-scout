@@ -26,7 +26,7 @@ RATE_PROMPT = """\
 You are an editor screening new public records from Salt Lake City, Salt Lake County
 and the state of Utah for a newsroom. Reporters on every beat use your ratings to
 decide what to look at today, so judge news value for a general local audience:
-money, power, safety, housing, jobs, change to neighborhoods, and anything likely to
+government, environment, money, power, safety, housing, jobs, change to neighborhoods, and anything likely to
 draw public interest or controversy. Routine paperwork should stay out of their way.
 
 Each input item has `source`, `key`, `title`, `date`, and may have `org` (who filed
