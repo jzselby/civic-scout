@@ -1,25 +1,60 @@
-# Civic Scout briefing: October 12, 2026
+# Civic Scout briefing: October 13, 2026
 
-**2 new record(s), 0 high importance.**
+**13 new record(s), 1 high importance.**
 
 | Source | New | Status |
 |---|---|---|
-| Public meeting notices | 1 | ok (1 fetched) |
+| Public meeting notices | 5 | ok (5 fetched) |
 | WARN layoff notices | 0 | ok (283 fetched) |
 | SLC new business licenses | 0 | ok (0 fetched) |
 | SL County health closures | 0 | FAILED: RetryError: HTTPSConnectionPool(host='public.cdpehs.com', port=443): Max retries exceeded with url: /UTEnvPbl/ (Caused by ResponseError('too many 502 error responses')) |
-| SLC permits & planning (slcbuilding) | 1 | ok (1 fetched) |
+| SLC permits & planning (slcbuilding) | 8 | ok (8 fetched) |
+
+## Top stories
+
+- **County may apply jail health rules to immigration detention.** The Salt Lake County Board of Health proposes amending Health Regulation #34 to add "civil detention facilities," explicitly including civil immigration detention. The rules cover medical care, language services, TB screening, temperature limits and inspections. A public hearing is set for Nov. 12 in Murray, which is also the comment deadline. ([Public meeting notices](https://www.utah.gov/pmn/sitemap/notice/1114905.html))
+- **Metro water district weighs staffing overhaul and pay increase.** On Oct. 19 the Metropolitan Water District of Salt Lake & Sandy board will consider changes to staffing levels and organizational structure and an increase to the FY2027 salary and wages budget. The agenda also includes the FY2026 audit, an appeal from Daniel Granderath, a water supply and demand update, and a closed session on pending or imminent litigation. ([Public meeting notices](https://www.utah.gov/pmn/sitemap/notice/1114875.html))
+- **U of U building AirMed hangar at the airport.** A temporary site-power permit shows construction starting on a University of Utah AirMed hangar for a plane and helicopter at 455 N 2200 W, on SLC International Airport property. The permit is tied to building permit BLD2026-08371. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26BEL&capID2=00000&capID3=01702&agencyCode=SLCREF&IsToShowInspection=))
+- **$5.1M printing press replacement on the west side.** The project, titled "PCB Timson Replacement RotaJet," would remove an existing press and install a new one across 16,390 sq ft at 1999 W 1700 S. The work includes civil, structural, mechanical and electrical changes. The architect is Dave Edwards of WPA Architecture. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26HIS&capID2=00000&capID3=08229&agencyCode=SLCREF&IsToShowInspection=))
+- **Master plan amendment filed for 1800 S 7200 W.** A new application headed to the Planning Commission seeks a master plan amendment for this property. No details are posted yet. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Planning&TabName=Planning&capID1=26HIS&capID2=00000&capID3=07892&agencyCode=SLCREF&IsToShowInspection=))
+
+## Coming up
+
+- **Wed., Oct. 14: Salt Lake Community College Trustees.** The board will swear in new trustees Lucy Andre and Clay Ashdown and hear a presidential evaluation update. It will also vote on an additional location for alcohol service and take up a second-read policy banning the care or feeding of feral or stray animals. The annual safety and security report is also on the agenda. ([Public meeting notices](https://www.utah.gov/pmn/sitemap/notice/1114601.html))
+
+## Also notable
+
+- **Gateway Condos amenity:** A $1.5M build-out would turn 1,930 sq ft of shelled first-floor space at 40 N State St into a tenant kitchen/dining and exercise space. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26HIS&capID2=00000&capID3=08230&agencyCode=SLCREF&IsToShowInspection=))
+- **MME Logistics dock expansion:** A $212,097 electrical permit covers a new loading dock at 1150 S Gladiola St and is tied to BLD2025-07947. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26BEL&capID2=00000&capID3=01705&agencyCode=SLCREF&IsToShowInspection=))
+- **Nonconforming use request:** Someone has asked for a zoning determination on whether an existing use can continue at 1448 E 900 S in the Douglas Park Amended subdivision. ([SLC permits & planning](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Planning&TabName=Planning&capID1=26HIS&capID2=00000&capID3=08234&agencyCode=SLCREF&IsToShowInspection=))
+
+## High importance
+
+| Source | Date | Headline | Why it matters |
+|---|---|---|---|
+| Public meeting notices | 2026-11-12 | [County health board proposes extending jail health rules to immigration detention facilities](https://www.utah.gov/pmn/sitemap/notice/1114905.html) | Proposed amendments to Health Regulation #34 would add 'civil detention facilities,' explicitly including civil immigration detention, to county health standards for jails, covering medical care, language services, TB screening, temperature limits and inspections. Public hearing and comment deadline Nov. 12 in Murray. |
 
 ## All new records
 
-### Public meeting notices (1)
+### Public meeting notices (5)
 
 | Importance | Date | Record | Who | Where | Why it matters |
 |---|---|---|---|---|---|
-| medium | 2026-10-13 | [Alpine school board weighs cellphone policy, human sexuality report in district's final year](https://www.utah.gov/pmn/sitemap/notice/1114589.html) | Alpine School District Board |  | Regional board outside Salt Lake County; agenda includes Policy 5250 on electronic communication devices, the annual human sexuality report, a Rocky Mountain Power easement and a closed session, but no closures, boundary or superintendent changes. Minutes note this is Alpine's final school year before new districts form. *Editor: Cellphone policy and sexuality report on agenda; Alpine's final year before district split is a useful brief. Keep visible.* |
+| high | 2026-11-12 | [County health board proposes extending jail health rules to immigration detention facilities](https://www.utah.gov/pmn/sitemap/notice/1114905.html) | Salt Lake County Board of Health |  | Proposed amendments to Health Regulation #34 would add 'civil detention facilities,' explicitly including civil immigration detention, to county health standards for jails, covering medical care, language services, TB screening, temperature limits and inspections. Public hearing and comment deadline Nov. 12 in Murray. |
+| medium | 2026-10-14 | [SLCC trustees swear in new members, vote on stray-animal feeding ban policy](https://www.utah.gov/pmn/sitemap/notice/1114601.html) | Salt Lake Community College Trustees |  | Agenda includes swearing in of new trustees Lucy Andre and Clay Ashdown, a presidential evaluation update, approval of an additional location for alcohol service, a second-read policy prohibiting care or feeding of feral or stray animals, and the annual safety and security report. |
+| medium | 2026-10-19 | [Metro water district weighs staffing overhaul, salary budget increase, closed litigation session](https://www.utah.gov/pmn/sitemap/notice/1114875.html) | Metropolitan Water District of Salt Lake & Sandy |  | The Metropolitan Water District of Salt Lake & Sandy board on Oct. 19 will consider changes to staffing levels and organization structure, an increase to the FY2027 salary and wages budget, the FY2026 audit, an appeal from Daniel Granderath, and hold a closed session on pending or imminent litigation; a water supply and demand update is also scheduled. *Editor: Staffing overhaul and salary budget are useful leads, but not call-today news; litigation session is closed with no detail.* |
+| medium | 2026-11-04 | [Utah County plans up to $30 million in bonds for new public works facility](https://www.utah.gov/pmn/sitemap/notice/1114729.html) | Utah County Commission |  | Utah County Commission authorized up to $30 million in sales tax revenue bonds for a new public works facility, with total estimated cost of $37,561,157 if held to maturity; public hearing Nov. 4 in Provo. |
+| low | 2026-10-12 | [SLC Council seeks applicants for Mosquito Abatement District board seat](https://www.utah.gov/pmn/sitemap/notice/1114755.html) | Salt Lake City Council |  | Routine board vacancy notice; applications due Nov. 9 for a four-year term starting Jan. 1, 2027. |
 
-### SLC permits & planning (slcbuilding) (1)
+### SLC permits & planning (slcbuilding) (8)
 
 | Importance | Date | Record | Who | Where | Why it matters |
 |---|---|---|---|---|---|
-| low | 2026-10-11 | [Add two new 1½-inch fire hose valves in an existing warehouse space.](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26BFR&capID2=00000&capID3=00350&agencyCode=SLCREF&IsToShowInspection=) | Platt Electric | 4650 W 1730 S, NFF, Salt Lake City UT 84104-0000 | Routine fire-sprinkler work. |
+| medium | 2026-10-12 | [Removal of an existing printing press and installation of a new print press within the PCB, with associated civil, architectural, structural, mechanical and electrical work over a 16,390 sq ft area.](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26HIS&capID2=00000&capID3=08229&agencyCode=SLCREF&IsToShowInspection=) | Dave Edwards, WPA Architecture | 1999 W 1700 S, Salt Lake City UT 84104-4233 | A $5.1M industrial printing-press replacement ("PCB Timson Replacement RotaJet") covering 16,390 sq ft at 1999 W 1700 S. *Editor: Sizable $5.1M industrial equipment replacement, but no neighborhood impact; worth a brief at most.* |
+| medium | 2026-10-12 | [Remodel of 1,930 sq ft of shelled first-floor space at Gateway Condos into a tenant social amenity with kitchen/dining area, unisex restroom and light exercise space.](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26HIS&capID2=00000&capID3=08230&agencyCode=SLCREF&IsToShowInspection=) | Gateway Condos | 40 N STATE ST, Salt Lake City UT 84103-2022 | A $1.5M first-floor amenity build-out at Gateway Condos, 40 N State St, downtown. *Editor: Private condo amenity remodel, $1.5M; modest interest, not a call-today item.* |
+| medium | 2026-10-12 | [Electrical power and lighting installation for a new loading dock expansion at MME Logistics.](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26BEL&capID2=00000&capID3=01705&agencyCode=SLCREF&IsToShowInspection=) | MME Logistics | 1150 S GLADIOLA ST, Salt Lake City UT 84104-0000 | MME Logistics is expanding its dock at 1150 S Gladiola St; this is a $212,097 electrical permit tied to building permit BLD2025-07947. |
+| medium | 2026-10-12 | [Temporary site power for construction of a University of Utah AirMed hangar to store a plane and helicopter on airport property.](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26BEL&capID2=00000&capID3=01702&agencyCode=SLCREF&IsToShowInspection=) | University of Utah | 455 N 2200 W, Salt Lake City UT 84116-0000 | The University of Utah is building an AirMed hangar for a plane and helicopter at SLC International Airport (455 N 2200 W); this temporary-power permit is tied to building permit BLD2026-08371. *Editor: Temporary power permit tied to building permit BLD2026-08371 for the AirMed hangar; first sign of project here but minor permit.* |
+| medium | 2026-10-12 | [Planning Commission application for a master plan amendment affecting the property at 1800 S 7200 W.](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Planning&TabName=Planning&capID1=26HIS&capID2=00000&capID3=07892&agencyCode=SLCREF&IsToShowInspection=) |  | 1800 S 7200 W, Salt Lake City UT 84121-4861 | A master plan amendment headed to the Planning Commission for 1800 S 7200 W could signal a future land-use change or development; details are not yet posted. *Editor: Master plan amendment at prescreen with no details posted; a lead to watch, not yet a call-today story.* |
+| medium | 2026-10-12 | [Zoning administration request for a determination of nonconforming use at 1448 E 900 S.](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Planning&TabName=Planning&capID1=26HIS&capID2=00000&capID3=08234&agencyCode=SLCREF&IsToShowInspection=) |  | 1448 E 900 S, Salt Lake City UT 84105-1620 | A nonconforming-use determination at 1448 E 900 S in the Douglas Park Amended subdivision could affect what use is allowed to continue there. |
+| low | 2026-10-12 | [Construction of a woodshop in an existing 4,000 sq ft tenant space, including framed enclosed work areas, electrical and dust collection.](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26HIS&capID2=00000&capID3=08224&agencyCode=SLCREF&IsToShowInspection=) | Caitlyn Barhorst, Restoration West LLC | 47 S ORANGE ST, E1-E2, Salt Lake City UT 84116- | Small tenant remodel. |
+| low | 2026-10-12 | [Addition of three sidewall sprinklers in temporary offices within a warehouse space.](https://aca-prod.accela.com/SLCREF/Cap/CapDetail.aspx?Module=Building&TabName=Building&capID1=26BFR&capID2=00000&capID3=00351&agencyCode=SLCREF&IsToShowInspection=) | Certified Fire | 8080 W 1400 N, Salt Lake City UT 84116- | Routine sprinkler work. |
