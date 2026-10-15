@@ -55,6 +55,7 @@ publish     sheet (idempotent by Key) + the day's one report file (rewritten by 
 | `slc_licenses` | SLC monthly new business license list | PDF only; newest month per run |
 | `restaurants` | SL County health closures (cdpehs.com) | ASP.NET postback ("Closures" button); covers food, pools, lodging |
 | `slc_permits` | slcbuilding's committed permit data | already rated there (`prerated`) |
+| `slc_council` | SLC Council recaps (slc.gov RSS) and minutes (slc.primegov.com JSON) | minutes are dated by publish date, so the backlog is recorded as old, not rated |
 
 Public Notice body ids: SLC Council 1360, SLC Planning Commission 1274, SLC Board of
 Education 1067, Inland Port board 6413, SL County Council 709, SLC Historic Landmark

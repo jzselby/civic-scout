@@ -19,6 +19,7 @@ source's `guidance` (see `civic_scout/sources/`).
 | SLC new business licenses | `slc_licenses` | The city's monthly list of businesses that applied for a license (PDF only; Claude picks out notable names) | Working |
 | SL County health closures | `restaurants` | Health Department closures for imminent health hazards (restaurants, food trucks, pools, lodging), with each place's inspection report for the reason | Working |
 | SLC permits & planning | `slc_permits` | Commercial building permits and Planning applications, imported **read-only** from the [slcbuilding](https://github.com/jzselby/slcbuilding) project's data, already rated there | Working |
+| SLC Council actions | `slc_council` | What the SLC Council (and CRA board) decided: council staff's meeting recap, posted the day after each meeting (slc.gov), and the official minutes from the city's PrimeGov portal, which post about 100 days later and are rated only for what's still news (split votes, changes from the agenda) | Working |
 
 `python -m civic_scout sources` lists them. Ideas for next sources: campaign finance
 (disclosures.utah.gov), the Legislature's API (bill filings), Salt Lake County

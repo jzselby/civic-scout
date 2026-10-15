@@ -2,11 +2,12 @@
 
 from .pmn import PublicNotices
 from .restaurants import RestaurantClosures
+from .slc_council import SlcCouncil
 from .slc_licenses import SlcBusinessLicenses
 from .slc_permits import SlcPermits
 from .warn import WarnNotices
 
-ALL = [PublicNotices(), WarnNotices(), SlcBusinessLicenses(), RestaurantClosures(), SlcPermits()]
+ALL = [PublicNotices(), WarnNotices(), SlcBusinessLicenses(), RestaurantClosures(), SlcPermits(), SlcCouncil()]
 BY_NAME = {s.name: s for s in ALL}
 
 

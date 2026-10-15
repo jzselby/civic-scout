@@ -1,0 +1,977 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="publicMeetingPortalHtml">
+<head>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<script>
+        sessionStorage.setItem("csrfToken", '_kUWl9I7TyOaQYAvGXCT75z1OsLXLfJsd1iHuLjXslQ2uyY7qJN9wVA-BSveKAuo6lc3bi1GCd567LLfWwTVTmOQ1uU1:BvdpZlPiIV2MmC2VUdnsVRIoOzmiDWex2S2BD7bHT4MD-bQNnHDyg26qic2fLqYjbRtIYy9AX4hDQwew_Y2DolCItp01');
+        const _securityfeature = JSON.parse('{"csrf":false,"sensitiveData":false,"accusoftViewer":false,"xss":false,"pii":false}');
+	</script>
+	<title>Meeting</title>
+	<link href="/bundles/publichtml?v=HFTWWW7hXD0TGSSOmpfuvOgM2ZC8CPIj_QTVMvDuhZY1" rel="stylesheet"/>
+
+	<link href="/bundles/om/components/asyncmeetingitemcompiler?v=uRbtDtUumhmcezrGcMeixNMQYRDY5UfPSAdJjXZvjeY1" rel="stylesheet"/>
+
+    <link href="/Content/portal/css/toastr.css" rel="stylesheet" />
+		<script src="/Content/portal/Scripts/jquery-1.10.2.js"></script>
+	<script src="/bundles/om/scripts/csrfinjector?v=T2TXVQjRhESpCxXV7OWoDkto68kMqwTQf8J1H-IkfMI1"></script>
+
+	<script src="/Content/portal/Scripts/bootstrap.min.js"></script>
+	<script src="/Content/portal/Scripts/fixedsticky.js"></script>
+    <script src="/Content/portal/Scripts/toastr.js"></script>
+	<script async src="https://static.addtoany.com/menu/page.js"></script>
+	<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+	<script src="/Content/plugins/PullToRefresh/ptr.js"></script>
+	<link rel="icon" type="image/svg" href="/favicon.svg" sizes="32x32">
+
+	<style>
+		.section-item-attachments-insert {
+			padding-left: 5px !important;
+			margin-left: 0px;
+			cursor: pointer;
+		}
+
+		.item-cell {
+			padding-left: 0px;
+			cursor: pointer;
+		}
+
+		/* PGOME-21304: visible focus for custom disclosure toggles (WCAG 2.4.7). */
+		#MeetingContents [role="button"]:focus-visible,
+		#MeetingContents [tabindex="0"]:focus-visible {
+			outline: 2px solid #005fcc;
+			outline-offset: 2px;
+		}
+	</style>
+
+</head>
+<body class="publicMeetingPortalBody">
+<div class="modal fade" id="ItemSubscriptionModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body padding-15">
+                <div>
+                    <h3>Subscribe</h3>
+                </div>
+                <br />
+                <label for="txtEmailSubscribeItem">Enter your email address below to receive updates related to this item</label>
+                    <br />
+                    <span id="lblInvalidEmail" class="invalid-email-subscription" style="color: red">Invalid E-mail</span>
+                <input type="email" id="txtEmailSubscribeItem" class="form-control email-subscription" placeholder="Enter email address" required autocomplete="email" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-pure btnCancelItemSubscription" id="btnCancelItemSubscription" data-dismiss="modal" title="Cancel">Cancel</button>
+                <button type="button" id="btnSubscribeItem" class="btn btn-primary" title="Subscribe">Subscribe</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ItemSubscriptionSuccessModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body padding-15">
+                <div>
+                    <h3>Success</h3>
+                </div>
+                <br />
+                <p>You will now receive updates related to this item</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" title="Close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="AllContentContainer">
+        <div class="CenteredContainer">
+            <div class="VideoContentContainer" style="height: auto; overflow: hidden;">
+                <div class="VideoContent">
+                    <div id="ytplayer" aria-label="Video Player" title="Video Player"></div>
+                </div>
+                <div class="VideoContent">
+                    <div id="HideYouTubePlayer">
+                        <button onclick="hideYouTubeVideo();" class="ytp-play-button ytp-button ytp-hidevideo" aria-keyshortcuts="cv" data-title-no-tooltip="Hide Video" aria-label="Close Video" title="Hide Video">Hide Video</button>
+                    </div>
+                    <div id="ShowYouTubePlayer" aria-label="Show Video Player" title="Show Video Player">
+                        <button onclick="openYouTubeVideo();" class="showYouTubePlayer" data-title-no-tooltip="Show Video" aria-label="Show Video" title="Show Video">Show Video</button>
+                    </div>
+                </div>
+            </div>
+            <div class="MeetingContentContainer">
+
+                <div id="meetingSection">
+                    <!--Uncomment these and it will allow you to see the width and height of the window while resizing so you can handle the different resolutions accordingly
+                <div style="float: left; display: inline-block; position: absolute;"><input id="screenheight" /></div>
+                <div style="float: left; display: inline-block; position: absolute;"><input style="text-align: right; opacity: .5;" id="screenwidth" /></div>-->
+                    <div id="MeetingContents" role="main"><html lang="en" dir="ltr"><head><meta charset="UTF-8"><title>Oath of Office Ceremony - 1/5/2026 7:00:00 PM</title><style>
+
+                .section-with-items {margin-bottom: 1.5em;}
+                .section-with-footer {margin-bottom: 1.5em;}
+                .attachment-cell {width: 0px; vertical-align:top; white-space: nowrap; border:0px;}
+                .attachment-icon-holder {width: 0px; position: relative; left: -24px; top: 3px;}
+                .item-table {width: 100%;}
+                .number-cell {width:25px; vertical-align:top; white-space: nowrap; padding-left: 15px;}
+                .number-cell-section {width:30px; vertical-align:top; white-space: nowrap; padding-left: 5px; padding-right:5px;}
+                .number-center-cell {display: inline-block; text-align: center; width:100%;}
+                .center-item-number {text-align: center;}
+                .section-heading-pdf { width:100%}
+                .section-heading { }
+                .item-cell {width: 100%; display: inline-block; padding-left: 10px;}
+                .number-cell p {display: inline;}
+                .agenda-item p {display: inline;}
+
+@font-face { font-family: Philosopher ; src: url('https://slc.primegov.com/Content/css/customFonts/Philosopher.ttf'); } 
+@font-face { font-family: Philosopher ; font-style: italic; src: url('https://slc.primegov.com/Content/css/customFonts/Philosopher-Italic.ttf'); } 
+@font-face { font-family: Philosopher ; font-style: italic; font-weight:bold; src: url('https://slc.primegov.com/Content/css/customFonts/Philosopher-BoldItalic.ttf'); } 
+@font-face { font-family: Philosopher ; font-weight:bold; src: url('https://slc.primegov.com/Content/css/customFonts/Philosopher-Bold.ttf'); } 
+@font-face { font-family: Lucida Handwriting ; src: url('https://slc.primegov.com/Content/css/customFonts/Lucida-Handwriting.ttf'); } 
+@font-face { font-family: Lucida Handwriting ; font-style: italic; src: url('https://slc.primegov.com/Content/css/customFonts/Lucida-Handwriting-Italic.ttf'); } 
+@font-face { font-family: Helvetica Narrow ; src: url('https://slc.primegov.com/Content/css/customFonts/Helvetica-Narrow.ttf'); } 
+@font-face { font-family: Lato ; src: url('https://slc.primegov.com/Content/css/customFonts/Lato.ttf'); } 
+
+</style>
+<link href='https://slc.primegov.com/Content/portal/Content/bootstrap.min.css' rel='stylesheet'></head><body><div><span style="font-size:11pt;"><span style="font-family:Georgia,serif;">The City Council of Salt Lake City, Utah, met on Monday, January 5, 2026 at the Salt Lake City Library located at 210 East 400 South, SLC, 84111, in the Urban Room. <br>
+<br>
+<strong>The following Council Members were present:</strong><br>
+Victoria Petro, Daniel Dugan, Chris Wharton, Darin Mano, Sarah Young, Eva Lopez Chavez, Erika Carlsen<br>
+<br>
+<strong>The following Council Members were absent:</strong><br>
+Alejandro Puy<br>
+<br>
+<strong>Present Legislative Leadership:</strong><br>
+Jennifer Bruno – Executive Director, Lehua Weaver – Deputy Director, Nick Tarbet – Deputy Director<br>
+<br>
+<strong>Present Administrative Leadership:</strong><br>
+Mayor Erin Mendenhall, Rachel Otto – Chief of Staff, Jill Love – Chief Administrative Officer <br>
+<br>
+<strong>Present City Staff:</strong><br>
+Mark Kittrell – City Attorney, Keith Reynolds – City Recorder, Stephanie Elliott – Minutes & Records Clerk <br>
+<br>
+The meeting was called to order at 12:00 p.m.</span></span><br>
+ 
+<div style="page-break-after: always"><span style="display: none;"> </span></div>
+</div>
+<div><table style='width:100%;'><tr><td style='padding-left:0em;'><div class='' data-sectionid='6480' data-videolocation="0"><table width='100%'><tr class='section-row'><td class='number-cell-section'><em><strong>A.</strong></em></td><td class='section-heading'><div class='item-cell section-item-attachments-insert' data-sectiontemplateid='8869' data-meetingid='1192' data-hasattachment='0'><span style="color:#000000;"><span style="font-family:georgia,serif;"><span style="font-size:16px;"><u><strong>Oath of Office Ceremony</strong></u></span></span></span><br>
+ </div></td></tr><tr><td colspan='2'></td></tr></table><table id='sectionfooter_8869' style='width:100%;'><tr><td><span style="font-size:11pt;"><span style="font-family:Georgia,serif;"><br>&#10;<strong>Summary:</strong><br>&#10;<br>&#10;Council Member Victoria Petro was sworn in and stated intent to serve the citizens of Salt Lake City for another term and to leave a legacy for future generations.<br>&#10;<br>&#10;Council Member Chris Wharton was sworn in, read a letter addressed to a family member, and stated dedication to supporting future generations in Salt Lake City.<br>&#10;<br>&#10;Council Member&#160;Erika Carlsen was sworn in, thanked family and friends for their support, and pledged to serve Salt Lake City to the best of available abilities.<br>&#10;<br>&#10;Council Member Sarah Young was sworn in and expressed gratitude to community members and City employees for their continued dedication and efforts to maintain Salt Lake City as a safe place to live.&#10;<p><br>&#10;&#160;</p>&#10;</span></span></td></tr><tr><td></td></tr></table></div></td></tr></table></div><div style="page-break-after: always"><span style="display: none;"> </span></div>
+<span style="font-size:11pt;"><span style="font-family:Georgia,serif;">Meeting adjourned at 1:10 p.m.<br>
+<br>
+Minutes Approved: February 17, 2026</span></span><br>
+<br>
+<br>
+<br>
+<span style="font-size:11pt;"><span style="font-family:Georgia,serif;">_______________________________ <br>
+City Council Chair – Alejandro Puy<br>
+<br>
+<br>
+_______________________________ <br>
+City Recorder – Keith Reynolds<br>
+<br>
+<br>
+Please refer to Meeting Materials (available at <a href="https://data.slc.gov">https://data.slc.gov</a> by selecting City Council Meeting Information) for supportive content including electronic recordings and comments submitted prior to or during the meeting. Websites listed within the body of the Minutes may not remain active indefinitely. <br>
+ <br>
+This document along with the digital recording constitutes the official minutes of the City Council Formal</span></span> <span style="font-size:11pt;"><span style="font-family:Georgia,serif;">meeting held Monday, January 5, 2026 and is not intended to serve as a full transcript. Please refer to the electronic recording for entire content pursuant to Utah Code §52-4-203.</span></span><br>
+<br>
+ </body></html></div>
+                </div>
+            </div>
+        </div>
+        <input name="__RequestVerificationToken" type="hidden" value="qbv5iyNee9vaqsB41QBMQvfPTsnSS23OHH-iQ90hiZpwCJk9EsaIvJ_SJNn30DKxIPWBnCZVIjz3MNz7IOQsMjryZkc1" />
+        <script src="/Content/plugins/isInViewport/isInViewport.js"></script>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <script src="/Scripts/Custom/Public/_Subscription.js"></script>
+        <script src="/Content/js/common.js"></script>
+        <script src="/Scripts/Custom/GenericScripts.js"></script>
+        <script src="/Scripts/minipacket-html-compile-extension.js"></script>
+        <script src="/Scripts/itemsearch-html-compile-extension.js"></script>
+        <script src="/Scripts/ellipsis-menu-html-compile-extension.js?v=2026.9.25.403"></script>
+        <script src="/Scripts/meeting-keyboard-accessibility.js?v=2026.9.25.403"></script>
+        <script src="/Scripts/restoreFocusToLastTrigger.js"></script>
+        <script src="/bundles/signalr?v=izlIp7tiMLwzHtph5BuE1rAt7YNShrn5uEaCWCL5Res1"></script>
+
+        <script src="/bundles/asyncmeetingitemcompiler?v=8hXFhc-ZbAMYM6tJ8cXM3mTKLZ_G4MoipJbwzHE78dE1"></script>
+
+        <script src="/signalr/hubs"></script>
+        <script type="text/javascript">
+                const ptr = PullToRefresh.init({
+                    mainElement: 'body',
+                    scrollTopElement: '.MeetingContentContainer',
+                    distIgnore: 60,
+                    onRefresh(el) {
+                        if (el.scrollTopBeforeRefresh && $(el.scrollTopElement).scrollTop() <= 0) {
+                            window.location.reload();
+                        }
+                        else if (el.scrollTopBeforeRefresh == false) {
+                            window.location.reload();
+                        }
+                    },
+                    onRefreshScrollTop: function(el) {
+                        if (el.scrollTopBeforeRefresh && $(el.scrollTopElement).scrollTop() <= 0) {
+                            window.location.reload();
+                        }
+                        else if (el.scrollTopBeforeRefresh == false) {
+                            window.location.reload();
+                        }
+                    }
+                });
+
+                var _touchMoved = false;
+                var _openingItem = false;
+                var _allowButtonClick = false;
+		        var _IsAuthenticated = false;
+                var _compiledDocId = 41833;
+                var _compiledMeetingDocumentId = 38548;
+                var _canViewConfidential = ("False".toLocaleLowerCase() === "true");
+                var fb_visible = false;
+                var twitter_visible = false;
+                var minipacket_visible = false;
+                var _IsSection = getParameterByName('s') == null || getParameterByName('s') == '1';
+                var _SectionOrItemId = getParameterByName('tid') ?? '';
+                var _VideoLocation = getParameterByName('t') ?? '0';
+
+                var itemAttachmentVisibility = 1;
+                var isItemSearchAvailable = "False".toLocaleLowerCase();
+
+                // For item notification subscriptions
+                // Change back to the appropriate flag properties in susbscription tab
+                var _subscriptionEnabled = false;
+                var _isSubscribeItemsEnabled = false;
+                var _subscriptions = new PrimeGov.Views.PublicPortal.Subscription();
+
+		        
+                var _IsVideoLoactionButtonEnabledValue = "False".toLocaleLowerCase();
+		        var _IsVideoLocationButtonEnabled = ( _IsVideoLoactionButtonEnabledValue === "true");
+                const _IsMinipacketServiceEnabled = ("True" === "True");
+                var _HasMiniPacketTemplate = ("False".toLocaleLowerCase() === "true");
+		        var videoUrl = "k5CCgDJs9jY";
+		        var tag = document.createElement('script');
+		        tag.src = "https://www.youtube.com/iframe_api";
+		        var firstScriptTag = document.getElementsByTagName('script')[0];
+		        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+		        var player;
+
+                if ("False".toLocaleLowerCase() == "true") {
+                    fb_visible = true;
+                }
+
+                if ("False".toLocaleLowerCase() == "true") {
+                    twitter_visible = true;
+                }
+
+                if ("True".toLocaleLowerCase() == "true") {
+                    minipacket_visible = true;
+		        }                
+
+                // Bind compiled controls immediately because they are keyboard-focusable before
+                // document.ready; otherwise Enter is inert and Space scrolls during that gap.
+                let meetingHtmlAccessibilityHelper = new MeetingHtmlAccessibilityExtension();
+                meetingHtmlAccessibilityHelper.applyAllLegacyMeetingMarkup();
+                meetingHtmlAccessibilityHelper.wireAnchorSpaceKeyActivation();
+                initMeetingKeyboardAccessibility({
+                    triggerElipsisMenu: triggerElipsisMenu,
+                    loadItemAttachmentsFromSourceId: LoadItemAttachmentsFromSourceId,
+                    seekToVideoLocation: seekToVideoLocation,
+                    videoLocationClick: videoLocationClick
+                });
+
+                $(document).ready(function () {
+
+
+                    let miniPacketHelper = new MiniPacketExtension("True".toLocaleLowerCase() == 'true', "True".toLocaleLowerCase() == 'true');
+                    miniPacketHelper.removeMiniPacketOptions();
+
+                    let itemSearchHtmlHelper = new ItemSearchHtmlCompileExtension();
+                    itemSearchHtmlHelper.fixMalformedPublicPortalItemSearchUrls();
+
+                    setTimeout(function () {
+                        $('#fb-root iframe, .fb-share-button iframe, .flex-parent iframe');
+
+                        var count = 0;
+
+                        $(".fb-share-button iframe").each(function () {
+                            $(this).attr('title', 'Facebook Share ' + count);
+                            count++
+                        });
+
+                        $(".twitter-share-button").each(function () {
+                            $(this).attr('title', 'Twitter Share ' + count);
+                            count++
+                        });
+                    }, 5000);
+
+                    $('.attachment-icon-holder').show();
+
+                    $('.meeting-item').each(function (i, item) {
+                        var itemId = $(item).data('itemid');
+                        var uuid = $(item).data('mig');
+                        //if the meeting item is not deleted then load the download button
+                        if (uuid) {
+                            loadDownloadItemButton(itemId, uuid);
+                        }
+
+                        // Hide, write onclick to re-appear
+                        $('#agenda_item_area_' + itemId).hide();
+                    });
+
+                    renderVideoLocationButtons(function () {
+                        meetingHtmlAccessibilityHelper.applyAccessibilityToVideoRows(document.getElementById('MeetingContents'));
+                    });
+
+                    if (_IsMinipacketServiceEnabled) {
+						AsyncMeetingItemCompiler.Init('mini-packet_{MeetingTitle}_{Timestamp}');
+                    }
+
+                    function appendDownloadAsPdfForSection() {
+                        $(".section-item-attachments-insert").each(function () {
+                            var sharebuttons = $(this).find(".sharebuttons");
+                            if (sharebuttons.length == 0) {
+                                if (minipacket_visible) {
+                                    if (_HasMiniPacketTemplate) {
+                                        var elem = $("<div class='sharebuttons pull-right shareButtons'>" +
+                                            '<a href="/meetings/SectionWithTemplateType?id=' + $(this).data('sectiontemplateid') + '&meetingTemplateType=2" onclick="event.stopPropagation();" tabindex="0" class="btn btn-primary shareButtons_display shareButtons_dl">'
+                                            + '<span class="packet-download">Download</span></a></div>');
+                                        $(this).find("div").prepend(elem);
+                                    }
+                                    else {
+                                        var elem = $("<div class='sharebuttons pull-right shareButtons'>" + "<a href='/meetings/section/" + $(this).data('sectiontemplateid') + "' tabindex='0' class='open-pdfs btn btn-primary shareButtons_display shareButtons_dl'><span class='packet-download'>Open</span></a></div>");
+                                        $(this).find("div").prepend(elem);
+                                    }
+                                }
+                            } else {
+                                if (minipacket_visible) {
+                                    if (_HasMiniPacketTemplate) {
+                                        var elem = $('<a href="/meetings/SectionWithTemplateType?id=' + $(this).data('sectiontemplateid') + '&meetingTemplateType=2" onclick="event.stopPropagation();" tabindex="0" class="btn btn-primary shareButtons_display shareButtons_dl">'
+                                            + '<span class="packet-download">Download</span></a>');
+                                        $(this).find(".sharebuttons").prepend(elem);
+                                    }
+                                    else {
+                                        var elem = $("<a href='/meetings/section/" + $(this).data('sectiontemplateid') + "' tabindex='0' class='open-pdfs btn btn-primary shareButtons_display shareButtons_dl'><span class='packet-download'>Open</span></a>");
+                                        $(this).find(".sharebuttons").prepend(elem);
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    $(document).on('touchstart', function (e) {
+                        // PGOME-21304: never reset when the touch is on attachment View/Download,
+                        // ellipsis, or share icons — that was closing open rows before the action ran.
+                        if (window.meetingEllipsisUI && window.meetingEllipsisUI.isProtectedTarget(e.target)) {
+                            return;
+                        }
+
+                        // Title/section row owns open/close (same as keyboard); don't close-then-reopen.
+                        if ($(e.target).closest('.agenda-item:not(.attachmentCell), .section-item-attachments-fromdocx, .section-item-attachments-insert').length) {
+                            return;
+                        }
+
+                        if (_openingItem == false) {
+                            $.each($(`[class*=shareItemBtns_]`), function () {
+                                // Keep click/keyboard-pinned menus open (hover/touch coexistence).
+                                var shareId = (this.className.match(/shareItemBtns_(\S+)/) || [])[1];
+                                if (shareId && window.meetingEllipsisUI && window.meetingEllipsisUI.isPinned(shareId)) {
+                                    return;
+                                }
+
+                                $(this).css('visibility', 'hidden');
+                                if (shareId) {
+                                    $('.elipsis_' + shareId).show().attr('aria-expanded', 'false');
+                                } else {
+                                    $('[class*="elipsis_"]').show().attr('aria-expanded', 'false');
+                                }
+                            })
+
+                            // Only close attachment rows when the touch is truly "outside" content.
+                            // Closing every agenda_item_area on any document touch made View/Download
+                            // collapse the row before navigation (especially for dynamically added links).
+                            // Sync a11y only for panels that were open — same as Escape via setExpanded.
+                            $.each($(`[id*=agenda_item_area_]`), function () {
+                                var $area = $(this);
+                                if (!$area.is(':visible')) {
+                                    return;
+                                }
+                                var targetId = (this.id || '').replace('agenda_item_area_', '');
+                                $area.hide();
+                                if (window.meetingAttachmentUI && typeof window.meetingAttachmentUI.setExpanded === 'function') {
+                                    window.meetingAttachmentUI.setExpanded(targetId, false);
+                                }
+                            })
+                        }
+                    });
+
+                    $(document).on("click", ".view-item-details", async function () {
+                        var newPortalUrl = null;
+                        var currentUrl = window.location.href;
+                        if (currentUrl.includes("parentLink=newPublicPortal")) {
+
+                            newPortalUrl = await new Promise((resolve, reject) => {
+                                $.getJSON('/api/v2/PublicPortal/GetNewPublicPortalUrl', resolve).fail(reject);
+                            });
+                        }
+                        if (newPortalUrl) {
+                            const url = $(this).data('newportalurl');
+                            window.open(url, '_blank');
+                        } else {
+                            const url = $(this).data('portalurl');
+                            window.open(url, '_blank');
+                        }
+                    });
+
+
+                    $("[class*=elipsis_]").on('touchstart', function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+
+                        var id = $(this).data('id');
+                        triggerElipsisMenu(id);
+                        if (window.meetingEllipsisUI) {
+                            window.meetingEllipsisUI.syncPinFromDom(id);
+                            window.meetingEllipsisUI.markHandled(id);
+                        }
+
+                        _touchMoved = false;
+                        _openingItem = true;
+                    });
+
+                    $(`.optionalButtons`).on('touchstart', function (e) {
+                        e.stopPropagation();
+                        _allowButtonClick = true;
+                    })
+
+                    $(`.attachment-holder > a`).on('touchstart', function (e) {
+                        e.stopPropagation();
+                        _allowButtonClick = true;
+                    })
+
+                    $('.item-table-fromdocx').on('touchend', function (e) {
+                        if (_touchMoved == false && _allowButtonClick == false) {
+                            // Ellipsis/share already handled on touchstart — do not re-toggle.
+                            if (window.meetingEllipsisUI && window.meetingEllipsisUI.isProtectedTarget(e.target)) {
+                                _openingItem = false;
+                                return;
+                            }
+
+                            // Section rows toggle on their own touchstart.
+                            if ($(e.target).closest('.section-item-attachments-fromdocx').length) {
+                                _openingItem = false;
+                                return;
+                            }
+
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            var videoLocation = $(this).data('videolocation');
+                            if (videoLocation) {
+                                seekToVideoLocation(videoLocation);
+                            }
+
+                            // Keyboard parity: title/body toggles attachments (not ellipsis).
+                            var $toggle = $(e.target).closest('.agenda-item:not(.attachmentCell), .section-item-attachments-insert');
+                            if ($toggle.length && window.meetingAttachmentUI) {
+                                window.meetingAttachmentUI.toggle($toggle[0], false);
+                            }
+                        }
+
+                        _openingItem = false;
+                    }).on('touchmove', function (e) {
+                        _touchMoved = true;
+                        _allowButtonClick = false;
+                    }).on('touchstart', function () {
+                        _touchMoved = false;
+                        _openingItem = true;
+                        _allowButtonClick = false;
+                    })
+
+                    // PGOME-21304: keep legacy hover reveal for mouse users, but do not fight a
+                    // click/keyboard-pinned ellipsis (otherwise A stays open while B's "..." is
+                    // hidden by hover before the click can open B).
+                    $('.item-table-fromdocx').hover(function (event) {
+                        var id = $(this).data('id');
+                        if (window.meetingEllipsisUI && window.meetingEllipsisUI.hasPinned()) {
+                            return;
+                        }
+                        $('.shareItemBtns_' + id).css('visibility', 'visible');
+                        $('.elipsis_' + id).hide().attr('aria-expanded', 'true');
+                    });
+
+                    $('.item-table-fromdocx').mouseleave(function (event) {
+                        var id = $(this).data('id');
+                        if (window.meetingEllipsisUI && window.meetingEllipsisUI.isPinned(id)) {
+                            return;
+                        }
+                        $('.shareItemBtns_' + id).css('visibility', 'hidden');
+                        $('.elipsis_' + id).show().attr('aria-expanded', 'false');
+                    });
+
+
+                    // PGOME-21304: stopPropagation/preventDefault avoids a following synthetic click
+                    // double-toggling the panel. Match click/keyboard: toggle + aria only (no ellipsis).
+                    $('.section-item-attachments-fromdocx').on('touchstart', function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+
+                        if (window.meetingAttachmentUI) {
+                            window.meetingAttachmentUI.toggle(this, false);
+                        }
+                    })
+
+                    window.twttr = (function (d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0],
+                            t = window.twttr || {};
+                        if (d.getElementById(id)) return t;
+                        js = d.createElement(s);
+                        js.id = id;
+                        js.src = "https://platform.twitter.com/widgets.js";
+                        fjs.parentNode.insertBefore(js, fjs);
+
+                        t._e = [];
+                        t.ready = function (f) {
+                            t._e.push(f);
+                        };
+
+                        return t;
+                    }(document, "script", "twitter-wjs"));
+
+                    window.fb = (function (d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0],
+                            t = window.fb || {};
+                        if (d.getElementById(id)) return;
+                        js = d.createElement(s); js.id = id;
+                        js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v14.0';
+                        fjs.parentNode.insertBefore(js, fjs);
+
+                        t._e = [];
+                        t.ready = function (f) {
+                            t._e.push(f);
+                        };
+
+                        return t;
+                    }(document, 'script', 'facebook-jssdk'));
+
+                    bindSectionAttachments();
+
+                    $('.section-row td .attachment-icon-holder').css('left', '-30px');
+                });
+
+                function triggerElipsisMenu(id) {
+                    // PGOME-21304: determine open/close BEFORE resetting state below. The reset loop
+                    // unconditionally shows every "..." toggle (including this one), so checking
+                    // display/aria-expanded after the loop always looked "closed" and only ever
+                    // opened the menu - alternating between ellipses or reopening the same one failed.
+                    var willOpen = $('.elipsis_' + id).attr('aria-expanded') !== 'true';
+
+                    $.each($(`[class*=shareItemBtns_]`), function () {
+                        $(this).css('visibility', 'hidden');
+                    })
+                    $('[class*="elipsis_"]').show().attr('aria-expanded', 'false');
+
+                    // Ellipsis open/close must not open/close attachment panels - attachment
+                    // disclosure is owned by the agenda-item / section toggle handlers only.
+                    if (willOpen) {
+                        $('.shareItemBtns_' + id).css('visibility', 'visible');
+                        $('.elipsis_' + id).hide().attr('aria-expanded', 'true');
+                    }
+                }
+
+                function bindSectionAttachments() {
+                    function getAnchor(item) {
+                        if (item.confidential && item.path == '' && item.pdfPath == '') {
+                                html = '<div style="display:none;" class="attachment-holder"></div>';
+                        }
+                        else {
+                            var html = '<div class="attachment-holder">'
+                                + '<a target="_blank" title="View ' + item.name + '" href="viewer?id=' + item.id + '&type=4" onclick="event.stopPropagation();">'
+                                + '<span class="glyphicon glyphicon-eye-open"></span>'
+                                + '</a>&nbsp;&nbsp;<a href="/meetings/sectionattachment?id=' + item.id + '" title="Download ' + item.name + '" onclick="event.stopPropagation();">'
+                                + '<span class="glyphicon glyphicon-cloud-download"></span>&nbsp;&nbsp;' + item.name + ' </a>'
+                                + '</div>';
+                        }
+
+                        return html;
+                    }
+
+                    function getAnchorHistory(item) {
+                        if (item.confidential && !_canViewConfidential) {
+                                return '<div style="display:none;" class="attachment-holder"></div>';
+                        }
+                        else {
+                            var html = '<div class="attachment-holder">'
+                                + `<a target="_blank" title="View ${item.name}" href="viewer?id=0&type=7&uid=${item.uId}" onclick="event.stopPropagation();">`
+                                + '<span class="glyphicon glyphicon-eye-open"></span>'
+                                + `</a>&nbsp;&nbsp;<a href="/api/compilemeetingattachmenthistory/historyattachment/?historyId=${item.uId}" title="Download ${item.name}" onclick="event.stopPropagation();">`
+                                + '<span class="glyphicon glyphicon-cloud-download"></span>&nbsp;&nbsp;' + item.name + ' </a>'
+                                + '</div>';
+                            return html;
+                        }
+                    }
+
+                    // Click/keyboard for .section-item-attachments-insert is handled by
+                    // meeting-keyboard-accessibility.js (bindClickEvent stub removed).
+                }
+
+                var count = 0;
+                async function loadDownloadItemButton(id, uuid) {
+                    var host = window.location.host;
+                    var itemUrl = "https://" + host + "/portal/item?meetingitemid=" + uuid;
+
+                    if (fb_visible) {
+                        var fbBtn = '<div style="display:flex;align-items:center;" class="fb-share-button a2a_button_facebook shareButtons_display shareButtons_fb" data-href="' + itemUrl + '" data-layout="button" data-size="small" data-mobile-iframe="false"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' + itemUrl + '%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore"></a></div>';
+                    }
+                    else {
+                        var fbBtn = '';
+                    }
+
+                    if (twitter_visible) {
+                        var href_to = "https://twitter.com/intent/tweet?text=Meeting&url=" + encodeURIComponent(itemUrl);
+                        var twBtn = '<div class="twitter_button shareButtons_display"><svg style="margin-left:7px;" width="20" height="20" viewBox="-1 -2 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.73874 7.34724L15.205 1H13.9097L9.16332 6.51122L5.37239 1H1L6.73263 9.33394L1 15.99H2.29541L7.30773 10.17L11.3112 15.99H15.6836L9.73843 7.34724H9.73874ZM7.9645 9.40737L7.38366 8.57749L2.76217 1.97411H4.75185L8.48145 7.30325L9.06228 8.13312L13.9103 15.0602H11.9206L7.9645 9.40768V9.40737Z" fill="#020E1A"/></svg><a class="twttr_anchor btn" href="' + href_to + '" tabindex="0" aria-label="Post on Twitter"><b>Post</b></a></div> ';
+                    }
+                    else {
+                        var twBtn = '';
+                    }
+
+                    if (minipacket_visible) {
+                        var queryParameters = '';
+
+						if (_compiledMeetingDocumentId > 0) {
+                            queryParameters = `&compiledMeetingDocumentId=${_compiledMeetingDocumentId}`;
+                        }
+
+                        if (_HasMiniPacketTemplate) {
+                            //Single Attachment
+                            var dnLoad = `<a href="/meetings/ItemWithTemplateType?id=${id}&meetingTemplateType=2${queryParameters}" onclick="event.stopPropagation();" tabindex="0" aria-label="Download" class="btn btn-primary shareButtons_display shareButtons_dl async-file-download"><span class="packet-download">Download</span></a>`;
+                        }
+                        else {
+                            //Multiple Attachments
+                            var dnLoad = `<a href="/meetings/item/?id=${id}${queryParameters}" tabindex="0" aria-label="Open" class="open-pdfs btn btn-primary shareButtons_display shareButtons_dl async-file-download"><span class="packet-download">Open</span></a>`;
+                        }
+                    }
+                    else {
+                        var dnLoad = '';
+                    }
+
+                    //View Item page functionality
+                    if (itemAttachmentVisibility == 2 || itemAttachmentVisibility == 3) {
+                        let itemShareUrl = null;
+                        var newPortalUrl = null;
+
+                        var currentUrl = window.location.href;
+                        if (currentUrl.includes("parentLink=newPublicPortal")) {
+
+                            newPortalUrl = await new Promise((resolve, reject) => {
+                                $.getJSON('/api/v2/PublicPortal/GetNewPublicPortalUrl', resolve).fail(reject);
+                            });
+                        }
+
+                        if (isItemSearchAvailable == 'true') {
+                            if (newPortalUrl) {
+                                itemShareUrl = newPortalUrl + '/search?meetingItemId=' + id;
+                            } else {
+                                itemShareUrl = '/search/itemsearch?meetingItemId=' + id;
+                            }
+                        }
+                        else {
+                            itemShareUrl = '/portal/item?id=' + id;
+                        }
+
+                        shareElem = '<a href="' + itemShareUrl + '" target="_blank" onclick="event.stopPropagation();" tabindex="0" aria-label="View Details" class="btn btn-primary shareButtons_display shareButtons_dl">'
+                            + '<span class="packet-download">View Details</span></a>';
+                    }
+                    else {
+                        var shareElem = '';
+                    }
+
+                    if (_isSubscribeItemsEnabled) {
+						var subBtn = `<a onclick="_subscriptions.openItemSubscriptionPopup('${escape("Enter your email address below to receive updates related to this item")}', ${-1}, event, ${id})" data-id="${id}" data-name="${escape("Item to Subscribe")}" title="Subscribe to item updates" tabindex="0" aria-label="Subscribe to item updates" class="btn btn-primary shareButtons_display shareButtons_dl"><span class="packet-download">Subscribe</span></a>`;
+                    } else {
+                        var subBtn = '';
+                    }
+
+                    var html = "<td style='vertical-align: top;'><div id='sharebuttons_" + id + "' data-loaded='Loaded' class='sharebuttons pull-right shareButtons'>" +
+                        fbBtn +
+                        twBtn +
+                        dnLoad +
+                        shareElem +
+                        subBtn +
+                        "</div></td>";
+
+                    $("#AgendaItem_" + id).parent("td.item-cell").after(html); //the HTML I returned from the controller
+                    new MeetingHtmlAccessibilityExtension().applyAccessibilityToDynamicShareButtons(document.getElementById('sharebuttons_' + id));
+                    count = count + 3;
+                }
+
+		        function LoadItem(itemId) {
+			        $.getJSON('/api/meetings/getItemInfo?itemId=' + itemId, null, function(data) {
+				        if (data.seconds)
+					        seekToVideoLocation(data.seconds);
+				        var attachemntHtml = data.attachments.length > 0
+					        ? '<h2>Attachments</h2>'
+					        : '<div><h3>This item has no attachments</h3></div>';
+				        $.each(data.attachments,
+					        function(indx, itm) {
+						        attachemntHtml += '<div class="attachment-holder"><a href="' +
+							        itm.url +
+							        '">' +
+							        itm.name +
+							        '&nbsp;&nbsp;&nbsp;<span class="pull-right glyphicon glyphicon-download"></span></a></div>';
+					        });
+				        $('#AttachmentArea').html(attachemntHtml);
+			        });
+		        }
+
+                function onYouTubeIframeAPIReady() {
+                    if (videoUrl != "") {
+                        player = new YT.Player('ytplayer', {
+                            videoId: videoUrl,
+                            playerVars: {
+                                'rel': 0,
+                                'start': parseInt(_VideoLocation) > 0 ? _VideoLocation : 0
+                            },
+                            events: {
+                                'onStateChange': videoStateChanged
+                            }
+                        });
+                    }
+                    else {
+                        $(".VideoContentContainer").remove();
+                    }
+
+                    if (_SectionOrItemId != '') {
+                        if (_IsSection) {
+                            if ($(`[data-sectionid="${_SectionOrItemId}"]`).length > 0) {
+                                $('.MeetingContentContainer').animate({
+                                    scrollTop: $(`[data-sectionid="${_SectionOrItemId}"]`).offset().top - 15
+                                }, 'slow');
+                                $('[data-sectionid="' + _SectionOrItemId + '"]').focus();
+                            }
+                        } else {
+                            if ($(`[data-itemid="${_SectionOrItemId}"]`).length > 0) {
+                                $('.MeetingContentContainer').animate({
+                                    scrollTop: $(`[data-itemid="${_SectionOrItemId}"]`).offset().top - 15
+                                }, 'slow');
+                                $('[data-itemid="' + _SectionOrItemId + '"]').focus();
+                            }
+                        }
+                    }
+                }
+
+                /*Uncomment this and it will allow you to see the width and height of the window while resizing so you can handle the different resolutions accordingly
+                $(window).resize(function () {
+                    $("#screenheight").val($(window).height());
+                    $("#screenwidth").val($(window).width());
+                })*/
+
+                function hideYouTubeVideo() {
+                    pauseVideo();
+                    $("#ytplayer").hide();
+                    $("#HideYouTubePlayer").hide();
+                    $("#ShowYouTubePlayer").show();
+                }
+
+                function openYouTubeVideo() {
+                    $("#ytplayer").show();
+                    $("#HideYouTubePlayer").show();
+                    $("#ShowYouTubePlayer").hide();
+                }
+
+		        function pauseVideo() {
+                    if (player) {
+                        player.pauseVideo();
+                    }
+		        }
+
+		        var preventSeekToPlaying = false;
+                function seekToVideoLocation(seconds) {
+                    if (player && seconds > 0) {
+				        var preSeekState = player.getPlayerState();
+				        if (preSeekState != YT.PlayerState.PLAYING && preSeekState != YT.PlayerState.PAUSED)
+					        preventSeekToPlaying = true;
+
+				        player.seekTo(seconds, true);
+			        }
+                }
+
+                function jumpToVideoLocation() {
+                    var videoLocation = $(this).data("videolocation");
+
+                    seekToVideoLocation(videoLocation);
+                }
+
+                function videoStateChanged(event) {
+			        if (preventSeekToPlaying && event.data == YT.PlayerState.PLAYING) {
+				        preventSeekToPlaying = false;
+				        pauseVideo();
+			        }
+                }
+
+                /*************************
+                * video
+                *************************/
+                function renderVideoLocationButtons(callback) {
+                    $('[data-videolocation]').each(function () {
+                        // Same timestamp on table and cell; bind the outer node only.
+                        var $outer = $(this).parents('[data-videolocation]').first();
+                        if ($outer.length && String($outer.data('videolocation')) === String($(this).data('videolocation'))) {
+                            return;
+                        }
+
+                        var videoLocation = $(this).data("videolocation");
+                        var fromDocx = $(this).hasClass('item-table-fromdocx');
+
+                        if (_IsVideoLocationButtonEnabled && fromDocx == false) {
+                            var elem;
+                            var sectionId = $(this).data("sectionid");
+
+                            var playButton = $("<button class='btn btn-primary shareButtons_display shareButtons_dl playvideo' title='Play' aria-label='Play video at this location'><span class='playvideo'>Play</span> <i class='glyphicon glyphicon-play'></i></button>");
+                            $(playButton).on('click', function (event) {
+                                event.stopPropagation();
+                                seekToVideoLocation(videoLocation);
+                            });
+
+                            if (sectionId) {
+                                elem = $(`<div id="shareButtons_${sectionId}" class='sharebuttons pull-right shareButtons'></div>`);
+                                $(this).find('tr[class="section-row"]').append($(`<td style="vertical-align: top;"><div id="shareButtons_${sectionId}" class='sharebuttons pull-right shareButtons'></div></td>`));
+
+                                $(`#shareButtons_${sectionId}`).append(playButton);
+                            }
+                            else {
+                                elem = $(this).find(".sharebuttons");
+                                $(elem).append(playButton);
+                            }
+                        }
+                        else {
+                            var elem;
+
+                            if (sectionId) {
+                                elem = $(this).find(".section-row");
+
+                                if (elem.length == 0) {
+                                    elem = $(this);
+                                }
+                            }
+                            else {
+                                elem = $(this);
+                            }
+
+                            $(elem).on('click', function (event) {
+                                videoLocationClick(event, videoLocation);
+                            });
+                        }
+                    });
+
+                    if (typeof callback == 'function')
+                        callback();
+                }
+
+                function videoLocationClick(event, videoLocation) {
+                    // Do not stopPropagation — attachment toggle is delegated on #MeetingContents.
+
+                    var clickedTagName = event.target.tagName.toLowerCase();
+
+                    if (clickedTagName !== 'a' && clickedTagName !== 'button') {
+                        seekToVideoLocation(videoLocation);
+                    }
+                }
+
+		        /*************************
+		        * attachments
+		        *************************/
+                function LoadItemAttachmentsFromSourceId(itemId) {
+			        $.getJSON('/api/meetingitemattachment/ListPublicFromSourceId?sourceItemId=' + itemId, null, function(data) {
+				        var attachmentHtml = "";
+                        var confHtml = "";
+
+				        if (data.length > 0) {
+					        $.each(data,
+						        function(indx, itm) {
+							        if (itm.authorized == true) {
+								        attachmentHtml += '<div class="attachment-holder' +
+									        (itm.hasAnnotations ? ' holder-highlight' : '') +
+									        '">' +
+									        (_IsAuthenticated
+										        ? '<a target= "_blank" href="viewer?id=' +
+										        itm.id +
+										        '&type=2"><span class="glyphicon glyphicon-eye-open"></span></a>&nbsp;&nbsp;'
+										        : '') +
+									        '<a href="/meeting/attachment/' +
+									        itm.id +
+									        '.pdf?name=' +
+									        encodeURIComponent(itm.name) +
+									        '"><span class="glyphicon glyphicon-download"></span>&nbsp;&nbsp;' +
+									        itm.name +
+									        '' +
+									        '</a>' +
+									        '</div>';
+                                    } else {
+                                            confHtml = '<div style="display:none;" class="attachment-holder"></div>';
+							        }
+						        });
+				        } else {
+					        attachmentHtml = "No attachments for item";
+				        }
+
+				        $('#MigratedAttachmentList').html(attachmentHtml + confHtml);
+				        $('#MigratedAttachmentModal').modal('show');
+                        $('#MigratedAttachmentModal').one('shown.bs.modal', function () {
+                            $(this).find('a[href], button:not([disabled])').filter(':visible').first().focus();
+                        });
+			        });
+		        }
+
+		        function downloadAttachment(id) {
+			        $.getJSON('/api/meetingitemattachment/GetPublicPdfDownloadUrl/' + id, null, function(data) {
+				        window.location = data;
+			        })
+			        .fail(function(jqXHR, status, error) {
+				        //toastr["error"]("Error: " + error);
+				        handleError('Error: ' + jqXHR.responseJSON.exceptionMessage, jqXHR);
+			        });
+		        }
+
+		        function downloadDoc(id) {
+			        $.getJSON('/api/systemdocument/GetPublicPdfDownloadUrl/' + id, null, function(data) {
+                        window.location = data;
+			        })
+			        .fail(function(jqXHR, status, error) {
+				        //toastr["error"]("Error: " + error);
+				        handleError('Error: ' + jqXHR.responseJSON.exceptionMessage, jqXHR);
+			        });
+                }
+
+                Share = {
+                    facebook: function (purl, ptitle, pimg, text) {
+                        url = 'http://www.facebook.com/sharer.php?s=100';
+                        url += '&u=' + encodeURIComponent(purl);
+                        Share.popup(url);
+                    },
+                    twitter: function (purl, ptitle) {
+                        url = 'http://twitter.com/intent/tweet?';
+                        url += 'text=' + encodeURIComponent(ptitle);
+                        url += '&url=' + encodeURIComponent(purl);
+                        url += '&counturl=' + encodeURIComponent(purl);
+                        Share.popup(url);
+                    },
+                    popup: function (url) {
+                        window.open(url, '', 'toolbar=0,status=0,width=626, height=436');
+                    }
+                };
+        </script>
+    </div>
+
+    <div class="modal fade" role="dialog" id="MigratedAttachmentModal">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Attachments</h3>
+                </div>
+                <div class="modal-body">
+                    <div id="MigratedAttachmentList">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

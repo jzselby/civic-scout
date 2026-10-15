@@ -161,3 +161,54 @@ def test_health_closures_fetch_presses_through_to_the_closing_results():
     assert "live cockroaches" in vietopia["text"]
     assert vietopia["url"] == restaurants.SITE
     assert "ctl00$PageContent$INSPECTIONTableControlRepeater$ctl03$ViolButton$_Button" in pressed
+
+
+def test_council_recap_feed_gives_posts_with_their_dates():
+    from civic_scout.sources import slc_council
+    recaps = slc_council.parse_recap_feed(read("council_recaps.xml"))
+    assert len(recaps) == 10
+    assert recaps[1]["id"] == "recap-17949" and recaps[1]["date"] == "2026-10-07"
+    assert recaps[1]["url"] == "https://www.slc.gov/council/october-6-2026-meeting-recap/"
+
+
+def test_council_recap_page_text_is_just_the_recap():
+    from civic_scout.sources import slc_council
+    text = slc_council.recap_text(read("council_recap.html"), "October 6, 2026 Meeting Recap")
+    assert text.startswith("October 6, 2026 Meeting Recap\nCouncil Approves $50,000")
+    assert "Impact Fee" in text and "City Directory" not in text and "Tags:" not in text
+
+
+def test_council_minutes_are_dated_when_posted_not_when_held():
+    import json
+    from civic_scout.sources import slc_council
+    items = slc_council.parse_meetings(json.loads(read("primegov_meetings.json")))
+    assert [i["id"] for i in items] == ["minutes-41833", "minutes-45593", "minutes-45590"]  # no-minutes meeting skipped
+    assert items[1]["date"] == "2026-10-14" and items[1]["meeting_date"] == "2026-08-18"
+    assert items[1]["url"].endswith("compiledMeetingDocumentFileId=45593")
+    text = slc_council.minutes_text(read("primegov_minutes.html"))
+    assert text.startswith("Oath of Office Ceremony") and "Subscribe" not in text
+
+
+def test_council_fetch_reads_text_only_for_new_records(monkeypatch):
+    from datetime import date
+    from civic_scout.config import Config
+    from civic_scout.sources import slc_council
+
+    fetched = []
+
+    class FakeHttp:
+        def text(self, url):
+            fetched.append(url)
+            if url == slc_council.RECAP_FEED:
+                return read("council_recaps.xml")
+            if "ListArchivedMeetings" in url:
+                return read("primegov_meetings.json") if url.endswith("2026") else "[]"
+            return read("council_recap.html") if "slc.gov" in url else read("primegov_minutes.html")
+
+    monkeypatch.setattr(slc_council, "today", lambda: date(2026, 10, 15))
+    items = slc_council.SlcCouncil().fetch(Config(), FakeHttp(), seen={"recap-17967"})
+    with_text = {i["id"] for i in items if i.get("text")}
+    # Within 14 days and unseen: the Oct. 6 recap and the two minutes posted Oct. 14.
+    assert with_text == {"recap-17949", "minutes-45593", "minutes-45590"}
+    assert len(items) == 13  # older and seen records still come back, so they're recorded
+    assert not any("41833" in u for u in fetched)
