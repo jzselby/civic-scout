@@ -14,6 +14,9 @@ on:
       pmn_notices:
         description: "Public Notice notice ids whose body ids to look up (comma-separated)"
         default: ""
+      urls:
+        description: "Other pages to save, space-separated (to scout a new source; skips the sources)"
+        default: ""
 
 permissions:
   contents: read
@@ -29,7 +32,33 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - name: Probe other pages
+        if: inputs.urls != ''
+        env:
+          URLS: ${{ inputs.urls }}
+        run: |
+          python - <<'PY'
+          import os, pathlib
+          from civic_scout.http import Http
+          from civic_scout.sources.text_utils import pdf_text
+          out = pathlib.Path("probe/urls")
+          out.mkdir(parents=True, exist_ok=True)
+          http = Http(60)
+          for n, url in enumerate(os.environ["URLS"].split(), 1):
+              try:
+                  r = http.session.get(url, timeout=60)
+                  kind = r.headers.get("content-type", "")
+                  print(f"{n}: {url} -> {r.status_code} {kind} {len(r.content)} bytes, final {r.url}")
+                  if "pdf" in kind:
+                      data, ext = pdf_text(r.content).encode(), "txt"
+                  else:
+                      data, ext = r.content, "json" if "json" in kind else "html" if "html" in kind else "txt"
+                  (out / f"{n:02d}.{ext}").write_bytes(data)
+              except Exception as exc:
+                  print(f"{n}: {url} FAILED {type(exc).__name__}: {exc}")
+          PY
       - name: Probe
+        if: inputs.urls == ''
         env:
           PMN_BODIES: ${{ inputs.pmn_bodies || vars.PMN_BODIES }}
           PMN_NOTICES: ${{ inputs.pmn_notices }}
@@ -40,7 +69,7 @@ jobs:
           for f in $(find probe -type f | sort); do
             echo "===== $f ($(wc -c < "$f") bytes)"
             case "$f" in
-              *.html|*.txt|*.jsonl|*.csv) python - "$f" <<'PY'
+              *.html|*.txt|*.json|*.jsonl|*.csv) python - "$f" <<'PY'
           import sys, re
           from bs4 import BeautifulSoup
           raw = open(sys.argv[1], encoding="utf-8", errors="replace").read()
@@ -54,7 +83,7 @@ jobs:
                   t.decompose()
               print(re.sub(r"\n\s*\n+", "\n", body.get_text("\n"))[:4000])
           else:
-              print(raw[:3000])
+              print(raw[:15000] if "/urls/" in sys.argv[1] else raw[:3000])
           PY
               ;;
               *) echo "(binary)";;
