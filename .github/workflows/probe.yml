@@ -76,6 +76,8 @@ jobs:
           if sys.argv[1].endswith(".html"):
               soup = BeautifulSoup(raw, "lxml")
               other = "/urls/" in sys.argv[1]
+              if other:
+                  print("RAW:", raw[:400000])
               print("TITLE:", soup.title.get_text(strip=True) if soup.title else None)
               for a in soup.find_all("a", href=True)[:None if other else 80]:
                   print("LINK:", a["href"], "|", a.get_text(" ", strip=True)[:80])
