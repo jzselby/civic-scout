@@ -265,3 +265,35 @@ def test_campaign_finance_fetch_skips_types_without_filings_and_seen_reports(mon
     monkeypatch.setattr(cf, "today", lambda: date(2027, 1, 12))
     ids = {i["id"] for i in cf.CampaignFinance().fetch(None, FakeHttp(), set())}
     assert "2026:PIC:Defend Utahs Ballot:September 30th" in ids
+
+
+def test_slc_permits_lowers_repeat_trade_permits_and_test_records():
+    class FakeHttp:
+        def text(self, url):
+            return read("slcbuilding_permits.jsonl")
+
+    from civic_scout.config import Config
+    items = slc_permits.SlcPermits().fetch(Config(), FakeHttp(), seen=set())
+    rated = {i["id"]: i["importance"] for i in items}
+    assert rated["BLD2026-08571"] == "high"  # first record about Suan Wasatch Thai stays
+    assert rated["26TMP-023331"] == rated["BLD2026-08631"] == rated["BLD2026-08645"] == "low"
+    assert rated["BLD2026-08654"] == "low"  # void test record at the City & County Building
+    assert rated["BLD2026-08056"] == "high"  # first record at its address
+
+    # A place already seen in an earlier run counts too.
+    items = slc_permits.SlcPermits().fetch(Config(), FakeHttp(), seen={"BLD2026-08571"})
+    assert {i["id"]: i["importance"] for i in items}["BLD2026-08645"] == "low"
+
+
+def test_slc_permits_keeps_big_trade_jobs():
+    import json
+    rec = json.loads(read("slcbuilding_permits.jsonl").splitlines()[-1])
+    again = {**rec, "record_number": "BLD-X", "date": "12/01/2026"}
+
+    class FakeHttp:
+        def text(self, url):
+            return "\n".join(json.dumps(r) for r in (rec, again))
+
+    from civic_scout.config import Config
+    items = slc_permits.SlcPermits().fetch(Config(), FakeHttp(), seen={rec["record_number"]})
+    assert [(i["id"], i["importance"]) for i in items] == [("BLD-X", rec["importance"])]
