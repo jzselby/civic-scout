@@ -32,6 +32,10 @@ dockets, the Legislature's bill filings; see `HANDOFF.md` for the full scouting 
 for each source:      fetch the current list → drop records already seen
                       → records dated before the look-back window (default 14 days)
                         are remembered but not reported, so a first run isn't a flood
+                      → routine records come in as Low: apartment and hotel pool
+                        closures, and trade permits (under $1M) at a place that
+                        already has a record; the first record about a place keeps
+                        its rating
 rate (Claude Opus)    headline, importance (high/medium/low), category, why it
                       matters, plus the names and addresses each record mentions
 editor (Claude Sonnet) a skeptical second pass over every rating, as an assignment
@@ -45,7 +49,9 @@ editor (Claude Sonnet) a skeptical second pass over every rating, as an assignme
 connect               normalize addresses ("1124 East 100 South, Unit 3" → "1124 E 100 S")
                       and names ("Postino, LLC" → "POSTINO"); match records across
                       sources, over the past year
-brief (Claude)        Top stories · Connections · Coming up · Also notable
+brief (Claude)        Top stories (up to 8, none on a slow day) · Connections ·
+                      Coming up (hearings and comment deadlines first) · Also notable;
+                      the report also names public bodies with no meeting in 35 days
 publish               Google Sheet + reports/YYYY-MM-DD.md + data/<source>.jsonl
 ```
 
