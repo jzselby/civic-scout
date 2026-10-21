@@ -1,3 +1,4 @@
+import json
 from datetime import date
 from types import SimpleNamespace
 
@@ -361,6 +362,30 @@ def test_briefing_leaves_out_regional_records_below_high(monkeypatch):
     analyze.brief(items, {}, {}, date(2026, 10, 5), "model")
     assert "pmn:m" in sent["prompt"] and "pmn:rm" not in sent["prompt"]
     assert analyze.brief(items[:1], {}, {}, date(2026, 10, 5), "model") is None
+
+
+def test_briefing_marks_records_the_editor_lowered(monkeypatch):
+    sent = {}
+    monkeypatch.setattr(analyze, "available", lambda: True)
+    monkeypatch.setattr(analyze.anthropic, "Anthropic", lambda: None)
+
+    def call(client, model, system, prompt):
+        sent["system"], sent["prompt"] = system, prompt
+        return SimpleNamespace(content=[SimpleNamespace(type="text", text="Brief")])
+
+    monkeypatch.setattr(analyze, "_call", call)
+    items = [{"source": "campaign_finance", "id": "c", "title": "Donation", "importance": "medium",
+              "first_importance": "high", "editor_note": "One routine contribution."},
+             {"source": "pmn", "id": "u", "title": "Closure", "importance": "high",
+              "first_importance": "medium", "editor_note": "School closure."},
+             {"source": "pmn", "id": "m", "title": "Agenda", "importance": "medium"}]
+    analyze.brief(items, {}, {}, date(2026, 10, 5), "model")
+    payload = {e["key"]: e for e in json.loads(sent["prompt"].split("\n\n", 1)[1])}
+    assert payload["campaign_finance:c"]["lowered_by_editor"] is True
+    assert payload["campaign_finance:c"]["editor_note"] == "One routine contribution."
+    assert "lowered_by_editor" not in payload["pmn:u"]
+    assert "editor_note" not in payload["pmn:m"]
+    assert "3 to 8" not in sent["system"]
 
 
 def test_several_runs_in_one_day_leave_one_briefing_row(monkeypatch):

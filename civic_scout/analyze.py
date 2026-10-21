@@ -58,18 +58,30 @@ beat read it, so lead with what matters most to the public.
 
 You get the high- and medium-importance items (already rated, with headlines and
 the news angle) and `connections`: items that share an address or a name with
-another record, possibly from a different source or an earlier date.
+another record, possibly from a different source or an earlier date. An item with
+`lowered_by_editor` was rated higher by the screener and lowered by the assignment
+editor, whose reason is in `editor_note`.
 
 Write GitHub-flavored Markdown with these sections:
-**Top stories**: the 3 to 8 most newsworthy items, most important first. Each is one
-bullet: a bold short headline, then one or two sentences with the specifics, and the
-source and link in the form ([source label](url)).
+**Top stories**: up to 8 of the most newsworthy items, most important first. Each is
+one bullet: a bold short headline in plain words (what changes for people, not the
+agency's title for it), then one or two sentences with the specifics, and the source
+and link in the form ([source label](url)). Say where (city, neighborhood or street)
+and who is affected (taxpayers, riders, families at a school, a block's residents),
+using only what the record states; don't work out numbers it doesn't give. Include only items a reporter
+should act on today; on a slow day one or two is right, and if nothing qualifies,
+write "Nothing urgent today." and put the items under Also notable. Never fill the
+section to reach a count. Don't put these in Top stories unless they reveal something
+bigger: a pool or spa closure, a trade permit (electrical, plumbing, mechanical, fire,
+solar), a small fine or a single routine campaign contribution, or an item the editor
+lowered.
 **Connections**: where records from different sources point to the same project,
 business or place (e.g. a planning application, a permit and a liquor license at
 one address), explain what they add up to. Only connections that tell a reporter
 something; omit the section if none do.
-**Coming up**: meetings and hearings in the next two weeks worth attending, with
-dates. Omit if none.
+**Coming up**: public hearings and comment deadlines in the next two weeks where
+residents can weigh in, first, each with its date and how to take part when the
+record says; then other meetings worth attending. Omit if none.
 **Also notable**: up to 8 one-line bullets for the rest of the medium/high items.
 
 Be concise and factual; don't speculate beyond the records. Don't repeat an item
@@ -95,9 +107,12 @@ Keep (or raise) to high, whatever the meeting date: a proposed or decided school
 closure, consolidation or boundary change; a tax, fee or tuition increase; layoffs of
 50+ or a business closing; a lawsuit, settlement, audit finding or investigation; a
 top official hired, fired or resigning; a health closure of a restaurant or business
-people know (pool and spa closures stay medium); a rezoning or project that would
-change a neighborhood. These are news the first time they appear, even if the hearing
-has passed or the vote is weeks away.
+people know (pool and spa closures are at most medium, and low when routine); a
+rezoning or project that would change a neighborhood; a bond or other new public debt;
+a pipeline, power plant, data center or other major energy or industrial project;
+major water or transportation funding, or a transit agency's budget gap; a large
+enrollment decline. These are news the first time they appear, even if the hearing has
+passed or the vote is weeks away.
 
 Be skeptical of:
 - trade permits (electrical, plumbing, mechanical, fire alarm/sprinkler, low voltage)
@@ -111,7 +126,8 @@ Be skeptical of:
 - agendas for meetings that already happened whose items are routine, with no
   outcome reported. A past date alone is never a reason to lower a record: a vote,
   cancellation, tabling, approval or study reported from a past meeting is news;
-- placeholder, test, withdrawn or incomplete records: low.
+- placeholder records: low only when the record itself says test, void or withdrawn,
+  or has no substance (no title, scope or details), not just because it is brief.
 You see only a headline and summary, not what has already been published, so don't
 lower a record as a "known story" or "follow-up" unless another record in this list
 covers it.
@@ -340,6 +356,9 @@ def brief(items: list[dict], connections: dict[str, list[dict]], labels: dict[st
             "why_it_matters": i.get("why_it_matters"), "date": i.get("date"), "org": i.get("org"),
             "place": i.get("place"), "url": i.get("url"),
         }
+        if i.get("editor_note"):
+            entry["editor_note"] = i["editor_note"]
+            entry["lowered_by_editor"] = LEVEL.get(i.get("first_importance"), 0) > LEVEL[i["importance"]]
         if key in connections:
             entry["connections"] = [
                 {"source": labels.get(c["source"], c["source"]), "title": c["title"], "date": c["date"],

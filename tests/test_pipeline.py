@@ -113,3 +113,28 @@ def test_report_lists_sources_found_by_an_earlier_run():
                         None, {})
     assert "| Notices | 1 | ok (5 fetched) |" in text
     assert "| WARN | 1 | earlier run today |" in text
+
+
+def test_briefing_lists_meetings_held_since_the_last_weekday(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline.analyze, "brief", lambda *a: "Brief")
+    store = Store(tmp_path)
+    store.source("pmn").add([
+        {"source": "pmn", "id": "fri", "title": "Council agenda", "headline": "Council votes on jail tax",
+         "org": "Salt Lake County Council", "date": "2026-10-16", "importance": "high", "url": "https://x/1"},
+        {"source": "pmn", "id": "sun", "title": "Board agenda", "org": "SLC Board of Education",
+         "date": "2026-10-18", "importance": "medium", "url": "https://x/2"},
+        {"source": "pmn", "id": "low", "title": "Minutes", "org": "SLC Planning Commission",
+         "date": "2026-10-17", "importance": "low"},
+        {"source": "pmn", "id": "reg", "title": "Provo", "org": "Provo Municipal Council",
+         "date": "2026-10-17", "importance": "medium", "regional": True},
+        {"source": "pmn", "id": "thu", "title": "Earlier", "org": "SLC Council",
+         "date": "2026-10-15", "importance": "high"},
+        {"source": "pmn", "id": "mon", "title": "Today", "org": "SLC Council",
+         "date": "2026-10-19", "importance": "high"},
+    ])
+    monday = date(2026, 10, 19)
+    assert [i["id"] for i in pipeline.results_to_check(store, monday)] == ["fri", "sun"]
+    text = pipeline.day_briefing(Config(data_dir=tmp_path), store, monday, [], {})
+    assert text.startswith("Brief\n\n**Results to check**")
+    assert "- Salt Lake County Council (Oct 16): Council votes on jail tax ([notice](https://x/1))" in text
+    assert [i["id"] for i in pipeline.results_to_check(store, date(2026, 10, 21))] == []
