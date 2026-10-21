@@ -1,4 +1,4 @@
-# Civic Scout handoff (as of Oct 5, 2026)
+# Civic Scout handoff (as of Oct 21, 2026)
 
 Start a new session with the `jzselby/civic-scout` repository selected, then ask Claude to
 read this file. `CLAUDE.md` (loaded automatically) has the working rules; `README.md` has
@@ -50,12 +50,13 @@ publish     sheet (idempotent by Key) + the day's one report file (rewritten by 
 
 | Key | Source | Notes |
 |---|---|---|
-| `pmn` | Utah Public Notice Website agendas | 15 bodies, ids in `sources/pmn.py` `DEFAULT_BODIES`; Claude reads attached agenda PDFs |
+| `pmn` | Utah Public Notice Website agendas | about 45 bodies, ids in `sources/pmn.py` `DEFAULT_BODIES` and `REGIONAL_BODIES`; Claude reads attached agenda PDFs |
 | `warn` | DWS WARN layoff notices | year headings fill missing years in dates |
 | `slc_licenses` | SLC monthly new business license list | PDF only; newest month per run |
 | `restaurants` | SL County health closures (cdpehs.com) | ASP.NET postback ("Closures" button); covers food, pools, lodging |
 | `slc_permits` | slcbuilding's committed permit data | already rated there (`prerated`) |
 | `slc_council` | SLC Council recaps (slc.gov RSS) and minutes (slc.primegov.com JSON) | minutes are dated by publish date, so the backlog is recorded as old, not rated |
+| `campaign_finance` | disclosures.utah.gov CSV per year and filer type (candidates, PACs, issue committees, parties, corporations, independent expenditures) | one record per filed report, dated by its latest transaction; reports under $5,000 prerated low; amendments and transactions added after a report was first seen are not re-reported |
 
 Public Notice body ids: SLC Council 1360, SLC Planning Commission 1274, SLC Board of
 Education 1067, Inland Port board 6413, SL County Council 709, SLC Historic Landmark
@@ -65,7 +66,9 @@ trustees 1376, SLCC trustees 1383, State Charter School Board 1495, SLC CRA 9033
 Fairpark district 8711, Point of the Mountain authority 6439, SL County Mountainous
 Planning District 5341, Housing Connect 6223, Air Quality Board 38, Water Quality Board
 40, Waste Management and Radiation Control Board 5281, Great Salt Lake Advisory Council
-7937, Metropolitan Water District of SL & Sandy 885, SL County Board of Health 1498.
+7937, Metropolitan Water District of SL & Sandy 885, SL County Board of Health 1498, DEQ Division
+of Water Quality 6493 (permit and settlement notices), UTA Transit Commission 9629 (replaced
+the deactivated Board of Trustees 940 on July 1, 2026).
 
 Regional bodies (`REGIONAL_BODIES` in `sources/pmn.py`; records carry `regional: true`
 and reach Top stories and the briefing only when High, see `store.is_notable`): Utah
@@ -88,30 +91,61 @@ Transportation Commission 60 are regular bodies, since they decide Salt Lake pro
 `pmn_notices` (look up the body id behind notice ids). Prints raw pages and parser output
 to the job log.
 
-Local: `pip install -r requirements.txt`, `python -m pytest` (32 tests), `python -m
+Local: `pip install -r requirements.txt`, `python -m pytest` (50 tests), `python -m
 civic_scout run --dry-run --no-summary`, `python -m civic_scout sources`.
 
 ## Open items
 
-1. **UTA board not watched.** Body 940 is UTA's deactivated board; its current notices
-   don't show under a new body yet. Find a recent UTA notice id and run the probe with
-   `pmn_notices`.
-2. **Editor calibration.** It now errs toward visibility (the owner's priority). Ratings
+1. **Editor calibration.** It now errs toward visibility (the owner's priority). Ratings
    vary a bit between runs (LLM nondeterminism). If Top stories grows too long on normal
    days, tune `REVIEW_PROMPT` rather than loosening `HIDE_REASONS`. Watch a week of
    normal (non-backlog) runs before changing anything.
-3. **Business license list** is one item per month (PDF). Per-business items would
+2. **Business license list** is one item per month (PDF). Per-business items would
    improve address matching; the PDF's layout hasn't been inspected yet (probe it).
+3. **Campaign finance first deadline.** The pre-general reports (Sept. 26–Oct. 22) are due
+   Oct. 27, 2026: expect a few hundred reports on Oct. 27–28, most rated by Claude. Check
+   that day's run cost and Top stories length. The CSV has no office or race; Claude
+   names it only when it's clear. A filer's later amendment keeps the same id and isn't
+   re-reported.
 
-## Next sources the owner approved in principle
+## Next sources (scouted Oct 21, 2026)
 
-In this order:
-- State Auditor and Legislative Auditor General audit reports (simple list pages).
-- Campaign finance (disclosures.utah.gov), timely before the Nov. 3 election.
-- Restaurant inspections with many critical violations (same cdpehs.com site).
+Checked live through the probe workflow on Oct 21 unless marked otherwise. In order:
+1. **State Auditor reports** (`auditor.utah.gov/audit-reports/recent-audit-reports/`,
+   server-rendered list; its wp-json API returns 403) and **Legislative Auditor General**
+   audits (`olag.utleg.gov/audits_all.jsp`).
+2. **Utah appellate opinions**: RSS at `legacy.utcourts.gov/rss/opinions/index.xml`
+   (5–10 a week; PDF per opinion).
+3. **Public Service Commission dockets**: `psc.utah.gov/wp-json/wp/v2/posts` lists each new
+   docket with its date (Rocky Mountain Power is the 26-035 series; Enbridge gas 057).
+4. Small list pages, one module: Judicial Conduct Commission dispositions
+   (`jcc.utah.gov/public-dispositions/`), governor's executive orders
+   (`governor.utah.gov/executive-orders/`), initiatives and referenda
+   (`vote.utah.gov/initiatives-and-referenda`), admin rules (`rules.utah.gov/feed/`), SL
+   County DA officer-involved incidents (`saltlakecounty.gov/district-attorney/oici---media/`,
+   list not parsed yet), Government Records Office (GRAMA appeal) decisions
+   (`archives.utah.gov/transparency-services/government-records-office/`).
+5. **Legislature bills** for the 2027 session (opens Jan. 19; bills numbered from
+   December). Needs a developer token (owner: request at le.utah.gov/data/developer.htm).
+   The interim calendar JSON (`le.utah.gov/CalServ/CalServ?month=<0-11>&year=<y>`) works
+   without one.
+6. Later: U3P/Bonfire bids (`utah.bonfirehub.com/PublicPortal/getOpenPublicOpportunitiesSectionData`,
+   JSON after a GET of `/portal/?tab=openOpportunities`; 208 open from 52 agencies incl. SLC,
+   UTA, school districts; needs filtering), water-rights change applications
+   (`waterrights.utah.gov/applicationsrecords/AppTracker.asp`, HTML table), DAQ permit
+   applications (`daqpermitting.utah.gov`), new federal cases in D. Utah (CourtListener
+   search API, no key), restaurant inspections with many critical violations (cdpehs.com).
 
-Later: Legislature bill filings (glen.le.utah.gov, needs a token), DEQ permit notices,
-water-rights applications, County recorder sales.
+**Transparent Utah** (State Auditor) has no public API: bulk transactions are in BigQuery
+(`ut-sao-transparency-prod.transaction.transaction`) for "Super Users" the auditor's office
+approves (owner: ask, and whether a service account can be granted). Fits a weekly job:
+large payments by Salt Lake County entities, new vendors. Its compliance report
+(`old.transparent.utah.gov/compliance.php`: entities delinquent / on hold) is filled in by
+JavaScript; find its data endpoint (`static/js/compliance.js`) before building on it.
+
+Skip: opendata.utah.gov (decommissioned), maps.slc.gov services (token required), the
+County recorder (paid), court calendars, jail bookings, UDOT, SEC EDGAR (blocks the
+probe's User-Agent; fixable if wanted), Federal Register (noisy).
 
 To add a source: a class in `civic_scout/sources/` with `name`, `label`, `guidance`,
 `default_enabled`, `fetch()` and `probe()`; register it in `sources/__init__.py`; add a

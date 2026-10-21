@@ -1,5 +1,6 @@
 """Registry of sources. To add one, write a class following base.Source and list it here."""
 
+from .campaign_finance import CampaignFinance
 from .pmn import PublicNotices
 from .restaurants import RestaurantClosures
 from .slc_council import SlcCouncil
@@ -7,7 +8,8 @@ from .slc_licenses import SlcBusinessLicenses
 from .slc_permits import SlcPermits
 from .warn import WarnNotices
 
-ALL = [PublicNotices(), WarnNotices(), SlcBusinessLicenses(), RestaurantClosures(), SlcPermits(), SlcCouncil()]
+ALL = [PublicNotices(), WarnNotices(), SlcBusinessLicenses(), RestaurantClosures(), SlcPermits(), SlcCouncil(),
+       CampaignFinance()]
 BY_NAME = {s.name: s for s in ALL}
 
 

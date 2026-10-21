@@ -70,9 +70,14 @@ DEFAULT_BODIES: list[tuple[str, str, str, str]] = [
     ("885", "Metropolitan Water District of Salt Lake & Sandy", "Board of Trustees",
      "Metropolitan Water District of Salt Lake"),
     ("1498", "Salt Lake County Board of Health", "Salt Lake County Board of Health", "Salt Lake County"),
+    # DEQ's divisions post permit drafts, 401 certifications and settlements (stipulation
+    # and consent orders) that never reach the boards' agendas. Checked 2026-10-21.
+    ("6493", "Utah Division of Water Quality", "Division of Water Quality", "Department of Environmental Quality"),
     # Transportation (checked 2026-10-06): they decide Salt Lake road and transit projects too.
     ("2262", "Wasatch Front Regional Council", "Wasatch Front Regional Council", "Wasatch Front Regional Council"),
     ("60", "Utah Transportation Commission", "Transportation Commission", "Department of Transportation"),
+    # Replaced UTA's Board of Trustees (body 940, deactivated) on July 1, 2026. Checked 2026-10-21.
+    ("9629", "UTA Transit Commission", "Transit Commission", "Utah Transit Authority"),
 ]
 # Regional: neighboring counties and regional boards. Their records reach Top stories
 # and the briefing only when rated high (store.is_notable). Checked 2026-10-06.
@@ -92,9 +97,6 @@ REGIONAL_BODIES: list[tuple[str, str, str, str]] = [
     ("7775", "Utah Lake Authority", "Utah Lake Authority Governing Board", "Utah Lake Authority"),
 ]
 REGIONAL_IDS = {body_id for body_id, *_ in REGIONAL_BODIES}
-
-# Not yet found: the current UTA Board of Trustees. 940 is "Board of Trustees
-# (Deactivated)"; its last notice is for June 24, 2026, and no newer UTA body was found.
 
 # Body pages list only upcoming notices, so this cap is rarely reached.
 MAX_PER_BODY = 30
@@ -165,8 +167,10 @@ state school, charter school and higher-education boards, university trustees, t
 liquor commission, development authorities (Inland Port, Fairpark district, Point of the
 Mountain, SLC's Community Reinvestment Agency), the county housing authority, the state
 air, water and waste boards, the Great Salt Lake Advisory Council, the county health
-board, a water district, the Wasatch Front Regional Council and the state
-Transportation Commission, and others). `org` is the public body; `text`
+board, a water district, the Wasatch Front Regional Council, the state
+Transportation Commission and the UTA Transit Commission, and others), and public
+notices from DEQ's Division of Water Quality (draft permits, water quality
+certifications and settlements with named companies or cities). `org` is the public body; `text`
 holds the notice and the text of its attached agenda.
 - high: votes on budgets, taxes, fees, bonds or large contracts; school closures,
   boundary changes, superintendent or president hires, contracts and departures,

@@ -224,3 +224,44 @@ def test_council_fetch_reads_text_only_for_new_records(monkeypatch):
     assert with_text == {"recap-17949", "minutes-45593", "minutes-45590"}
     assert len(items) == 13  # older and seen records still come back, so they're recorded
     assert not any("41833" in u for u in fetched)
+
+
+def test_campaign_finance_makes_one_record_per_filed_report():
+    from civic_scout.sources import campaign_finance as cf
+    rows = cf.parse_csv(read("campaign_finance_pic.csv"))
+    assert len(rows) == 21 and rows[0]["FILER"] == "Defend Utahs Ballot"
+    reports = {i["id"]: i for i in cf.reports(rows, "PIC", 2026)}
+    # The General report isn't filed yet (FILED blank), so it isn't a record yet.
+    assert sorted(reports) == ["2026:PIC:Defend Utahs Ballot:September 30th",
+                               "2026:PIC:Protect Utah Workers:September 30th",
+                               "2026:PIC:Utahns for Worker Freedom:Primary"]
+    ballot = reports["2026:PIC:Defend Utahs Ballot:September 30th"]
+    assert ballot["date"] == "2026-09-23" and ballot["org"] == "Defend Utahs Ballot"
+    assert ballot["spent"] == 145397.26 and "spent $145,397 in 9 expenditure(s)" in ballot["details"]
+    assert ballot["text"].splitlines()[6] == "2026-09-23  $100,000  Utahns Protecting Our Constitution  Other"
+    assert not ballot.get("prerated")
+    # Under $5,000 moved: recorded as routine without asking Claude.
+    small = reports["2026:PIC:Protect Utah Workers:September 30th"]
+    assert small["prerated"] and small["importance"] == "low"
+
+
+def test_campaign_finance_fetch_skips_types_without_filings_and_seen_reports(monkeypatch):
+    from datetime import date
+    from types import SimpleNamespace
+    from civic_scout.sources import campaign_finance as cf
+    monkeypatch.setattr(cf, "today", lambda: date(2026, 10, 21))
+    csv_bytes = (FIX / "campaign_finance_pic.csv").read_bytes()
+
+    class FakeHttp:
+        def get(self, url):
+            if url.endswith("EntityType=PIC"):
+                return SimpleNamespace(headers={"content-type": "application/csv; charset=utf-8"}, content=csv_bytes)
+            return SimpleNamespace(headers={"content-type": "text/html"}, content=b"<html></html>")
+
+    seen = {"2026:PIC:Utahns for Worker Freedom:Primary"}
+    items = cf.CampaignFinance().fetch(None, FakeHttp(), seen)
+    assert {i["org"] for i in items} == {"Defend Utahs Ballot", "Protect Utah Workers"}
+    # In January last year's year-end report is still being filed, so both years are read.
+    monkeypatch.setattr(cf, "today", lambda: date(2027, 1, 12))
+    ids = {i["id"] for i in cf.CampaignFinance().fetch(None, FakeHttp(), set())}
+    assert "2026:PIC:Defend Utahs Ballot:September 30th" in ids
