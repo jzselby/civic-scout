@@ -13,6 +13,8 @@ Optional keys the rest of the pipeline understands:
     place   street address or location as written
     text    raw text for Claude to read (not stored)
     details short "label: value" facts shown in the sheet
+    max_importance  the highest rating the record may get, whatever Claude says
+              (e.g. "medium" for pool closures)
     prerated  True when the item already carries importance/category/why_it_matters
               (e.g. imported from another pipeline), so Claude doesn't re-rate it
 

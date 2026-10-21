@@ -95,8 +95,9 @@ Keep (or raise) to high, whatever the meeting date: a proposed or decided school
 closure, consolidation or boundary change; a tax, fee or tuition increase; layoffs of
 50+ or a business closing; a lawsuit, settlement, audit finding or investigation; a
 top official hired, fired or resigning; a health closure of a restaurant or business
-people know; a rezoning or project that would change a neighborhood. These are news
-the first time they appear, even if the hearing has passed or the vote is weeks away.
+people know (pool and spa closures stay medium); a rezoning or project that would
+change a neighborhood. These are news the first time they appear, even if the hearing
+has passed or the vote is weeks away.
 
 Be skeptical of:
 - trade permits (electrical, plumbing, mechanical, fire alarm/sprinkler, low voltage)
@@ -302,7 +303,8 @@ def apply_review(items: list[dict], changes: dict[str, Change]) -> int:
 
     Guard against burying news: the editor may hide a record the screener rated medium
     or high (lower it to low) only for a routine reason (HIDE_REASONS); otherwise the
-    record stays visible at medium.
+    record stays visible at medium. Nor may it raise a record above its source's
+    `max_importance`.
     """
     n = 0
     for item in items:
@@ -313,6 +315,8 @@ def apply_review(items: list[dict], changes: dict[str, Change]) -> int:
         new = c.importance
         if new == "low" and LEVEL[screener] > 0 and c.reason not in HIDE_REASONS:
             new = "medium"
+        if LEVEL[new] > LEVEL[item.get("max_importance") or "high"]:
+            new = item["max_importance"]
         if new != item.get("importance"):
             item.setdefault("first_importance", item.get("importance"))
             item["importance"] = new

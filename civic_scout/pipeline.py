@@ -23,10 +23,13 @@ def today() -> date:
 
 
 def apply_rules(item: dict) -> None:
-    """Deterministic floors, so big items surface even without Claude."""
+    """Deterministic floors, so big items surface even without Claude, and ceilings."""
     if item["source"] == "warn" and (item.get("workers") or 0) >= 50:
         item["importance"] = "high"
         item.setdefault("category", "Jobs / economy")
+    cap = item.get("max_importance")
+    if cap and analyze.LEVEL.get(item.get("importance"), 0) > analyze.LEVEL[cap]:
+        item["importance"] = cap
 
 
 @dataclass

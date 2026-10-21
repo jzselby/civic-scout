@@ -68,6 +68,15 @@ def test_big_warn_notice_is_high_without_claude():
     assert item["importance"] == "high"
 
 
+def test_pool_closures_are_never_high():
+    item = {"source": "restaurants", "id": "x", "importance": "high", "max_importance": "medium"}
+    pipeline.apply_rules(item)
+    assert item["importance"] == "medium"
+    low = {"source": "restaurants", "id": "y", "importance": "low", "max_importance": "medium"}
+    pipeline.apply_rules(low)
+    assert low["importance"] == "low"
+
+
 def test_was_reported_flags_old_backlog_items():
     from civic_scout.store import was_reported
     assert was_reported({"reported": False}) is False

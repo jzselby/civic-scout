@@ -56,6 +56,15 @@ def closure_links(html: str, base: str) -> list[str]:
 
 
 _DATE = re.compile(r"^\d{1,2}/\d{1,2}/\d{4}$")
+# Pools, spas and splash pads are listed under their facility's name with a suffix:
+# "PARKGATE APTS - POOL", "COUNTRY INN & SUITES WV - W/P".
+_POOL = re.compile(r"\s-\s.*\b(POOL|W/P|SPA|WHIRLPOOL|SPLASH PAD)\b", re.I)
+
+
+def is_pool(name: str) -> bool:
+    return bool(_POOL.search(name))
+
+
 _INSP_BUTTON = re.compile(r"__doPostBack\('([^']*InspButton[^']*)'")
 
 
@@ -148,10 +157,11 @@ hazards, mostly restaurants and food trucks but also pools, spas and lodging. `t
 (when present) is the inspection report from the closing date: the inspector's
 observed violations, which give the reason (critical violations are what close a
 place); `details` gives the closing and reopening dates.
-- high: any closure of a restaurant, chain location or business the public would
+- high: any closure of a restaurant, chain location or food business the public would
   recognize; a repeat closure; a striking reason (pests, sewage, no hot water,
-  illness outbreak); a hotel or public pool.
-- medium: other closures (an apartment complex pool, a small market).
+  illness outbreak).
+- medium: pool, spa and splash pad closures (never high, even at a hotel or for a
+  repeat closure) and other closures (a small market).
 - low: nothing notable.
 why_it_matters should give the name, address, closure date, the reason as the
 inspection report states it, and whether it has reopened."""
@@ -183,6 +193,8 @@ inspection report states it, and whether it has reopened."""
                 "details": details,
                 "text": text,
             })
+            if is_pool(row["name"]):
+                items[-1]["max_importance"] = "medium"
         return items
 
     @staticmethod

@@ -122,6 +122,15 @@ def test_health_closures_table_parses_rows_and_inspection_buttons():
     assert rows[1]["button"] == "ctl00$PageContent$VW_EST_PUBLIC4TableControlRepeater$ctl02$InspButton$_Button"
 
 
+def test_pool_closures_are_told_apart_from_restaurants():
+    from civic_scout.sources import restaurants
+    for name in ("SOUTH RIDGE TOWNHOMES - W/P", "PARKGATE APTS - POOL", "21LUX APTS - OUTDOOR POOL",
+                 "ARTESIAN SPRINGS APTS - NORTH W/P #2", "SOME HOTEL - SPA"):
+        assert restaurants.is_pool(name), name
+    for name in ("VIETOPIA BISTRO", "LOS PANCHITOS #US95AG", "SPA CAFE", "POOLSIDE GRILL"):
+        assert not restaurants.is_pool(name), name
+
+
 def test_health_closure_reason_comes_from_the_closing_inspection():
     from civic_scout.sources import restaurants
     history = restaurants.parse_history(read("inspection_history.html"))
@@ -160,6 +169,9 @@ def test_health_closures_fetch_presses_through_to_the_closing_results():
     vietopia = next(i for i in items if i["org"] == "Vietopia Bistro")
     assert "live cockroaches" in vietopia["text"]
     assert vietopia["url"] == restaurants.SITE
+    assert "max_importance" not in vietopia
+    pool = next(i for i in items if i["org"] == "South Ridge Townhomes - W/P")
+    assert pool["max_importance"] == "medium"
     assert "ctl00$PageContent$INSPECTIONTableControlRepeater$ctl03$ViolButton$_Button" in pressed
 
 

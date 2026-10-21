@@ -300,6 +300,13 @@ def test_editor_can_hide_a_record_only_for_a_routine_reason():
     assert items[0]["first_importance"] == "high"
 
 
+def test_editor_cannot_raise_a_record_above_its_ceiling():
+    items = [{"source": "s", "id": "0", "importance": "medium", "max_importance": "medium"}]
+    changes = {"s:0": analyze.Change(key="s:0", importance="high", reason="other", note="Hotel pool.")}
+    assert analyze.apply_review(items, changes) == 0
+    assert items[0]["importance"] == "medium" and "editor_note" not in items[0]
+
+
 def test_top_stories_holds_high_for_30_days_and_medium_for_7(monkeypatch):
     sh = FakeSpreadsheet()
     pool = [
