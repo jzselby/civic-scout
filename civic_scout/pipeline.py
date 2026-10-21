@@ -11,7 +11,7 @@ from . import analyze, link, report
 from .config import Config
 from .http import Http
 from .sources import ALL, selected
-from .store import Store, was_reported
+from .store import Store, is_notable, was_reported
 
 log = logging.getLogger(__name__)
 
@@ -73,8 +73,33 @@ def day_connections(store: Store, day: date, items: list[dict]) -> dict[str, lis
     return link.connections(items, store.everything() + items, day)
 
 
+def results_to_check(store: Store, day: date) -> list[dict]:
+    """High and medium agenda items (Salt Lake bodies, not regional ones) from meetings
+    held since the last weekday, so reporters check what was decided: notices show
+    only what a body planned to do."""
+    start = day - timedelta(days=1)
+    while start.weekday() >= 5:
+        start -= timedelta(days=1)
+    held = [i for i in store.source("pmn").items.values()
+            if start.isoformat() <= (i.get("date") or "") < day.isoformat()
+            and is_notable(i) and not i.get("regional") and not i.get("hidden")]
+    return sorted(held, key=lambda i: (i.get("importance") != "high", i["date"], i.get("org") or ""))
+
+
+def results_section(items: list[dict]) -> str:
+    lines = ["**Results to check**: these meetings have happened; the records show only the agenda."]
+    for i in items:
+        lines.append(f"- {i.get('org') or 'Public body'} ({date.fromisoformat(i['date']):%b %d}): "
+                     f"{i.get('headline') or i.get('title')} ([notice]({i.get('url')}))")
+    return "\n".join(lines)
+
+
 def day_briefing(cfg: Config, store: Store, day: date, items: list[dict], labels: dict[str, str]) -> str | None:
-    return analyze.brief(items, day_connections(store, day, items), labels, day, cfg.model)
+    briefing = analyze.brief(items, day_connections(store, day, items), labels, day, cfg.model)
+    held = results_to_check(store, day)
+    if not held:
+        return briefing
+    return "\n\n".join(p for p in (briefing, results_section(held)) if p)
 
 
 def day_report(store: Store, day: date, items: list[dict], health: dict[str, str], briefing: str | None,
