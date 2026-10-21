@@ -61,6 +61,18 @@ def local_date(stamp: str | None) -> date | None:
     return (dt.astimezone(TZ) if dt.tzinfo else dt).date()
 
 
+def forget_day(store: Store, day: date) -> int:
+    """Drop the records first seen on this day from the store, in memory only, so a dry
+    run finds and rates them again as if the day's run hadn't happened."""
+    n = 0
+    for path in sorted(store.data_dir.glob("*.jsonl")):
+        items = store.source(path.stem).items
+        for item_id in [k for k, i in items.items() if local_date(i.get("first_seen")) == day]:
+            del items[item_id]
+            n += 1
+    return n
+
+
 def reported_on(store: Store, day: date, new_items: list[dict] = ()) -> list[dict]:
     """Every record reported on this day (by first_seen, Mountain time), plus new ones."""
     out = {link.item_key(i): i for i in store.everything()

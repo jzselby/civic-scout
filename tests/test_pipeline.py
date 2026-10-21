@@ -138,3 +138,13 @@ def test_briefing_lists_meetings_held_since_the_last_weekday(tmp_path, monkeypat
     assert text.startswith("Brief\n\n**Results to check**")
     assert "- Salt Lake County Council (Oct 16): Council votes on jail tax ([notice](https://x/1))" in text
     assert [i["id"] for i in pipeline.results_to_check(store, date(2026, 10, 21))] == []
+
+
+def test_forget_day_drops_only_that_days_records_in_memory(tmp_path):
+    store = Store(tmp_path)
+    store.source("pmn").add([{"source": "pmn", "id": "old", "title": "t", "first_seen": "2026-10-20T15:00:00+00:00"},
+                             {"source": "pmn", "id": "new", "title": "t", "first_seen": "2026-10-21T14:20:00+00:00"}])
+    store = Store(tmp_path)
+    assert pipeline.forget_day(store, date(2026, 10, 21)) == 1
+    assert set(store.source("pmn").items) == {"old"}
+    assert set(Store(tmp_path).source("pmn").items) == {"old", "new"}  # nothing written

@@ -39,6 +39,10 @@ def cmd_run(cfg: Config, args) -> int:
     store = Store(cfg.data_dir)
     http = Http(cfg.http_timeout)
     day = pipeline.today()
+    if args.replay_today:
+        args.dry_run = True
+        log.info("Replaying today: %d record(s) first seen today will be fetched and rated again",
+                 pipeline.forget_day(store, day))
     result = pipeline.collect(cfg, store, http, day)
     pipeline.enrich(cfg, store, result, use_claude=not args.no_summary)
     print(result.report)
@@ -178,6 +182,8 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("--sources", help="comma-separated source names (default: all enabled)")
     run.add_argument("--days-back", type=int, help="report items dated within this many days (default 14)")
     run.add_argument("--dry-run", action="store_true", help="print the report; write nothing, mark nothing seen")
+    run.add_argument("--replay-today", action="store_true",
+                     help="dry run that treats today's records as new, to preview rating changes")
     run.add_argument("--no-sheet", action="store_true", help="skip the Google Sheet")
     run.add_argument("--no-summary", action="store_true", help="skip Claude (no ratings or briefing)")
     run.add_argument("--require-claude", action="store_true",

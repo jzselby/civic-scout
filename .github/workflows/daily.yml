@@ -22,6 +22,10 @@ on:
         description: "Dry run: print the report only; write nothing and mark nothing seen"
         type: boolean
         default: false
+      replay_today:
+        description: "Test: re-fetch and re-rate today's records and print the report; writes nothing (implies dry run)"
+        type: boolean
+        default: false
       refresh_connections:
         description: "Only recompute the sheet's Connections column (no fetching, no Claude)"
         type: boolean
@@ -86,6 +90,7 @@ jobs:
           REFRESH: ${{ inputs.refresh_connections }}
           FORMAT: ${{ inputs.format_sheet }}
           REVIEW: ${{ inputs.review_existing }}
+          REPLAY: ${{ inputs.replay_today }}
         run: |
           if [ "$REVIEW" = "true" ]; then
             if [ "$DRY_RUN" = "true" ]; then python -m civic_scout review-existing --dry-run; else python -m civic_scout review-existing; fi
@@ -94,11 +99,12 @@ jobs:
           if [ "$FORMAT" = "true" ]; then python -m civic_scout format-sheet; exit; fi
           if [ "$REFRESH" = "true" ]; then python -m civic_scout refresh-connections; exit; fi
           args=(run)
-          if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); else args+=(--require-claude); fi
+          if [ "$REPLAY" = "true" ]; then args+=(--replay-today)
+          elif [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); else args+=(--require-claude); fi
           python -m civic_scout "${args[@]}"
 
       - name: Commit report and seen-record lists
-        if: ${{ !inputs.dry_run && steps.guard.outputs.skip != 'true' }}
+        if: ${{ !inputs.dry_run && !inputs.replay_today && steps.guard.outputs.skip != 'true' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
