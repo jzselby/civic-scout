@@ -15,9 +15,15 @@ name, and writes a cross-source briefing. Output goes to a Google Sheet and to
 - Sheet: [Civic Scout: Utah public records briefing](https://docs.google.com/spreadsheets/d/107ajJ93b3iGa6wKsbTwqi7jk0tNj_y_82Ymt0_me2Ag/edit)
   (id `107ajJ93b3iGa6wKsbTwqi7jk0tNj_y_82Ymt0_me2Ag`), owned by the owner, shared
   with the same service account slcbuilding uses.
-- Schedule: `daily.yml` at 14:13, 14:47 and 15:31 UTC (about 8–9:30am Mountain); later
-  attempts skip once the day's report exists. GitHub's scheduler runs late (Oct 4's run
-  started at 18:06 UTC).
+- Schedule: a scheduled Claude task in the owner's other Claude account starts `daily.yml`
+  (workflow_dispatch) at 7:30am Mountain; it ran at about 8:18 until Oct 21. It isn't
+  visible from this account's Routines. slcbuilding's own Claude task ("SLC permit digest
+  daily update", was 7:41am) moves to about 7:00am, so its permits land (~5 minutes)
+  before this run; if they're late, they come in the next morning. `daily.yml`'s own
+  schedule (14:47, 15:31, 16:13 UTC) is only a backup: GitHub fires it 3–6 hours late
+  for this repo, and each attempt skips once the day's report exists. A manual or
+  task-started run never skips, so a second one the same day re-rates new records and
+  rewrites the day's briefing.
 - Cost: roughly under $1/day in Claude usage; the first backlog run was about $0.85.
 
 ## How a run works
