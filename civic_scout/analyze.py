@@ -103,9 +103,12 @@ Keep (or raise) to high, whatever the meeting date: a proposed or decided school
 closure, consolidation or boundary change; a tax, fee or tuition increase; layoffs of
 50+ or a business closing; a lawsuit, settlement, audit finding or investigation; a
 top official hired, fired or resigning; a health closure of a restaurant or business
-people know (pool and spa closures are at most medium, and low when routine); a rezoning or project that would
-change a neighborhood. These are news the first time they appear, even if the hearing
-has passed or the vote is weeks away.
+people know (pool and spa closures are at most medium, and low when routine); a
+rezoning or project that would change a neighborhood; a bond or other new public debt;
+a pipeline, power plant, data center or other major energy or industrial project;
+major water or transportation funding, or a transit agency's budget gap; a large
+enrollment decline. These are news the first time they appear, even if the hearing has
+passed or the vote is weeks away.
 
 Be skeptical of:
 - trade permits (electrical, plumbing, mechanical, fire alarm/sprinkler, low voltage)
@@ -119,7 +122,8 @@ Be skeptical of:
 - agendas for meetings that already happened whose items are routine, with no
   outcome reported. A past date alone is never a reason to lower a record: a vote,
   cancellation, tabling, approval or study reported from a past meeting is news;
-- placeholder, test, withdrawn or incomplete records: low.
+- placeholder records: low only when the record itself says test, void or withdrawn,
+  or has no substance (no title, scope or details), not just because it is brief.
 You see only a headline and summary, not what has already been published, so don't
 lower a record as a "known story" or "follow-up" unless another record in this list
 covers it.
