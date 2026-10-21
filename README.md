@@ -112,8 +112,9 @@ daily workflow with **format_sheet** ticked.
 3. **Probe first.** Actions → *Probe sources* → Run workflow. It saves raw pages from
    every source and logs what each parser makes of them.
 4. **Test run.** Actions → *Civic Scout daily briefing* → Run workflow with *dry run*
-   ticked, then once for real. After that it runs every morning around 8am Mountain,
-   after slcbuilding's update.
+   ticked, then once for real. After that a Claude Routine starts it every morning at
+   7:21am Mountain (see `HANDOFF.md`), after slcbuilding's update (moved to about 7:00am so its permits
+   are in). The workflow's own schedule is only a backup: GitHub fires it hours late.
 
 ## Run it locally
 

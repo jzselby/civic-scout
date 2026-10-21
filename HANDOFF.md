@@ -15,9 +15,20 @@ name, and writes a cross-source briefing. Output goes to a Google Sheet and to
 - Sheet: [Civic Scout: Utah public records briefing](https://docs.google.com/spreadsheets/d/107ajJ93b3iGa6wKsbTwqi7jk0tNj_y_82Ymt0_me2Ag/edit)
   (id `107ajJ93b3iGa6wKsbTwqi7jk0tNj_y_82Ymt0_me2Ag`), owned by the owner, shared
   with the same service account slcbuilding uses.
-- Schedule: `daily.yml` at 14:13, 14:47 and 15:31 UTC (about 8–9:30am Mountain); later
-  attempts skip once the day's report exists. GitHub's scheduler runs late (Oct 4's run
-  started at 18:06 UTC).
+- Schedule: the Routine "Civic Scout daily briefing" (claude.ai, the owner's account) starts
+  `daily.yml` (workflow_dispatch) at 7:21am America/Denver, so the briefing is ready by
+  about 7:30. It is bound to Claude Code session `session_01FN8jTXZ59MQ5xf1m7mYxPX`,
+  because that session has GitHub access and Routine-created sessions don't; don't
+  archive that session, or the Routine has nowhere to run (then recreate it from a session
+  with the repo attached, or from the claude.ai Routines page). It skips if the day's
+  report exists or a run is going, and sends a push notification if it can't start the run.
+  Until Oct 21 a task in the owner's other Claude account started it at about 8:18; stop
+  that one once the Routine has run. slcbuilding's own Claude task ("SLC permit digest daily
+  update", was 7:41am) moves to about 7:00am so its permits land (~5 minutes) first; if
+  they're late they come in the next morning. `daily.yml`'s own schedule (14:47, 15:31,
+  16:13 UTC) is only a backup: GitHub fires it 3–6 hours late for this repo, and each
+  attempt skips once the day's report exists. A manual or Routine-started run never skips,
+  so a second one the same day re-rates new records and rewrites the day's briefing.
 - Cost: roughly under $1/day in Claude usage; the first backlog run was about $0.85.
 
 ## How a run works

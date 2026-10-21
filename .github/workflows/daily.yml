@@ -2,12 +2,14 @@ name: Civic Scout daily briefing
 
 on:
   schedule:
-    # GitHub's scheduler is best-effort, so there are backup attempts; each skips
-    # itself once the day's report exists. Runs after slcbuilding's morning update.
-    # UTC = 8:13, 8:47, 9:31am MDT (summer); 7:13, 7:47, 8:31am MST (winter).
-    - cron: "13 14 * * *"
+    # The daily run is started at 7:21am Mountain by a Claude Routine (see HANDOFF.md),
+    # after slcbuilding's update. GitHub's scheduler fires hours late for
+    # this repo, so these are only backups for a morning the Routine misses; each skips
+    # itself once the day's report exists. All are after 7:30am in both seasons:
+    # UTC = 8:47, 9:31, 10:13am MDT (summer); 7:47, 8:31, 9:13am MST (winter).
     - cron: "47 14 * * *"
     - cron: "31 15 * * *"
+    - cron: "13 16 * * *"
   workflow_dispatch:
     inputs:
       sources:
