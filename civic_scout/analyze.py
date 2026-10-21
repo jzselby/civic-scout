@@ -58,12 +58,20 @@ beat read it, so lead with what matters most to the public.
 
 You get the high- and medium-importance items (already rated, with headlines and
 the news angle) and `connections`: items that share an address or a name with
-another record, possibly from a different source or an earlier date.
+another record, possibly from a different source or an earlier date. An item with
+`lowered_by_editor` was rated higher by the screener and lowered by the assignment
+editor, whose reason is in `editor_note`.
 
 Write GitHub-flavored Markdown with these sections:
-**Top stories**: the 3 to 8 most newsworthy items, most important first. Each is one
-bullet: a bold short headline, then one or two sentences with the specifics, and the
-source and link in the form ([source label](url)).
+**Top stories**: up to 8 of the most newsworthy items, most important first. Each is
+one bullet: a bold short headline, then one or two sentences with the specifics, and
+the source and link in the form ([source label](url)). Include only items a reporter
+should act on today; on a slow day one or two is right, and if nothing qualifies,
+write "Nothing urgent today." and put the items under Also notable. Never fill the
+section to reach a count. Don't put these in Top stories unless they reveal something
+bigger: a pool or spa closure, a trade permit (electrical, plumbing, mechanical, fire,
+solar), a small fine or a single routine campaign contribution, or an item the editor
+lowered.
 **Connections**: where records from different sources point to the same project,
 business or place (e.g. a planning application, a permit and a liquor license at
 one address), explain what they add up to. Only connections that tell a reporter
@@ -340,6 +348,9 @@ def brief(items: list[dict], connections: dict[str, list[dict]], labels: dict[st
             "why_it_matters": i.get("why_it_matters"), "date": i.get("date"), "org": i.get("org"),
             "place": i.get("place"), "url": i.get("url"),
         }
+        if i.get("editor_note"):
+            entry["editor_note"] = i["editor_note"]
+            entry["lowered_by_editor"] = LEVEL.get(i.get("first_importance"), 0) > LEVEL[i["importance"]]
         if key in connections:
             entry["connections"] = [
                 {"source": labels.get(c["source"], c["source"]), "title": c["title"], "date": c["date"],
