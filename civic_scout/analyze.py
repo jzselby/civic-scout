@@ -103,7 +103,7 @@ Keep (or raise) to high, whatever the meeting date: a proposed or decided school
 closure, consolidation or boundary change; a tax, fee or tuition increase; layoffs of
 50+ or a business closing; a lawsuit, settlement, audit finding or investigation; a
 top official hired, fired or resigning; a health closure of a restaurant or business
-people know (pool and spa closures stay medium); a rezoning or project that would
+people know (pool and spa closures are at most medium, and low when routine); a rezoning or project that would
 change a neighborhood. These are news the first time they appear, even if the hearing
 has passed or the vote is weeks away.
 

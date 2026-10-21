@@ -160,9 +160,12 @@ place); `details` gives the closing and reopening dates.
 - high: any closure of a restaurant, chain location or food business the public would
   recognize; a repeat closure; a striking reason (pests, sewage, no hot water,
   illness outbreak).
-- medium: pool, spa and splash pad closures (never high, even at a hotel or for a
-  repeat closure) and other closures (a small market).
-- low: nothing notable.
+- medium: other closures (a small market); a pool, spa or splash pad closure only
+  when the facility is public (a city, county, school, rec center or club pool), the
+  report mentions an injury or illness, or the same facility was closed before
+  (never high).
+- low: other pool, spa and splash pad closures (an apartment, condo or hotel pool
+  closed for water chemistry, barriers or equipment), which are routine.
 why_it_matters should give the name, address, closure date, the reason as the
 inspection report states it, and whether it has reopened."""
 
