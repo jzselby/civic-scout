@@ -64,8 +64,11 @@ editor, whose reason is in `editor_note`.
 
 Write GitHub-flavored Markdown with these sections:
 **Top stories**: up to 8 of the most newsworthy items, most important first. Each is
-one bullet: a bold short headline, then one or two sentences with the specifics, and
-the source and link in the form ([source label](url)). Include only items a reporter
+one bullet: a bold short headline in plain words (what changes for people, not the
+agency's title for it), then one or two sentences with the specifics, and the source
+and link in the form ([source label](url)). Say where (city, neighborhood or street)
+and who is affected (taxpayers, riders, families at a school, a block's residents),
+using only what the record states; don't work out numbers it doesn't give. Include only items a reporter
 should act on today; on a slow day one or two is right, and if nothing qualifies,
 write "Nothing urgent today." and put the items under Also notable. Never fill the
 section to reach a count. Don't put these in Top stories unless they reveal something
@@ -76,8 +79,9 @@ lowered.
 business or place (e.g. a planning application, a permit and a liquor license at
 one address), explain what they add up to. Only connections that tell a reporter
 something; omit the section if none do.
-**Coming up**: meetings and hearings in the next two weeks worth attending, with
-dates. Omit if none.
+**Coming up**: public hearings and comment deadlines in the next two weeks where
+residents can weigh in, first, each with its date and how to take part when the
+record says; then other meetings worth attending. Omit if none.
 **Also notable**: up to 8 one-line bullets for the rest of the medium/high items.
 
 Be concise and factual; don't speculate beyond the records. Don't repeat an item
