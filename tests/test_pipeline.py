@@ -113,16 +113,3 @@ def test_report_lists_sources_found_by_an_earlier_run():
                         None, {})
     assert "| Notices | 1 | ok (5 fetched) |" in text
     assert "| WARN | 1 | earlier run today |" in text
-
-
-def test_report_names_public_bodies_with_no_recent_meetings(tmp_path, monkeypatch):
-    from civic_scout.sources import pmn
-    monkeypatch.setattr(pmn, "DEFAULT_BODIES", [("1", "Busy Council", "", ""), ("2", "Quiet Board", "", ""),
-                                                ("3", "New Board", "", "")])
-    monkeypatch.setattr(pmn, "REGIONAL_BODIES", [])
-    store = Store(tmp_path)
-    store.source("pmn").add([{"source": "pmn", "id": "a", "title": "t", "org": "Busy Council", "date": "2026-10-28"},
-                             {"source": "pmn", "id": "b", "title": "t", "org": "Quiet Board", "date": "2026-09-01"}])
-    assert pipeline.quiet_bodies(store, date(2026, 10, 21)) == [("Quiet Board", "2026-09-01"), ("New Board", None)]
-    text = pipeline.day_report(store, date(2026, 10, 21), [], {}, None)
-    assert "No recent meetings from: Quiet Board (last 2026-09-01), New Board (none recorded)" in text

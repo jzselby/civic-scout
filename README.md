@@ -50,8 +50,7 @@ connect               normalize addresses ("1124 East 100 South, Unit 3" → "11
                       and names ("Postino, LLC" → "POSTINO"); match records across
                       sources, over the past year
 brief (Claude)        Top stories (up to 8, none on a slow day) · Connections ·
-                      Coming up (hearings and comment deadlines first) · Also notable;
-                      the report also names public bodies with no meeting in 35 days
+                      Coming up (hearings and comment deadlines first) · Also notable
 publish               Google Sheet + reports/YYYY-MM-DD.md + data/<source>.jsonl
 ```
 

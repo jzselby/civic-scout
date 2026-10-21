@@ -27,8 +27,7 @@ def _sort_key(item: dict):
 
 
 def build(today: date, items: list[dict], labels: dict[str, str], health: dict[str, str],
-          briefing: str | None, connections: dict[str, list[dict]],
-          quiet: list[tuple[str, str | None]] | None = None) -> str:
+          briefing: str | None, connections: dict[str, list[dict]]) -> str:
     items = [i for i in items if not i.get("hidden")]
     parts = [f"# Civic Scout briefing: {today:%B %d, %Y}\n"]
     by_source: dict[str, list[dict]] = defaultdict(list)
@@ -41,9 +40,6 @@ def build(today: date, items: list[dict], labels: dict[str, str], health: dict[s
         parts.append(f"| {cell(labels.get(name, name))} | {len(by_source.get(name, []))} | {cell(status)} |")
     for name in [n for n in labels if n in by_source and n not in health]:
         parts.append(f"| {cell(labels.get(name, name))} | {len(by_source[name])} | earlier run today |")
-    if quiet:
-        bodies = ", ".join(f"{name} ({f'last {last}' if last else 'none recorded'})" for name, last in quiet)
-        parts.append(f"\nNo recent meetings from: {bodies}. Check that they are still posting.")
     parts.append("")
 
     if briefing:

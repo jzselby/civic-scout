@@ -10,15 +10,12 @@ from zoneinfo import ZoneInfo
 from . import analyze, link, report
 from .config import Config
 from .http import Http
-from .sources import ALL, pmn, selected
+from .sources import ALL, selected
 from .store import Store, was_reported
 
 log = logging.getLogger(__name__)
 
 TZ = ZoneInfo("America/Denver")
-# A public body with no meeting dated in this many days may have stopped posting, or
-# its notices may no longer be reaching us.
-QUIET_DAYS = 35
 
 
 def today() -> date:
@@ -80,25 +77,12 @@ def day_briefing(cfg: Config, store: Store, day: date, items: list[dict], labels
     return analyze.brief(items, day_connections(store, day, items), labels, day, cfg.model)
 
 
-def quiet_bodies(store: Store, day: date) -> list[tuple[str, str | None]]:
-    """(name, latest meeting date) for each public body with no meeting dated in the
-    last QUIET_DAYS days, by any notice we have recorded."""
-    latest: dict[str, str] = {}
-    for i in store.source(pmn.PublicNotices.name).items.values():
-        if i.get("org") and i.get("date"):
-            latest[i["org"]] = max(latest.get(i["org"], ""), i["date"])
-    cutoff = (day - timedelta(days=QUIET_DAYS)).isoformat()
-    return [(name, latest.get(name)) for _, name, *_ in pmn.DEFAULT_BODIES + pmn.REGIONAL_BODIES
-            if latest.get(name, "") < cutoff]
-
-
 def day_report(store: Store, day: date, items: list[dict], health: dict[str, str], briefing: str | None,
                labels: dict[str, str] | None = None) -> str:
     """The day's report: every record reported today, whichever run found it, so a
     repeat run rewrites the day's one report instead of adding a second."""
     labels = {**{s.name: s.label for s in ALL}, **(labels or {})}
-    return report.build(day, items, labels, health, briefing, day_connections(store, day, items),
-                        quiet_bodies(store, day))
+    return report.build(day, items, labels, health, briefing, day_connections(store, day, items))
 
 
 def collect(cfg: Config, store: Store, http: Http, day: date) -> RunResult:
