@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from . import analyze, link, report
+from . import analyze, link, openings, report
 from .config import Config
 from .http import Http
 from .sources import ALL, selected
@@ -94,8 +94,25 @@ def results_section(items: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def openings_section(store: Store, day: date, items: list[dict], labels: dict[str, str]) -> str | None:
+    """New restaurants & bars in today's records, with earlier records about the same places."""
+    today = {link.item_key(i) for i in items}
+    earlier = [i for i in store.everything() if link.item_key(i) not in today and was_reported(i)]
+    return openings.section(earlier + items, day, {**{s.name: s.label for s in ALL}, **labels})
+
+
+def mark_new_openings(store: Store, items: list[dict], day: date) -> None:
+    """Flag records that are the first to name a restaurant, bar or cafe, so the editor
+    can't hide them as routine permits."""
+    earlier = store.everything()
+    for n, item in enumerate(items):
+        if item.get("openings") and openings.is_new(item, earlier + items[:n], day):
+            item["new_opening"] = True
+
+
 def day_briefing(cfg: Config, store: Store, day: date, items: list[dict], labels: dict[str, str]) -> str | None:
     briefing = analyze.brief(items, day_connections(store, day, items), labels, day, cfg.model)
+    briefing = openings.add_section(briefing, openings_section(store, day, items, labels))
     held = results_to_check(store, day)
     if not held:
         return briefing
@@ -155,7 +172,16 @@ def enrich(cfg: Config, store: Store, result: RunResult, use_claude: bool = True
         if note:
             item.update(headline=note.headline, importance=note.importance, category=note.category,
                         why_it_matters=note.why_it_matters, names=note.names, places=note.places)
+            if note.openings:
+                item["openings"] = [o.model_dump() for o in note.openings]
         apply_rules(item)
+    if attempted:
+        prerated = [i for i in result.items if i.get("prerated") and not i.get("hidden")]
+        found = analyze.find_openings(prerated, result.labels, cfg.review_model)
+        for item in prerated:
+            if link.item_key(item) in found:
+                item["openings"] = [o.model_dump() for o in found[link.item_key(item)]]
+    mark_new_openings(store, result.items, result.day)
     if use_claude:
         changed = analyze.apply_review(result.items, analyze.review(result.items, result.labels, cfg.review_model))
         if changed:

@@ -1,12 +1,14 @@
 """Write the run to a Google Sheet.
 
 Authenticates as a Google Cloud service account; share the sheet with the service
-account's email (Editor). Three tabs:
+account's email (Editor). Four tabs:
 
   Briefings      one row per run, newest first: the cross-source briefing
   Top stories    rebuilt every run: high records (last TOP_DAYS days) and medium
                  ones (last MEDIUM_DAYS days): the tab reporters work from
   All records    every new record, sorted newest first; add your own columns freely
+  Openings       rebuilt every run: new restaurants, bars and cafes seen in the last
+                 OPENINGS_DAYS days, one row per place with each step found so far
 
 Values are written under their column headings, so people can reorder columns or
 add their own (e.g. "Notes", "Assigned to"); runs leave those alone.
@@ -23,7 +25,7 @@ from typing import Any
 import gspread
 from gspread.utils import ValueRenderOption
 
-from . import link
+from . import link, openings
 from .link import item_key
 from .store import is_notable, was_reported
 
@@ -35,6 +37,9 @@ ALL = "All records"
 BRIEFING_HEADERS = ["Run date", "New records", "High importance", "Briefing"]
 RECORD_HEADERS = ["First seen", "Date", "Source", "Importance", "Category", "Headline", "Why it matters",
                   "Editor's note", "Who", "Where", "Details", "Connections", "Link", "Key"]
+OPENINGS = "Openings"
+OPENING_HEADERS = ["First seen", "Last seen", "Place", "What", "Address", "City", "Area", "Steps", "Key"]
+OPENINGS_DAYS = 90
 # Top stories keeps high records this many days, medium ones MEDIUM_DAYS (or until
 # their meeting or hearing date, within TOP_DAYS).
 TOP_DAYS = 30
@@ -222,6 +227,13 @@ COLUMN_STYLE: dict[str, tuple[int, str | None, dict | None]] = {
     "Connections": (300, "WRAP", None),
     "Link": (60, None, None),
     "Key": (160, None, None),
+    "Last seen": (95, None, DATE_FORMAT),
+    "Place": (220, "WRAP", None),
+    "What": (180, "WRAP", None),
+    "Address": (200, "WRAP", None),
+    "City": (130, "WRAP", None),
+    "Area": (130, None, None),
+    "Steps": (440, "WRAP", None),
     "Run date": (95, None, DATE_FORMAT),
     "New records": (80, None, None),
     "High importance": (85, None, None),
@@ -394,7 +406,7 @@ def format_existing(sheet_id: str, service_account_json: str) -> None:
             pass
     state = _format_state(sh)
     for title, reqs in ((ALL, record_format_requests), (TOP, record_format_requests),
-                        (BRIEFINGS, briefing_format_requests)):
+                        (OPENINGS, record_format_requests), (BRIEFINGS, briefing_format_requests)):
         try:
             ws = sh.worksheet(title)
         except gspread.WorksheetNotFound:
@@ -456,6 +468,45 @@ def write_top(sh: gspread.Spreadsheet, today: date, pool_items: list[dict], conn
             ws.add_rows(len(rows) + 1 - ws.row_count)
         ws.update(rows, "A2", value_input_option="USER_ENTERED")
     log.info("Top stories: %d record(s)", len(rows))
+    return ws, headers
+
+
+def opening_values(place: dict, labels: dict[str, str]) -> dict[str, Any]:
+    latest = place["sightings"][-1]
+    steps = "; ".join(
+        f"{openings.STAGE_LABELS.get(s.get('stage'), s.get('stage') or 'record')} "
+        f"({labels.get(s['source'], s['source'])}, {s['seen']})" for s in place["sightings"])
+    return {
+        "First seen": place["first_seen"],
+        "Last seen": place["last_seen"],
+        "Place": hyperlink(latest.get("url"), place["name"]),
+        "What": text(place.get("kind")),
+        "Address": text(place.get("address")),
+        "City": text(place.get("city")),
+        "Area": text(place.get("area")),
+        "Steps": text(steps),
+        "Key": text(latest["key"]),
+    }
+
+
+def write_openings(sh: gspread.Spreadsheet, today: date, pool_items: list[dict],
+                   labels: dict[str, str]) -> tuple[gspread.Worksheet, list[str]]:
+    """Regenerate Openings: every place seen in the last OPENINGS_DAYS days, the latest
+    first, so reporters can see what is close to opening."""
+    since = (today - timedelta(days=OPENINGS_DAYS)).isoformat()
+    pool = [i for i in {item_key(i): i for i in pool_items}.values() if was_reported(i)]
+    rows_in = [p for p in openings.places(pool, today) if p["last_seen"] >= since]
+    rows_in.sort(key=lambda p: p["name"].upper())
+    rows_in.sort(key=lambda p: openings.AREAS.index(p["area"]))
+    rows_in.sort(key=lambda p: p["last_seen"], reverse=True)
+    ws, headers = _worksheet(sh, OPENINGS, OPENING_HEADERS)
+    ws.batch_clear([f"A2:{gspread.utils.rowcol_to_a1(max(ws.row_count, 2), len(headers))}"])
+    rows = _rows(headers, [opening_values(p, labels) for p in rows_in])
+    if rows:
+        if ws.row_count < len(rows) + 1:
+            ws.add_rows(len(rows) + 1 - ws.row_count)
+        ws.update(rows, "A2", value_input_option="USER_ENTERED")
+    log.info("Openings: %d place(s)", len(rows))
     return ws, headers
 
 
@@ -548,11 +599,13 @@ def publish(sheet_id: str, service_account_json: str, today: date, items: list[d
                            value_input_option="USER_ENTERED", table_range="A1")
 
     top_ws, top_headers = write_top(sh, today, all_stored + items, connections, labels)
+    open_ws, open_headers = write_openings(sh, today, all_stored + items, labels)
     # Presentation only: a failure here must not lose the data written above.
     try:
         state = _format_state(sh)
         for tab, tab_headers, reqs in ((all_ws, all_headers, record_format_requests),
                                        (top_ws, top_headers, record_format_requests),
+                                       (open_ws, open_headers, record_format_requests),
                                        (briefings, b_headers, briefing_format_requests)):
             if _needs_format(state, tab):
                 _apply_format(sh, tab, state, reqs(tab.id, tab_headers))

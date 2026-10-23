@@ -202,9 +202,9 @@ def test_sheet_tabs_are_created_and_filled(monkeypatch):
     assert "Sheet1" not in sh.tabs
     # Each tab is formatted once, then left alone on later runs.
     formatted = [r for r in sh.requests if "createDeveloperMetadata" in r]
-    assert len(formatted) == 3
+    assert len(formatted) == 4
     sheets.publish("id", "{}", date(2026, 10, 4), [], {}, None, {}, stored)
-    assert len([r for r in sh.requests if "createDeveloperMetadata" in r]) == 3
+    assert len([r for r in sh.requests if "createDeveloperMetadata" in r]) == 4
 
 
 def test_refresh_rewrites_connections_by_key(monkeypatch):

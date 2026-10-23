@@ -44,6 +44,7 @@ editor      Claude Sonnet 5.5: skeptical second pass; changes carry an Editor's 
 connect     normalized address/name matching across sources (link.py); a public body's
             meeting place (an address on 3+ of its notices) is ignored
 brief       Claude Opus: one briefing per day covering all of the day's records
+            (+ a "New restaurants & bars" section built by code from records' `openings`)
 publish     sheet (idempotent by Key) + the day's one report file (rewritten by later
             runs that day) + data/ committed by the workflow
 ```
@@ -53,6 +54,8 @@ publish     sheet (idempotent by Key) + the day's one report file (rewritten by 
 - **Briefings**: one row per day (later runs rewrite the day's row); rich text with links.
 - **Top stories**: what reporters use. High (30 days) + Medium (7 days), newest first.
   Rebuilt each run.
+- **Openings**: new restaurants, bars and cafes (90 days), one row per place with its
+  steps; built from the `openings` Claude lists on each record (`openings.py`).
 - **All records**: archive, sorted newest first, with the Editor's note column. Link and
   Key columns are hidden.
 - Formatting is applied once per `FORMAT_VERSION` (now "2") in `sheets.py`.
