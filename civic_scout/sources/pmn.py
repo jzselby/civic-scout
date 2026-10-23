@@ -192,6 +192,10 @@ holds the notice and the text of its attached agenda.
 - low: routine minutes, cancellations, ceremonial items, consent agendas without
   anything notable, operator certification and committee housekeeping, meeting
   schedules.
+For a liquor commission agenda, list each restaurant, bar, brewery, distillery or club
+it licenses (new licenses, not renewals or violations) in `openings`, with the address
+and city the agenda gives; a city's liquor proximity waiver or a planning item for a
+restaurant counts too.
 Regional bodies, outside Salt Lake County: the Utah, Davis, Weber, Tooele and Summit
 county commissions and councils, the Provo, Orem, Layton and Ogden city councils, the
 Alpine, Davis and Weber school boards and the Utah Lake Authority. The bar for these is higher:

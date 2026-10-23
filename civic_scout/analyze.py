@@ -42,6 +42,9 @@ Return one entry per input item, with the same `key`:
 - names: businesses, developers, employers, officials or organizations named in the
   record that a reporter might cross-check (not the public body itself).
 - places: street addresses in the record, as written (e.g. "707 W Genesee Ave").
+- openings: see below; an empty list for most records.
+
+{openings}
 
 Only state facts present in the record. Never guess numbers or names.
 
@@ -49,6 +52,30 @@ Source-specific guidance:
 
 {guidance}
 """
+
+OPENINGS_RULES = """\
+Openings: list every new restaurant, bar, cafe, coffee shop, bakery, dessert shop,
+brewery, distillery, food hall or food truck park the record shows is coming, moving
+or reopening under a new name, chains included, with:
+- name: the business name as the record gives it (or a short description, e.g. "Thai
+  restaurant at 1234 S State St", when it names none);
+- kind: a few words, e.g. "Thai restaurant", "coffee shop", "brewery and taproom";
+- address and city, as the record gives them (empty if it doesn't);
+- area: "Salt Lake City", "Salt Lake County" (any other city or unincorporated area in
+  the county, e.g. Millcreek, South Salt Lake, Murray, West Valley City, Sandy) or
+  "elsewhere";
+- stage: what this record is: "planning" (a planning or zoning application),
+  "building permit" (a build-out, remodel or change of use), "trade permit"
+  (electrical, plumbing, mechanical, kitchen hood, fire), "business license",
+  "liquor license" (a license or a proximity waiver), "health permit", or "opening".
+Don't list grocery stores, convenience stores and gas stations, catering-only or
+institutional kitchens (offices, schools, senior centers, apartment amenities), or
+work on a place that is already open under the same name (a repair, a re-roof, a
+remodel). A record that names several places (a liquor commission agenda, a monthly
+license list) lists each one."""
+
+RATE_PROMPT = RATE_PROMPT.replace("{openings}", OPENINGS_RULES)
+
 
 BRIEF_PROMPT = """\
 You write a morning briefing for a Utah newsroom from today's newly found public
@@ -83,6 +110,11 @@ something; omit the section if none do.
 residents can weigh in, first, each with its date and how to take part when the
 record says; then other meetings worth attending. Omit if none.
 **Also notable**: up to 8 one-line bullets for the rest of the medium/high items.
+
+Items marked `opening` (a new restaurant, bar or cafe) are listed in their own section
+after Top stories, which you don't write: leave them out of Connections and Also
+notable, and put one in Top stories only if it is news on its own (a major chain's
+first Utah location, a well-known place reopening, a large project).
 
 Be concise and factual; don't speculate beyond the records. Don't repeat an item
 in two sections.
@@ -175,6 +207,19 @@ class Review(BaseModel):
     changes: list[Change]
 
 
+Stage = Literal["planning", "building permit", "trade permit", "business license", "liquor license",
+                "health permit", "opening"]
+
+
+class Opening(BaseModel):
+    name: str
+    kind: str = ""
+    address: str = ""
+    city: str = ""
+    area: Literal["Salt Lake City", "Salt Lake County", "elsewhere"] = "elsewhere"
+    stage: Stage
+
+
 class ItemNotes(BaseModel):
     key: str
     headline: str
@@ -183,10 +228,20 @@ class ItemNotes(BaseModel):
     why_it_matters: str
     names: list[str] = Field(default_factory=list)
     places: list[str] = Field(default_factory=list)
+    openings: list[Opening] = Field(default_factory=list)
 
 
 class Ratings(BaseModel):
     items: list[ItemNotes]
+
+
+class ItemOpenings(BaseModel):
+    key: str
+    openings: list[Opening]
+
+
+class FoundOpenings(BaseModel):
+    items: list[ItemOpenings]
 
 
 # Records per request are capped by payload size (~4 chars/token), well under the context window.
@@ -284,6 +339,44 @@ def rate(items: list[dict], guidance: str, model: str) -> dict[str, ItemNotes]:
     return notes
 
 
+OPENINGS_PROMPT = """\
+You read new public records from Salt Lake City, Salt Lake County and Utah for a
+newsroom that tracks new places to eat and drink. Each record has `key`, `source`,
+`headline` and may have `why_it_matters`, `org`, `place` and `details`.
+
+{rules}
+
+Return only the records that show at least one such place, each with its `key` and
+`openings`. Return an empty list if none do.
+""".format(rules=OPENINGS_RULES)
+
+
+def find_openings(items: list[dict], labels: dict[str, str], model: str) -> dict[str, list[Opening]]:
+    """Openings in records that weren't rated here (pre-rated sources), keyed 'source:id'.
+    Records rated by `rate` get theirs from the rating. Empty if Claude is unavailable."""
+    if not items or not available() or not model:
+        return {}
+    payload = []
+    for i in items:
+        entry = {"key": f"{i['source']}:{i['id']}", "source": labels.get(i["source"], i["source"]),
+                 "headline": i.get("headline") or i.get("title"), "why_it_matters": i.get("why_it_matters"),
+                 "org": i.get("org"), "place": i.get("place"), "details": (i.get("details") or "")[:300]}
+        payload.append({k: v for k, v in entry.items() if v})
+    found: dict[str, list[Opening]] = {}
+    for batch in _batches(payload):
+        prompt = f"{len(batch)} records:\n\n" + json.dumps(batch, indent=1)
+        response = _call(anthropic.Anthropic(), model, OPENINGS_PROMPT, prompt, output_format=FoundOpenings,
+                         effort="low")
+        if response is None or response.parsed_output is None:
+            continue
+        known = {p["key"] for p in batch}
+        for entry in response.parsed_output.items:
+            if entry.key in known and entry.openings:
+                found[entry.key] = entry.openings
+    log.info("Openings: %d of %d pre-rated record(s) name a new place", len(found), len(items))
+    return found
+
+
 def review(items: list[dict], labels: dict[str, str], model: str) -> dict[str, Change]:
     """A second, skeptical pass over the ratings (all sources, including pre-rated
     ones). Returns the changes keyed 'source:id'; empty if Claude is unavailable."""
@@ -319,8 +412,9 @@ def apply_review(items: list[dict], changes: dict[str, Change]) -> int:
 
     Guard against burying news: the editor may hide a record the screener rated medium
     or high (lower it to low) only for a routine reason (HIDE_REASONS); otherwise the
-    record stays visible at medium. Nor may it raise a record above its source's
-    `max_importance`.
+    record stays visible at medium. A trade permit that is the first record of a new
+    restaurant, bar or cafe (`new_opening`) isn't routine either. Nor may it raise a
+    record above its source's `max_importance`.
     """
     n = 0
     for item in items:
@@ -329,7 +423,8 @@ def apply_review(items: list[dict], changes: dict[str, Change]) -> int:
             continue
         screener = item.get("first_importance") or item.get("importance") or "low"
         new = c.importance
-        if new == "low" and LEVEL[screener] > 0 and c.reason not in HIDE_REASONS:
+        if new == "low" and LEVEL[screener] > 0 and (
+                c.reason not in HIDE_REASONS or (c.reason == "routine_permit" and item.get("new_opening"))):
             new = "medium"
         if LEVEL[new] > LEVEL[item.get("max_importance") or "high"]:
             new = item["max_importance"]
@@ -356,6 +451,8 @@ def brief(items: list[dict], connections: dict[str, list[dict]], labels: dict[st
             "why_it_matters": i.get("why_it_matters"), "date": i.get("date"), "org": i.get("org"),
             "place": i.get("place"), "url": i.get("url"),
         }
+        if i.get("openings"):
+            entry["opening"] = True
         if i.get("editor_note"):
             entry["editor_note"] = i["editor_note"]
             entry["lowered_by_editor"] = LEVEL.get(i.get("first_importance"), 0) > LEVEL[i["importance"]]

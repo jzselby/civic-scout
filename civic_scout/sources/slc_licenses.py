@@ -83,7 +83,9 @@ An item is one business or, when the city published a PDF, a whole month's list 
 - medium: new restaurants, shops and offices with a storefront.
 - low: home occupations, contractors, sole proprietors, renewals.
 For a monthly list, why_it_matters should name the notable businesses and their
-addresses; put every notable address in `places` and name in `names`."""
+addresses; put every notable address in `places` and name in `names`. List every
+restaurant, bar, cafe, bakery or brewery on the list in `openings` (stage "business
+license"), not just the notable ones."""
 
     def fetch(self, cfg: Config, http: Http, seen: set[str]) -> list[dict]:
         files = list_files(http.text(LIST_PAGE))

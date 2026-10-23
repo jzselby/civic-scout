@@ -37,7 +37,9 @@ for each source:      fetch the current list → drop records already seen
                         already has a record; the first record about a place keeps
                         its rating
 rate (Claude Opus)    headline, importance (high/medium/low), category, why it
-                      matters, plus the names and addresses each record mentions
+                      matters, plus the names and addresses each record mentions,
+                      and any new restaurant, bar or cafe it shows is coming
+                      (pre-rated permits get a short Claude Sonnet pass for this)
 editor (Claude Sonnet) a skeptical second pass over every rating, as an assignment
                       editor: "high" means a reporter should start calls today, so
                       routine trade permits, repeat items about one project and past
@@ -46,10 +48,14 @@ editor (Claude Sonnet) a skeptical second pass over every rating, as an assignme
                       for a routine reason: a trade permit for a known project, a
                       duplicate, a placeholder, or procedural paperwork. Otherwise
                       the code keeps the record at Medium, where reporters see it.
+                      The first record of a new restaurant isn't a routine permit.
 connect               normalize addresses ("1124 East 100 South, Unit 3" → "1124 E 100 S")
                       and names ("Postino, LLC" → "POSTINO"); match records across
                       sources, over the past year
-brief (Claude)        Top stories (up to 8, none on a slow day) · Connections ·
+brief (Claude)        Top stories (up to 8, none on a slow day) · New restaurants &
+                      bars (written by code: one line per Salt Lake County place in
+                      today's records, SLC first, with when it first turned up) ·
+                      Connections ·
                       Coming up (hearings and comment deadlines first) · Also notable ·
                       Results to check (high/medium agenda items from meetings held
                       since the last weekday, so a reporter checks what was decided)
@@ -69,6 +75,7 @@ civic_scout/
   pipeline.py   collect → rate → connect → brief
   analyze.py    the two Claude calls and their prompts
   link.py       address/name normalization and cross-source matching
+  openings.py   new restaurants and bars: grouping records by place, the briefing section
   report.py     the Markdown report
   sheets.py     the Google Sheet
   store.py      data/<source>.jsonl: every record already seen
@@ -82,6 +89,10 @@ civic_scout/
 - **Top stories**: the tab reporters work from: High records from the last 30 days and
   Medium ones from the last 7, newest first and High before Medium. Rebuilt every run,
   so don't type notes here.
+- **Openings**: new restaurants, bars and cafes from the last 90 days, one row per
+  place, latest first, with each step found so far (building permit, business license,
+  liquor license) and the Area (Salt Lake City, Salt Lake County, elsewhere). Places
+  outside Salt Lake County appear only here, not in the briefing. Rebuilt every run.
 - **All records**: every new record, sorted newest first. When the editor pass changed
   a rating, the **Editor's note** column says why. Add your own columns (Notes,
   Assigned to); runs write by column heading and leave other columns alone. Don't
