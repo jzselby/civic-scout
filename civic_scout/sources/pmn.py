@@ -189,6 +189,10 @@ holds the notice and the text of its attached agenda.
   or policy; public-health orders or fees; freeway, road or transit projects
   and funding in or near Salt Lake County; anything likely to be contentious.
 - medium: routine items with a news hook, appointments, study sessions on big topics.
+  But a work session briefing on a citywide housing or zoning proposal (e.g. allowing
+  more homes in single-family neighborhoods) is high: councils take straw polls and
+  change proposals there before the vote. Name it in the headline, not just in
+  why_it_matters.
 - low: routine minutes, cancellations, ceremonial items, consent agendas without
   anything notable, operator certification and committee housekeeping, meeting
   schedules.
