@@ -399,3 +399,27 @@ def test_several_runs_in_one_day_leave_one_briefing_row(monkeypatch):
     briefs = sh.tabs[sheets.BRIEFINGS].grid
     assert [r[0] for r in briefs[1:]] == ["2026-10-05", "2026-10-04"]
     assert briefs[1][1:] == [2, 1, "afternoon"]
+
+
+def test_briefing_gets_earlier_records_and_links_its_earlier_notes(monkeypatch):
+    sent = {}
+    monkeypatch.setattr(analyze, "available", lambda: True)
+    monkeypatch.setattr(analyze.anthropic, "Anthropic", lambda: None)
+
+    def call(client, model, system, prompt):
+        sent["prompt"] = prompt
+        text = ("- **CRA balks at Parry Block sale**: no vote.\n"
+                "  *Earlier:* proposed ([Oct. 9](earlier:1)); delayed ([Oct. 16](earlier:2)); "
+                "unknown ([Oct. 1](earlier:9)).")
+        return SimpleNamespace(content=[SimpleNamespace(type="text", text=text)])
+
+    monkeypatch.setattr(analyze, "_call", call)
+    items = [{"source": "slc_council", "id": "m", "title": "Minutes", "importance": "high"}]
+    earlier = [{"source": "pmn", "id": "a", "headline": "CRA weighs Parry Block sale", "briefed": "2026-10-09",
+                "place": "428 W 300 S", "url": "https://x/agenda"},
+               {"source": "slc_council", "id": "r", "headline": "Council delays Parry Block sale",
+                "briefed": "2026-10-16"}]
+    text = analyze.brief(items, {}, {"pmn": "Notices"}, date(2026, 10, 29), "model", earlier)
+    assert "earlier (2 records):\n1 | 2026-10-09 | Notices | CRA weighs Parry Block sale | 428 W 300 S\n" \
+           "2 | 2026-10-16 | slc_council | Council delays Parry Block sale" in sent["prompt"]
+    assert "proposed ([Oct. 9](https://x/agenda)); delayed (Oct. 16); unknown (Oct. 1)." in text

@@ -138,3 +138,50 @@ def test_briefing_lists_meetings_held_since_the_last_weekday(tmp_path, monkeypat
     assert text.startswith("Brief\n\n**Results to check**")
     assert "- Salt Lake County Council (Oct 16): Council votes on jail tax ([notice](https://x/1))" in text
     assert [i["id"] for i in pipeline.results_to_check(store, date(2026, 10, 21))] == []
+
+
+def test_briefing_gets_notable_records_from_the_last_60_days_of_briefings(tmp_path, monkeypatch):
+    sent = {}
+
+    def brief(items, connections, labels, day, model, earlier):
+        sent["earlier"] = earlier
+        return "Brief"
+
+    monkeypatch.setattr(pipeline.analyze, "brief", brief)
+    store = Store(tmp_path)
+    store.source("pmn").add([
+        {"source": "pmn", "id": "new", "title": "b", "importance": "high", "date": "2026-10-28",
+         "first_seen": "2026-10-28T14:00:00+00:00"},
+        {"source": "pmn", "id": "old", "title": "a", "importance": "medium", "date": "2026-10-01",
+         "first_seen": "2026-10-01T14:00:00+00:00"},
+        {"source": "pmn", "id": "low", "title": "c", "importance": "low", "date": "2026-10-20",
+         "first_seen": "2026-10-20T14:00:00+00:00"},
+        {"source": "pmn", "id": "stale", "title": "d", "importance": "high", "date": "2026-08-01",
+         "first_seen": "2026-08-01T14:00:00+00:00"},
+        {"source": "pmn", "id": "backlog", "title": "e", "importance": "high", "date": "2026-10-10",
+         "first_seen": "2026-10-10T14:00:00+00:00", "reported": False},
+        {"source": "pmn", "id": "hidden", "title": "f", "importance": "high", "date": "2026-10-10",
+         "first_seen": "2026-10-10T14:00:00+00:00", "hidden": True},
+    ])
+    today = [{"source": "pmn", "id": "today", "title": "g", "importance": "high",
+              "first_seen": "2026-10-29T14:00:00+00:00"}]
+    store.source("pmn").add(today)
+    pipeline.day_briefing(Config(data_dir=tmp_path), store, date(2026, 10, 29), today, {})
+    assert [(e["id"], e["briefed"]) for e in sent["earlier"]] == [("old", "2026-10-01"), ("new", "2026-10-28")]
+
+
+def test_report_lists_only_connections_on_a_shared_address():
+    from civic_scout import report
+    items = [{"id": "p", "source": "slc_permits", "title": "Kitchen permit"},
+             {"id": "c", "source": "slc_council", "title": "Minutes"}]
+    conns = {
+        "slc_permits:p": [{"key": "slc_licenses:l", "source": "slc_licenses", "title": "License list", "date": "2026-10-15",
+                           "url": None, "via": ["address 602 E 500 S", "name BEAUMONT BAKERY CAFE"]}],
+        "slc_council:c": [{"key": "pmn:u", "source": "pmn", "title": "UTA agenda", "date": "2026-10-27",
+                           "url": None, "via": ["name UTAH TRANSIT AUTHORITY"]}],
+    }
+    text = report.build(date(2026, 10, 29), items, {}, {}, None, conns)
+    assert "License list (slc_licenses, 2026-10-15) on address 602 E 500 S\n" in text
+    assert "UTA agenda" not in text and "Minutes (" not in text
+    assert "Connections across records" not in report.build(date(2026, 10, 29), items, {}, {}, None,
+                                                            {"slc_council:c": conns["slc_council:c"]})

@@ -44,6 +44,8 @@ editor      Claude Sonnet 5.5: skeptical second pass; changes carry an Editor's 
 connect     normalized address/name matching across sources (link.py); a public body's
             meeting place (an address on 3+ of its notices) is ignored
 brief       Claude Opus: one briefing per day covering all of the day's records
+            (sees the last 60 days of briefed high/medium records: "Earlier:" notes, repeats
+            become one-line updates)
             (+ a "New restaurants & bars" section built by code from records' `openings`)
 publish     sheet (idempotent by Key) + the day's one report file (rewritten by later
             runs that day) + data/ committed by the workflow
