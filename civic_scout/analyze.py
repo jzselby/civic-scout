@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from datetime import date
 from typing import Literal
 
@@ -110,6 +111,23 @@ something; omit the section if none do.
 residents can weigh in, first, each with its date and how to take part when the
 record says; then other meetings worth attending. Omit if none.
 **Also notable**: up to 8 one-line bullets for the rest of the medium/high items.
+
+You also get `earlier`: the high- and medium-importance records from the briefings of
+the last 60 days, one per line as "ref | date of the briefing | source | headline |
+place". Use them to connect today's items to stories already under way:
+- When a Top story or Also notable item continues an earlier one (the same project,
+  site, deal, vote, lawsuit, business or dollar figure), end its bullet with a new
+  line, indented two spaces, "*Earlier:* " and a few words per earlier record with
+  its briefing date, linked as [Oct. 16](earlier:ref) with the record's ref, e.g.
+  "*Earlier:* proposed on the CRA agenda ([Oct. 9](earlier:41)); sale delayed
+  ([Oct. 16](earlier:57))." Name at most three, the most telling; then say in a few
+  words what is new today. Link only where it is clearly the same story, not just the
+  same agency or a similar topic.
+- An item that only restates a story an earlier briefing already ran (new minutes or
+  a recap of a meeting already reported, a revised copy) is not a Top story. Put it
+  under Also notable as one line starting "**Update, <story>:**" with only what is
+  new, and its Earlier note; leave it out if nothing is new.
+- Never list earlier records on their own; they are context for today's items.
 
 Items marked `opening` (a new restaurant, bar or cafe) are listed in their own section
 after Top stories, which you don't write: leave them out of Connections and Also
@@ -436,9 +454,32 @@ def apply_review(items: list[dict], changes: dict[str, Change]) -> int:
     return n
 
 
+EARLIER_LINK = re.compile(r"\[([^\]]*)\]\(earlier:(\d+)\)")
+
+
+def earlier_lines(earlier: list[dict], labels: dict[str, str]) -> str:
+    """One compact line per earlier record; refs stand in for URLs, which are long."""
+    return "\n".join(
+        f"{n} | {e['briefed']} | {labels.get(e['source'], e['source'])} | "
+        f"{e.get('headline') or e.get('title')} | {e.get('place') or ''}".rstrip(" |")
+        for n, e in enumerate(earlier, 1))
+
+
+def link_earlier(text: str, earlier: list[dict]) -> str:
+    """Turn [Oct. 16](earlier:12) into a link to record 12, or plain text if it has no URL."""
+    def sub(m: re.Match) -> str:
+        n = int(m.group(2))
+        url = earlier[n - 1].get("url") if 0 < n <= len(earlier) else None
+        return f"[{m.group(1)}]({url})" if url else m.group(1)
+    return EARLIER_LINK.sub(sub, text)
+
+
 def brief(items: list[dict], connections: dict[str, list[dict]], labels: dict[str, str], today: date,
-          model: str) -> str | None:
-    """Markdown briefing across sources, or None if Claude is unavailable or nothing qualifies."""
+          model: str, earlier: list[dict] = ()) -> str | None:
+    """Markdown briefing across sources, or None if Claude is unavailable or nothing qualifies.
+
+    `earlier` is notable records from past briefings (each with `briefed`, its date), so
+    the briefing can say what today's records follow from."""
     notable = [i for i in items if is_notable(i)]
     if not notable or not available():
         return None
@@ -465,6 +506,8 @@ def brief(items: list[dict], connections: dict[str, list[dict]], labels: dict[st
         payload.append({k: v for k, v in entry.items() if v})
     prompt = (f"Today is {today:%A, %B %d, %Y}. {len(items)} new records today, "
               f"{len(notable)} rated high or medium:\n\n" + json.dumps(payload, indent=1))
+    if earlier:
+        prompt += f"\n\nearlier ({len(earlier)} records):\n" + earlier_lines(earlier, labels)
     response = _call(anthropic.Anthropic(), model, BRIEF_PROMPT, prompt)
     if response is None:
         return None
@@ -472,4 +515,4 @@ def brief(items: list[dict], connections: dict[str, list[dict]], labels: dict[st
     # The report already has a title; drop one if Claude adds its own.
     if text.startswith("# "):
         text = text.split("\n", 1)[1].strip() if "\n" in text else ""
-    return text or None
+    return link_earlier(text, list(earlier)) or None

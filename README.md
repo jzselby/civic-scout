@@ -58,7 +58,13 @@ brief (Claude)        Top stories (up to 8, none on a slow day) · New restauran
                       Connections ·
                       Coming up (hearings and comment deadlines first) · Also notable ·
                       Results to check (high/medium agenda items from meetings held
-                      since the last weekday, so a reporter checks what was decided)
+                      since the last weekday, so a reporter checks what was decided).
+                      Claude also sees the high/medium records from the last 60 days
+                      of briefings: an item that continues one gets an "Earlier:" note
+                      linking it, and a repeat (new minutes of a meeting already
+                      reported) becomes a one-line "Update" under Also notable. The
+                      report's "Connections across records" lists address matches
+                      only; the sheet's Connections column keeps name matches too.
 publish               Google Sheet + reports/YYYY-MM-DD.md + data/<source>.jsonl
 ```
 

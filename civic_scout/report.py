@@ -26,6 +26,17 @@ def _sort_key(item: dict):
     return (IMPORTANCE_ORDER.get(item.get("importance"), 3), item.get("date") or "")
 
 
+def address_matches(matches: list[dict]) -> list[dict]:
+    """Matches on a shared address only. Name matches stay in the sheet's Connections
+    column: in the report they're mostly big names on every agenda (UTA, the U)."""
+    out = []
+    for m in matches:
+        via = [v for v in m["via"] if v.startswith("address ")]
+        if via:
+            out.append({**m, "via": via})
+    return out
+
+
 def build(today: date, items: list[dict], labels: dict[str, str], health: dict[str, str],
           briefing: str | None, connections: dict[str, list[dict]]) -> str:
     items = [i for i in items if not i.get("hidden")]
@@ -52,13 +63,13 @@ def build(today: date, items: list[dict], labels: dict[str, str], health: dict[s
                          f"| {link(i, i.get('headline') or i.get('title'))} | {why(i)} |")
         parts.append("")
 
-    if connections:
-        index = {f"{i['source']}:{i['id']}": i for i in items}
+    index = {f"{i['source']}:{i['id']}": i for i in items}
+    by_address = {key: found for key, matches in connections.items()
+                  if key in index and (found := address_matches(matches))}
+    if by_address:
         parts.append("## Connections across records\n")
-        for key, matches in connections.items():
-            item = index.get(key)
-            if not item:
-                continue
+        for key, matches in by_address.items():
+            item = index[key]
             parts.append(f"- {link(item, item.get('headline') or item.get('title'))} "
                          f"({cell(labels.get(item['source']))}) matches:")
             for m in matches[:6]:

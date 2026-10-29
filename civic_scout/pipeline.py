@@ -73,6 +73,22 @@ def day_connections(store: Store, day: date, items: list[dict]) -> dict[str, lis
     return link.connections(items, store.everything() + items, day)
 
 
+EARLIER_DAYS = 60
+
+
+def earlier_briefed(store: Store, day: date, items: list[dict], days: int = EARLIER_DAYS) -> list[dict]:
+    """High and medium records reported in the briefings of the last `days` days (not
+    today's), oldest first, each with `briefed`: the day its briefing ran."""
+    today = {link.item_key(i) for i in items}
+    out = []
+    for i in store.everything():
+        briefed = local_date(i.get("first_seen"))
+        if (briefed and day - timedelta(days=days) <= briefed < day and link.item_key(i) not in today
+                and was_reported(i) and is_notable(i) and not i.get("hidden")):
+            out.append({**i, "briefed": briefed.isoformat()})
+    return sorted(out, key=lambda i: (i["briefed"], link.item_key(i)))
+
+
 def results_to_check(store: Store, day: date) -> list[dict]:
     """High and medium agenda items (Salt Lake bodies, not regional ones) from meetings
     held since the last weekday, so reporters check what was decided: notices show
@@ -111,7 +127,8 @@ def mark_new_openings(store: Store, items: list[dict], day: date) -> None:
 
 
 def day_briefing(cfg: Config, store: Store, day: date, items: list[dict], labels: dict[str, str]) -> str | None:
-    briefing = analyze.brief(items, day_connections(store, day, items), labels, day, cfg.model)
+    briefing = analyze.brief(items, day_connections(store, day, items), labels, day, cfg.model,
+                             earlier_briefed(store, day, items))
     briefing = openings.add_section(briefing, openings_section(store, day, items, labels))
     held = results_to_check(store, day)
     if not held:
