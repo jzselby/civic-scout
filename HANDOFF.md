@@ -73,6 +73,7 @@ publish     sheet (idempotent by Key) + the day's one report file (rewritten by 
 | `slc_permits` | slcbuilding's committed permit data | already rated there (`prerated`) |
 | `slc_council` | SLC Council recaps (slc.gov RSS) and minutes (slc.primegov.com JSON) | minutes are dated by publish date, so the backlog is recorded as old, not rated |
 | `campaign_finance` | disclosures.utah.gov CSV per year and filer type (candidates, PACs, issue committees, parties, corporations, independent expenditures) | one record per filed report, dated by its latest transaction; reports under $5,000 prerated low; amendments and transactions added after a report was first seen are not re-reported |
+| `sugar_house` | Sugar House Community Council (sugarhousecouncil.org WordPress category feeds: agendas, minutes, public meeting review, land use) | full post text comes in the feed; a post in several categories is recorded once by its post id; the minutes feed is about 1.6 MB |
 
 Public Notice body ids: SLC Council 1360, SLC Planning Commission 1274, SLC Board of
 Education 1067, Inland Port board 6413, SL County Council 709, SLC Historic Landmark

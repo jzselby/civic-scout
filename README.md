@@ -21,6 +21,7 @@ source's `guidance` (see `civic_scout/sources/`).
 | SLC permits & planning | `slc_permits` | Commercial building permits and Planning applications, imported **read-only** from the [slcbuilding](https://github.com/jzselby/slcbuilding) project's data, already rated there | Working |
 | SLC Council actions | `slc_council` | What the SLC Council (and CRA board) decided: council staff's meeting recap, posted the day after each meeting (slc.gov), and the official minutes from the city's PrimeGov portal, which post about 100 days later and are rated only for what's still news (split votes, changes from the agenda) | Working |
 | Campaign finance reports | `campaign_finance` | Reports filed with the Lieutenant Governor (disclosures.utah.gov) by state candidates, PACs, ballot-issue committees, parties, corporations and independent spenders: one record per filed report, with totals and the largest contributions and expenditures. Reports moving under $5,000 are recorded as routine without Claude | Working |
+| Sugar House Community Council | `sugar_house` | The neighborhood council's monthly meeting agendas, its AI-drafted meeting summaries and news posts, and its Land Use and Zoning committee's reports and petition posts (sugarhousecouncil.org category RSS feeds, full text). Developers and the city often present Sugar House projects here before the Planning Commission sees them | Working |
 
 `python -m civic_scout sources` lists them. Next sources, in order: State Auditor and
 Legislative Auditor General reports, Utah appellate opinions, Public Service Commission
