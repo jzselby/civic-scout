@@ -39,7 +39,9 @@ Return one entry per input item, with the same `key`:
   or "low" (routine). Use the source-specific guidance below.
 - category: the single best fit.
 - why_it_matters: one or two sentences giving the news angle: who, what, how much,
-  where, when. For low items, a few words such as "Routine meeting minutes."
+  where, when. For a record covering several items (an agenda, a meeting recap,
+  minutes), up to three sentences, naming every item you would rate high on its own,
+  not only the lead. For low items, a few words such as "Routine meeting minutes."
 - names: businesses, developers, employers, officials or organizations named in the
   record that a reporter might cross-check (not the public body itself).
 - places: street addresses in the record, as written (e.g. "707 W Genesee Ave").
@@ -48,6 +50,10 @@ Return one entry per input item, with the same `key`:
 {openings}
 
 Only state facts present in the record. Never guess numbers or names.
+When a record names a program or plan by its official title (e.g. "Expanding Housing
+Options"), say in plain words what it would do, as far as the record says (e.g. allow
+backyard cottages and duplexes in single-family neighborhoods), in the headline or
+why_it_matters, so a reader recognizes the story.
 
 Source-specific guidance:
 
@@ -161,8 +167,11 @@ people know (pool and spa closures are at most medium, and low when routine); a
 rezoning or project that would change a neighborhood; a bond or other new public debt;
 a pipeline, power plant, data center or other major energy or industrial project;
 major water or transportation funding, or a transit agency's budget gap; a large
-enrollment decline. These are news the first time they appear, even if the hearing has
-passed or the vote is weeks away.
+enrollment decline; a council straw poll, direction or change to a citywide housing or
+zoning proposal, and the work session briefing where it is taken up. These are news
+the first time they appear, even if the hearing has passed or the vote is weeks away;
+"no vote yet" is never a reason to lower them, since councils set direction in work
+sessions before the formal vote.
 
 Be skeptical of:
 - trade permits (electrical, plumbing, mechanical, fire alarm/sprinkler, low voltage)

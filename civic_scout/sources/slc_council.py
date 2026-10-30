@@ -129,10 +129,18 @@ already came in through "pmn"; these records are the outcomes. Two kinds:
   comment, or anything that contradicts what was reported.
 - high: final votes on taxes, fees, budgets, bonds, rezonings, land sales, police or
   jail policy, homelessness and housing policy, large contracts or CRA deals; a
-  failed or split vote on any significant item; an item reversed or delayed.
-- medium: other substantive actions, briefings on big topics, appointments.
+  failed or split vote on any significant item; an item reversed or delayed; a
+  straw poll or the council's direction on any of these, even without a final vote.
+  The council sets direction in work sessions: a recap's "Briefing Updates" saying
+  the council "discussed potential alterations", "expressed support" or asked for
+  changes to a proposal, or minutes recording a straw poll, are decisions, not just
+  briefings.
+- medium: other substantive actions, briefings on big topics with no direction
+  given, appointments.
 - low: minutes or recaps of ceremonial, procedural or study-only meetings.
-why_it_matters should give the action, the vote if stated and the meeting date. List
+why_it_matters should give the action, the vote if stated and the meeting date, and
+cover every high item in the recap or minutes, work session direction included, not
+only the formal votes. List
 in `places` every street address and in `names` every business, developer or project
 named, so the outcome connects to the agenda item and permits."""
 
