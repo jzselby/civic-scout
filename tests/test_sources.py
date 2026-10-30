@@ -297,3 +297,44 @@ def test_slc_permits_keeps_big_trade_jobs():
     from civic_scout.config import Config
     items = slc_permits.SlcPermits().fetch(Config(), FakeHttp(), seen={rec["record_number"]})
     assert [(i["id"], i["importance"]) for i in items] == [("BLD-X", rec["importance"])]
+
+
+def test_sugar_house_agenda_feed_gives_posts_with_their_full_text():
+    from civic_scout.sources import sugar_house
+    items = sugar_house.parse_feed(read("sugar_house_agendas.xml"))
+    assert len(items) == 10
+    nov = items[0]
+    assert nov["id"] == "post-123341" and nov["date"] == "2026-10-28"
+    assert nov["url"].endswith("/articles/agendas/sugar-house-community-council-november-4th-2026-meeting-agenda/")
+    assert nov["title"] == "Sugar House Community Council – November 4th, 2026 Meeting Agenda"
+    assert nov["details"].startswith("Meeting agenda")
+    assert "DABS Update on new Sugar House Liquor Store" in nov["text"]
+    assert "first appeared on" not in nov["text"]
+
+
+def test_sugar_house_tells_minutes_from_news_and_petitions():
+    from civic_scout.sources import sugar_house
+    review = sugar_house.parse_feed(read("sugar_house_meeting_review.xml"))
+    assert [i["details"].split(";")[0] for i in review] == [
+        "Meeting minutes (AI-drafted summary)", "Council post"]
+    assert "325 apartments" in review[1]["text"]
+    land = {i["title"]: i for i in sugar_house.parse_feed(read("sugar_house_land_use.xml"))}
+    assert land["SHCC LUZ REPORT 2026 NOVEMBER"]["details"].startswith("Land Use and Zoning committee report")
+    assert land["567 E Warnock Ave (Rezone to RMF-35)"]["details"].startswith("Development petition")
+
+
+def test_sugar_house_records_a_post_in_several_categories_once():
+    from civic_scout.config import Config
+    from civic_scout.sources import sugar_house
+
+    class FakeHttp:
+        def text(self, url):
+            if "agendas" in url:
+                raise OSError("down")
+            if "land-use" in url or "luz" in url:
+                return read("sugar_house_land_use.xml")
+            return read("sugar_house_meeting_review.xml")
+
+    items = sugar_house.SugarHouseCouncil().fetch(Config(), FakeHttp(), seen=set())
+    ids = [i["id"] for i in items]
+    assert len(ids) == len(set(ids)) == 12  # one feed down, the others still read

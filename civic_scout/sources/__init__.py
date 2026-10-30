@@ -6,10 +6,11 @@ from .restaurants import RestaurantClosures
 from .slc_council import SlcCouncil
 from .slc_licenses import SlcBusinessLicenses
 from .slc_permits import SlcPermits
+from .sugar_house import SugarHouseCouncil
 from .warn import WarnNotices
 
 ALL = [PublicNotices(), WarnNotices(), SlcBusinessLicenses(), RestaurantClosures(), SlcPermits(), SlcCouncil(),
-       CampaignFinance()]
+       CampaignFinance(), SugarHouseCouncil()]
 BY_NAME = {s.name: s for s in ALL}
 
 
