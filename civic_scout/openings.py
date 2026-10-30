@@ -115,12 +115,14 @@ def _where(p: dict) -> str:
 
 
 def section(items: list[dict], today: date, labels: dict[str, str]) -> str | None:
-    """The briefing's "New restaurants & bars" section: one line per Salt Lake place seen
-    today, Salt Lake City first, with what today's records show and when the place
-    first turned up. None when there are none."""
+    """The briefing's "New restaurants & bars" section: one line per Salt Lake place that
+    took a new step today, Salt Lake City first, with what today's records show and when
+    the place first turned up. A record repeating a step the place already showed (a
+    second copy of council minutes about the same liquor license, another trade permit)
+    goes only to the sheet. None when there are none."""
     day = today.isoformat()
     todays = [p for p in places(items, today)
-              if p["last_seen"] == day and p["area"] in BRIEF_AREAS]
+              if p["last_seen"] == day and p["area"] in BRIEF_AREAS and _new_steps(p, day)]
     if not todays:
         return None
     todays.sort(key=lambda p: (BRIEF_AREAS.index(p["area"]), p["name"].upper()))
@@ -130,7 +132,7 @@ def section(items: list[dict], today: date, labels: dict[str, str]) -> str | Non
         if where := _where(p):
             head += f", {where}"
         steps = []
-        for s in (s for s in p["sightings"] if s["seen"] == day):
+        for s in _new_steps(p, day):
             label = STAGE_LABELS.get(s.get("stage"), s.get("stage") or "record")
             source = labels.get(s["source"], s["source"])
             step = f"{label} ([{source}]({s['url']}))" if s.get("url") else f"{label} ({source})"
@@ -143,6 +145,12 @@ def section(items: list[dict], today: date, labels: dict[str, str]) -> str | Non
                      f" ({STAGE_LABELS.get(first.get('stage'), first.get('stage') or 'record')}).")
         lines.append(line)
     return "\n".join(lines)
+
+
+def _new_steps(place: dict, day: str) -> list[dict]:
+    """The place's sightings from today whose stage it hadn't shown on an earlier day."""
+    before = {s.get("stage") for s in place["sightings"] if s["seen"] < day}
+    return [s for s in place["sightings"] if s["seen"] == day and s.get("stage") not in before]
 
 
 def add_section(briefing: str | None, section_md: str | None) -> str | None:

@@ -59,6 +59,25 @@ def test_briefing_section_lists_todays_salt_lake_places_city_first():
     assert openings.section(ITEMS[:1], DAY, {}) is None  # nothing new today
 
 
+def test_briefing_section_skips_places_that_only_repeat_a_step():
+    # Silverside Deli, Oct 28-30: the liquor commission agenda, then two reposted copies of
+    # old council minutes about the same liquor license. Only the first belongs in the brief.
+    deli = opening("Silverside Deli", "liquor license", kind="deli")
+    at_address = opening("Silverside Deli", "liquor license", "2122 South Highland Drive", kind="deli")
+    items = [record("pmn", "dabs", "2026-10-28T13:34:39+00:00", deli),
+             record("slc_council", "minutes-45794", "2026-10-29T13:52:28+00:00", at_address),
+             record("slc_council", "minutes-45827", "2026-10-30T14:18:11+00:00", at_address)]
+    assert "Silverside Deli" in openings.section(items[:1], date(2026, 10, 28), {})
+    assert openings.section(items[:2], date(2026, 10, 29), {}) is None
+    assert openings.section(items, date(2026, 10, 30), {}) is None
+    # A new step still shows, with only that step listed.
+    items.append(record("slc_licenses", "l9", "2026-10-30T14:00:00+00:00",
+                        opening("Silverside Deli", "business license", "2122 S Highland Dr")))
+    md = openings.section(items, date(2026, 10, 30), {"slc_licenses": "SLC licenses"})
+    assert "business license ([SLC licenses](https://u/l9))." in md
+    assert "u/minutes-45827" not in md and "First seen Oct 28 (liquor license)." in md
+
+
 def test_section_goes_right_after_top_stories():
     for briefing in ("## Top stories\n\n- one\n- two\n\n## Coming up\n\n- hearing",
                      "**Top stories**\n- one\n- two\n**Coming up**: hearing"):
